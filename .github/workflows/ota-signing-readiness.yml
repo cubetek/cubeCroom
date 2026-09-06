@@ -1,0 +1,35 @@
+name: OTA Signing Readiness
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  challenge:
+    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    environment: release-publish
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Build the shared trust schema without signing credentials
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @cubecroom/contracts build
+      - name: Prove the protected key matches the committed public trust
+        env:
+          RELEASE_SIGNING_KEY_ID: ${{ vars.RELEASE_SIGNING_KEY_ID }}
+          RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
+        run: node scripts/release/signing-readiness.mjs

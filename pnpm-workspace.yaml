@@ -14,9 +14,10 @@ packages:
 # ملاحظة: في pnpm 11 لا تُقرأ هذه الإعدادات من .npmrc — مكانها هنا.
 nodeLinker: hoisted
 
-# Preserve Chromium sandboxing in the pinned AppImage launcher generator.
+# Preserve Chromium sandboxing and fail closed during Windows signature verification.
 patchedDependencies:
   app-builder-lib@26.15.3: patches/app-builder-lib@26.15.3.patch
+  electron-updater@6.8.9: patches/electron-updater@6.8.9.patch
 
 # pnpm لا يشغّل سكربتات ما بعد التثبيت إلا لما يُسمح به صراحةً.
 allowBuilds:

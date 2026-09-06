@@ -24,7 +24,7 @@ const virtual = {
 await build({
   entryPoints: [join(root, 'apps/desktop/src/updates/service.ts')], outfile: bundle,
   bundle: true, format: 'esm', platform: 'node', packages: 'external',
-  define: { 'process.resourcesPath': 'globalThis.__cubeUpdateTest.resources' },
+  define: { 'process.resourcesPath': 'globalThis.__cubeUpdateTest.resources', 'process.platform': 'globalThis.__cubeUpdateTest.platform', setInterval: 'globalThis.__cubeUpdateTest.schedule' },
   plugins: [{ name: 'update-boundaries', setup(builder) {
     builder.onResolve({ filter: /^@cubecroom\/(contracts|core)$/ }, (args) => ({ path: pathToFileURL(join(root, 'packages', args.path.split('/')[1], 'dist/index.js')).href, external: true }));
     builder.onResolve({ filter: /.*/ }, (args) => virtual[args.path] ? { path: args.path, namespace: 'test-boundary' } : undefined);
@@ -46,22 +46,27 @@ if (process.platform === 'linux') process.env.APPIMAGE = join(scratch, 'installe
 
 async function fixture(options = {}) {
   const events = [];
+  const calls = { check: 0, download: 0, install: 0, feed: 0, manifest: 0 };
+  let scheduled = 0;
   const app = Object.assign(new EventEmitter(), { isPackaged: true, getVersion: () => '0.1.0' });
   const settings = { get: () => 'stable', getBoolean: () => false, set: () => {} };
   let store = { status: 'open', dataDirectory: scratch, repositories: { settings, sessions: { active: () => undefined } } };
   let downloadedPath;
   const updater = Object.assign(new EventEmitter(), {
-    setFeedURL() {},
-    async checkForUpdates() { return { isUpdateAvailable: true, updateInfo: { version: '0.1.1', files: [{ url: entry.url, sha512: entry.sha512, size: entry.size }] } }; },
-    async downloadUpdate() { const path = join(scratch, `${++serial}-download`); downloadedPath = path; await writeFile(path, options.corrupt ? Buffer.alloc(installer.length) : installer); return [path]; },
-    quitAndInstall() { events.push('install'); if (options.installFails) updater.emit('error', new Error('installer failed')); },
+    setFeedURL() { calls.feed += 1; },
+    async checkForUpdates() { calls.check += 1; return { isUpdateAvailable: true, updateInfo: { version: '0.1.1', files: [{ url: entry.url, sha512: entry.sha512, size: entry.size }] } }; },
+    async downloadUpdate() { calls.download += 1; const path = join(scratch, `${++serial}-download`); downloadedPath = path; await writeFile(path, options.corrupt ? Buffer.alloc(installer.length) : installer); return [path]; },
+    quitAndInstall() { calls.install += 1; events.push('install'); if (options.installFails) updater.emit('error', new Error('installer failed')); },
   });
-  await writeFile(join(scratch, 'release-config.json'), JSON.stringify({ repository: RELEASE_CONFIG.repository }));
+  await writeFile(join(scratch, 'release-config.json'), JSON.stringify({ repository: RELEASE_CONFIG.repository, updateMode: options.missingMode ? undefined : options.mode ?? 'signed' }));
   await writeFile(join(scratch, 'release-trust.json'), JSON.stringify(options.noTrust ? { schemaVersion: 1, keys: [] } : trust));
+  if (options.noFeed) await rm(join(scratch, 'app-update.yml'), { force: true });
+  else await writeFile(join(scratch, 'app-update.yml'), JSON.stringify({ publisherName: Object.hasOwn(options, 'publisherName') ? options.publisherName : 'Synthetic test publisher' }));
   let service;
   const context = {
-    app, updater, resources: scratch,
-    net: { fetch: async () => new Response(JSON.stringify(options.badSignature ? { ...envelope, signature: Buffer.alloc(64).toString('base64') } : envelope)) },
+    app, updater, resources: scratch, platform: options.platform ?? process.platform,
+    schedule: (callback, delay) => { scheduled += 1; return setInterval(callback, delay); },
+    net: { fetch: async () => { calls.manifest += 1; return new Response(JSON.stringify(options.badSignature ? { ...envelope, signature: Buffer.alloc(64).toString('base64') } : envelope)); } },
     BrowserWindow: { getAllWindows: () => [{ isDestroyed: () => false, webContents: {
       id: 7, isDestroyed: () => false, send: (channel, value) => {
         if (channel === 'updates:prepare') queueMicrotask(() => { events.push('save'); service.acknowledgeUpdatePreparation(7, { token: value.token, saved: !options.saveFails }); });
@@ -77,8 +82,44 @@ async function fixture(options = {}) {
   globalThis.__cubeUpdateTest = context;
   service = await import(`${pathToFileURL(bundle).href}?fixture=${++serial}`);
   service.initializeUpdates();
-  return { service, events, updater, cleanup: () => app.emit('before-quit') };
+  return { service, events, updater, calls, scheduled: () => scheduled, cleanup: () => app.emit('before-quit') };
 }
+
+for (const options of [{ mode: 'disabled' }, { missingMode: true }, { mode: 'unknown' }, { noTrust: true }]) {
+  test(`update activation fails closed before network or install: ${JSON.stringify(options)}`, async () => {
+    const f = await fixture(options);
+    try {
+      assert.equal(f.service.updateState().phase, 'unavailable');
+      for (const method of ['checkForUpdates', 'downloadUpdate', 'installUpdate']) assert.equal((await f.service[method]()).phase, 'unavailable');
+      assert.deepEqual(f.calls, { check: 0, download: 0, install: 0, feed: 0, manifest: 0 });
+      assert.deepEqual(f.events, []);
+      assert.equal(f.scheduled(), 0);
+      assert.equal(f.updater.listenerCount('error'), 0);
+    } finally { f.cleanup(); }
+  });
+}
+
+for (const options of [{ noFeed: true }, { publisherName: undefined }, { publisherName: null }, { publisherName: '' }, { publisherName: '   ' }, { publisherName: [] }, { publisherName: ['Synthetic', ''] }, { publisherName: 42 }]) {
+  test(`signed Windows mode refuses missing native publisher configuration: ${JSON.stringify(options)}`, async () => {
+    const f = await fixture({ platform: 'win32', ...options });
+    try {
+      assert.equal((await f.service.checkForUpdates()).phase, 'unavailable');
+      assert.deepEqual(f.calls, { check: 0, download: 0, install: 0, feed: 0, manifest: 0 });
+      assert.equal(f.scheduled(), 0);
+    } finally { f.cleanup(); }
+  });
+}
+
+test('signed Windows mode accepts configured native publisher names without weakening updater behavior', async () => {
+  const f = await fixture({ platform: 'win32', publisherName: ['Synthetic test publisher'] });
+  try {
+    assert.equal(f.service.updateState().phase, 'idle');
+    assert.equal(f.scheduled(), 1);
+    assert.equal(f.updater.autoDownload, false);
+    assert.equal(f.updater.autoInstallOnAppQuit, false);
+    assert.equal(f.updater.allowDowngrade, false);
+  } finally { f.cleanup(); }
+});
 
 test('installation follows confirmed save, quiescence, backup, then close', async () => {
   const f = await fixture();

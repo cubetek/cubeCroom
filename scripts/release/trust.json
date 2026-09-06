@@ -1,4 +1,9 @@
 {
   "schemaVersion": 1,
-  "keys": []
+  "keys": [
+    {
+      "id": "cubecroom-ota-2026-09",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAmjdiPoLdqUOZVbMx4N4CB14lEdu4AGO65F1DWIKPM7o=\n-----END PUBLIC KEY-----\n"
+    }
+  ]
 }

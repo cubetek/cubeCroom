@@ -12,6 +12,15 @@ export type PublishedRelease = {
 };
 export type ReleaseCatalog = { current: PublishedRelease | null; history: PublishedRelease[]; limitReached: boolean };
 
+/** Published evidence links; displaying a file does not verify its signature in the browser. */
+export const RELEASE_VERIFICATION_LABELS: Readonly<Record<string, string>> = {
+  SHA512SUMS: 'بصمات SHA-512',
+  'release-metadata.json': 'بيان الإصدار',
+  'cubecroom-release.json': 'بيان تحديث OTA',
+  'downloads.json': 'قائمة ملفات التنزيل',
+  'attestation.json': 'إثبات مصدر البناء',
+};
+
 const semverTag = /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 const record = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -69,7 +78,7 @@ export function parsePublishedRelease(raw: unknown, source: ReleaseSource): Publ
     if (asset) files.push({ ...target, ...asset });
     else missingTargets.push(target);
   }
-  const verification = ['SHA512SUMS', 'release-metadata.json', 'attestation.json'].flatMap(name => {
+  const verification = Object.keys(RELEASE_VERIFICATION_LABELS).flatMap(name => {
     const asset = readAsset(name);
     return asset ? [asset] : [];
   });

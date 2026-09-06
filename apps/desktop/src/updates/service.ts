@@ -8,6 +8,7 @@ import {
 } from '@cubecroom/contracts';
 import { createUpdateFence, defaultBackupsDirectory, verifyReleaseFile, verifyReleaseManifest } from '@cubecroom/core';
 import { autoUpdater } from 'electron-updater';
+import { parse } from 'yaml';
 import { takeBackup } from '../backup.js';
 import { portalStatus, stopPortal } from '../portal.js';
 import { closeStore, openStore, storeState } from '../store.js';
@@ -66,11 +67,24 @@ function recoverPreparation(): void {
 export function initializeUpdates(): void {
   if (!app.isPackaged) return;
   try {
-    const config = JSON.parse(readFileSync(join(process.resourcesPath, 'release-config.json'), 'utf8')) as { repository: { owner: string; repo: string } };
+    const config = JSON.parse(readFileSync(join(process.resourcesPath, 'release-config.json'), 'utf8')) as { updateMode?: unknown; repository: { owner: string; repo: string } };
+    if (config.updateMode === 'disabled') {
+      publish({ message: 'التحديث داخل التطبيق غير مفعّل في هذه الحزمة.' });
+      return;
+    }
+    if (config.updateMode !== 'signed') throw new Error('Missing signed update mode');
     if (!/^[\w.-]+$/.test(config.repository.owner) || !/^[\w.-]+$/.test(config.repository.repo)) throw new Error('Invalid repository');
     repository = config.repository;
     trust = releaseTrustSchema.parse(JSON.parse(readFileSync(join(process.resourcesPath, 'release-trust.json'), 'utf8')));
     if (trust.keys.length === 0) return;
+    if (process.platform === 'win32') {
+      // NsisUpdater silently skips native verification when publisherName is absent.
+      const feed = parse(readFileSync(join(process.resourcesPath, 'app-update.yml'), 'utf8')) as { publisherName?: unknown };
+      const publishers: unknown = typeof feed.publisherName === 'string' ? [feed.publisherName] : feed.publisherName;
+      if (!Array.isArray(publishers) || publishers.length === 0 || publishers.some(name => typeof name !== 'string' || name.trim().length === 0)) {
+        throw new Error('Missing Windows publisher for native update verification');
+      }
+    }
     if (!['win32', 'darwin', 'linux'].includes(process.platform) || !['x64', 'arm64'].includes(process.arch)) return;
     if (process.platform === 'linux' && !process.env['APPIMAGE']) {
       publish({ message: 'شغّل نسخة AppImage للحصول على التحديثات.' });

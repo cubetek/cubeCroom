@@ -74,6 +74,25 @@ test('release notes reject executable URL protocols and credential-bearing links
   assert.equal(safeReleaseNoteUrl('/cubetek/cubeCroom/releases', repositoryUrl), `${repositoryUrl}/releases`);
 });
 
+test('production manifest and download-index links remain optional and require official ready assets', () => {
+  const names = ['cubecroom-release.json', 'downloads.json'];
+  const release = valid();
+  release.assets.push(...names.map(name => ({ name, state: 'uploaded', size: 420, browser_download_url: `${repositoryUrl}/releases/download/v1.2.3/${name}` })));
+  const parsed = parsePublishedRelease(release, source);
+  assert.deepEqual(parsed.verification.map(file => file.name), names);
+  assert.equal(parsed.files.length, 1, 'The download index does not supply replacement installer URLs.');
+  assert.equal(parsed.ota, undefined, 'A manifest link does not claim OTA or signature verification.');
+  for (const name of names) {
+    const hostile = structuredClone(release);
+    hostile.assets.find(asset => asset.name === name).browser_download_url = `https://attacker.invalid/${name}`;
+    assert.throws(() => parsePublishedRelease(hostile, source));
+    const pending = structuredClone(release);
+    pending.assets.find(asset => asset.name === name).state = 'open';
+    assert.throws(() => parsePublishedRelease(pending, source));
+  }
+  assert.deepEqual(parsePublishedRelease(valid(), source).verification, []);
+});
+
 test('concurrent consumers share requests, then cached data, and explicit retry refreshes an empty catalog', async () => {
   let calls = 0;
   let published = false;

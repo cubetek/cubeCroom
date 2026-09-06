@@ -10,12 +10,13 @@ The release workflow runs on trusted `main` pushes, or a `workflow_dispatch` tha
 
 ## Running on a new repository
 
-The two manual workflows serve different purposes:
+The manual workflows serve different purposes:
 
 | Workflow | Required setup | Result |
 | --- | --- | --- |
 | `CI` / `ci.yml` | The workflow is on the selected branch; no release secrets or GitHub App | Source checks, native unpacked application and smoke on all four targets; validation archives and SHA-512 hashes remain Actions artifacts for seven days. |
-| `Release` / `release.yml` | `main`, `RELEASE_AUTOMATION_ENABLED=true`, an existing draft with exact tag/SHA, the signing setup below, and the protected publication environment | All signed target builds, signed release manifest, checksum list, and public GitHub Release after approval. |
+| `Release` / `release.yml` | `main`, an existing draft with exact tag/SHA, the signing setup below, and the publication environment | All signed target builds, signed release manifest, checksum list, and public GitHub Release under the configured environment policy. No GitHub App or automatic-preparation switch is needed for manual dispatch. |
+| `OTA Signing Readiness` / `ota-signing-readiness.yml` | `main`, committed public trust, and the manifest key in `release-publish` | A random signed challenge proves the protected private key matches the committed public key. It creates no release or update payload. |
 
 Start validation with `gh workflow run ci.yml --repo cubetek/cubeCroom --ref main`. Download its `validation-<target>-<sha>` artifacts from that specific Actions run. Each contains a `.tar.gz` of the unpacked application, `validation.json` and `SHA512SUMS`. Extracting the tar archive preserves executable modes and macOS symbolic links. These are development/validation packages: production code signing has not been verified, and they are not installers, OTA updates, or releases for the public download page.
 
@@ -29,9 +30,13 @@ gh attestation verify CubeCroom-<version>-<target>-validation.tar.gz --repo cube
 
 The provenance establishes which repository, workflow and commit produced those bytes. It is not Authenticode, Apple Developer ID/notarization, or the OTA Ed25519 manifest signature. `validation.json` therefore retains `productionSigningVerified: false`, and a validation archive still requires the ordinary platform installation/update acceptance before an official release. A configured workflow alone is not evidence that an attestation has already been issued. [GitHub CLI verification options](https://cli.github.com/manual/gh_attestation_verify).
 
-To start the first official release without a GitHub App, an authorized maintainer can create a draft for the product version using `gh release create` with `--draft` and `--target` set to the full committed SHA on `main`. Then dispatch `release.yml` from `main`, providing that draft's `tag` and exact `commit`. The resolver checks the draft and both package versions; it does not accept a branch name as the draft target. Manual dispatch skips the App-token and Release Please steps. The GitHub App is needed for automatic release PR preparation on future pushes, not for this manual release path.
+To start an official release without a GitHub App, an authorized maintainer can create a draft for the product version using `gh release create` with `--draft` and `--target` set to the full committed SHA on `main`. Then dispatch `release.yml` from `main`, providing that draft's `tag` and exact `commit`. The resolver checks the draft and both package versions; it does not accept a branch name as the draft target. Manual dispatch skips the App-token and Release Please steps, regardless of `RELEASE_AUTOMATION_ENABLED`. Automatic preparation requires that switch and both App settings; missing App settings produce a skipped-preparation summary rather than failed pushes.
 
 The release workflow has no unsigned-publish mode. A missing platform certificate or missing trusted release key stops the official build; use CI artifacts to continue validation while those credentials are being provisioned.
+
+Every newly packaged application records `updateMode` in `resources/release-config.json`. The central `releaseUpdateMode()` helper selects `signed` only when `CUBECROOM_REQUIRE_SIGNING=1`; ordinary and preview builds use `disabled`, including when public verification keys are present. Combining production signing with `CUBECROOM_PREVIEW_BUILD=1` is rejected. Staging records this mode, and packaging rejects a stage from a different mode. Changing environment variables after packaging cannot enable updates in an installed application.
+
+The runtime requires explicit `signed` mode and configured public trust before scheduling checks or contacting the update service. Missing or unknown modes remain unavailable. Disabled builds also reject manual check, download and install requests without contacting the service. On Windows, signed mode additionally requires a nonempty `publisherName` in `app-update.yml`; production packaging verifies it includes the configured publisher. The manifest signature and native operating-system signature checks remain separate requirements. A preview must be replaced manually with an eligible signed installer before it can receive OTA updates.
 
 ### Public preview installers
 
@@ -59,37 +64,49 @@ The stable release's final job validates the complete asset set, signs a release
 
 ## External setup, not inferred credentials
 
-Keep `RELEASE_AUTOMATION_ENABLED` unset or `false` until the pipeline is ready. Configure the following GitHub environments with `main` deployment restrictions. Set a **required reviewer on `release-publish`**: this is the normal GitHub approval before publishing. The other environments organize automation and signing credentials. Protect the default branch and release tags using ordinary repository settings and reviews. Committing YAML does not configure those remote settings.
+Keep `RELEASE_AUTOMATION_ENABLED` unset or `false` until a real Release Please GitHub App is configured. This switch controls automatic PR/draft preparation only. Configure the following GitHub environments with `main` deployment restrictions. Required reviewers on `release-publish` are optional under the maintainer's release policy; unattended publication does not require a new approval service. The other environments organize automation and signing credentials. Protect the default branch and release tags using ordinary repository settings. Committing YAML does not configure those remote settings.
 
-GitHub waits for environment approval before running its job or exposing its environment secrets. Required reviewers are available for public repositories on current GitHub plans; private-repository availability depends on the plan. Verify that `release-publish` actually has the intended protection before enabling publication. There is no custom approval service, per-release approval variable, or legal-text keyword gate. [GitHub environment configuration](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments), [reviewing deployments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/review-deployments).
+When required reviewers are configured, GitHub waits for their approval before running the environment's job or exposing its secrets. A `main`-only environment without that optional rule supports the owner's requested automated flow. Verify that `release-publish` has the intended branch restrictions before enabling publication. There is no custom approval service, per-release approval variable, or legal-text keyword gate. [GitHub environment configuration](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments), [reviewing deployments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/review-deployments).
 
 | Scope | Variables | Secrets |
 | --- | --- | --- |
-| Repository | `RELEASE_AUTOMATION_ENABLED=true` when ready | None |
+| Repository | `RELEASE_AUTOMATION_ENABLED=true` when automatic App preparation is ready; otherwise `false` | None |
 | `release-automation` | `RELEASE_APP_ID` | `RELEASE_APP_PRIVATE_KEY` |
 | `release-signing` | `WINDOWS_PUBLISHER_NAME`, `APPLE_TEAM_ID` | `WINDOWS_CSC_LINK`, `WINDOWS_CSC_KEY_PASSWORD`, `MAC_CSC_LINK`, `MAC_CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` |
 | `release-publish` | `RELEASE_SIGNING_KEY_ID`, `RELEASE_PUBLIC_PUBLISH_ENABLED=true` | `RELEASE_SIGNING_PRIVATE_KEY` |
 
-The GitHub App is installed only on this repository and needs Contents, Pull requests, and Issues write permissions for Release Please. Its token is never sent to PR jobs. Build jobs receive only their platform's signing credentials, during the signing step. The release-manifest private key is exposed only to the aggregation/signing step.
+The GitHub App is installed only on this repository and needs Contents, Pull requests, and Issues write permissions for Release Please. Its token is never sent to PR jobs. Build jobs receive only their platform's signing credentials, during the signing step. The release-manifest private key is exposed only to the aggregation/signing step or the final step of the manual readiness challenge.
 
 `CSC_LINK` values use electron-builder's supported secure certificate input format, such as a base64-encoded certificate. Do not place production certificate files or passwords in the repository. `WINDOWS_PUBLISHER_NAME` is the exact certificate SimpleName expected in Authenticode and must match the real signing identity. Windows verification requires a valid signature and timestamp. macOS verification mounts the DMG read-only and checks the app's signature, notarization ticket, and Gatekeeper assessment; notarizing an app is not a claim that the DMG itself has been notarized separately.
 
+The pinned `electron-updater@6.8.9` patch removes its Windows verification fallbacks that could accept an update when PowerShell was unavailable or the signed file path was missing. Such failures now reject the download; successful native signature and publisher CN/DN checks use the existing upstream algorithm. Regression tests exercise the installed verifier with controlled process responses. The patch is tracked by pnpm with LF-stable bytes and must be reviewed when updating the dependency. [Pinned upstream Windows verifier](https://github.com/electron-userland/electron-builder/blob/bed3a9c421a8a05c49f36a2af5d7ae3598cb1b95/packages/electron-updater/src/windowsExecutableCodeSignatureVerifier.ts).
+
 These are distinct signing mechanisms. Windows needs a trusted Authenticode code-signing certificate for the configured publisher; macOS needs a Developer ID Application signing identity and Apple notarization credentials. The Ed25519 release key signs the manifest that binds every download's size and SHA-512 digest, including the Linux AppImage. It does not supply Windows/macOS operating-system trust. `SHA512SUMS` detects changed bytes when compared against a trusted reference; a checksum by itself is not a publisher signature. Generating an Ed25519 key, or a self-signed operating-system certificate, cannot replace the required platform signing setup.
 
-Before approving the ordinary `release-publish` deployment, review this short release checklist:
+Use this short acceptance checklist before enabling a new signed release:
 
 - [ ] The release commit, notes, and expected installers match; all native build jobs and `pnpm verify` passed.
 - [ ] Installation and A-to-B update evidence covers every platform/architecture being advertised, including save protection and recovery. Resource/unit checks alone do not establish installed-update acceptance.
 - [ ] The chosen LICENSE and shipped third-party notices are included, with normal contribution review completed.
 - [ ] Signing identities and the manifest key are correct, and the repository is ready for public downloads.
 
-The publisher requires a present, nonempty `LICENSE`. It does not select a license or require additional CLA, commercial-license, or trademark files. `RELEASE_PUBLIC_PUBLISH_ENABLED` remains the single publish switch; required environment review provides the human release decision. The exact commit, complete artifacts, checksums, signatures, and successful platform jobs remain enforced automatically.
+The publisher requires a present, nonempty `LICENSE`. It does not select a license or require additional CLA, commercial-license, or trademark files. `RELEASE_PUBLIC_PUBLISH_ENABLED` remains the single publish switch. The exact commit, complete artifacts, checksums, signatures, and successful platform jobs remain enforced automatically, with an optional environment review when the maintainer chooses it.
 
 The publish script additionally refuses a private repository. Visibility changes and historical source/secret review are external owner actions; this workflow never makes the repository public.
 
 ## Release manifest and key rotation
 
-The shared runtime validator lives in `packages/core/src/updates/release-manifest.ts`; release scripts use the same validator before signing/publishing. `scripts/release/trust.json` contains only reviewed public Ed25519 keys and is shipped with the application. It starts with **no keys**, so official preflight/signature verification fails closed until provisioning is complete. No production private key is generated by this implementation.
+The shared runtime validator lives in `packages/core/src/updates/release-manifest.ts`; release scripts use the same validator before signing/publishing. `scripts/release/trust.json` contains only reviewed public Ed25519 keys and is shipped with the application. The public preview `v0.1.0` shipped with no keys; it requires a one-time manual installation of a later signed release containing the provisioned trust. Adding a key to the repository cannot modify an already installed preview. Production key custody remains outside the source tree; the workflow never generates a replacement key automatically.
+
+The public key provisioned on 6 September 2026 has ID `cubecroom-ota-2026-09` and public SPKI SHA-256 fingerprint `2cdd51ece4e9ef52bbeb8a94df44ca4c2c75af67c1851523b3cd0c892753b37c`. The matching private key is held in the `release-publish` environment secret. Check the actual readiness run for proof that the secret is usable; public configuration alone does not establish that. Windows and Apple production credentials are still required before the first OTA-capable public release.
+
+After provisioning or rotating the protected key, run:
+
+```sh
+gh workflow run ota-signing-readiness.yml --repo cubetek/cubeCroom --ref main
+```
+
+The workflow must first exist on the default branch. It checks out that exact run SHA and builds the shared trust schema without signing credentials. Its final step receives `RELEASE_SIGNING_KEY_ID` and `RELEASE_SIGNING_PRIVATE_KEY`, verifies the Ed25519 public/private pair, signs a random domain-separated challenge, and verifies that signature. Only the public proof, source/run identity and SHA-256 fingerprint of the public SPKI appear in logs/summary. It has read-only repository permissions, no upload/publish step, and cannot be triggered by PRs. The challenge is deliberately not a release manifest. A successful run proves manifest-key provisioning; Windows/Apple signing, native installation and an actual A-to-B OTA update require their own evidence. [Manual workflow requirements](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow).
 
 `cubecroom-release.json` is an envelope:
 

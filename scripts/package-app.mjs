@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { build, Platform, Arch } from 'electron-builder';
 import { parse } from 'yaml';
 import { createBuilderConfig } from '../apps/desktop/electron-builder.config.mjs';
-import { currentReleaseTarget, packagedRuntimePaths, RELEASE_CONFIG, releasePaths } from './release/config.mjs';
+import { currentReleaseTarget, packagedRuntimePaths, RELEASE_CONFIG, releasePaths, releaseUpdateMode } from './release/config.mjs';
 import { verifyNative } from './rebuild-native.mjs';
 import { assertNoUnusedImageLibraries, assertNotices } from './release/notices.mjs';
 import { assertLegalAssets } from './release/legal-assets.mjs';
@@ -14,6 +14,7 @@ const paths = releasePaths(root);
 const step = process.argv[2] ?? 'package';
 if (!['make', 'package'].includes(step)) throw new Error('Expected package or make');
 const target = currentReleaseTarget();
+const updateMode = releaseUpdateMode();
 const outDirectory = process.env.CUBECROOM_OUT_DIR === undefined
   ? paths.outDirectory : resolve(paths.appDirectory, process.env.CUBECROOM_OUT_DIR);
 // Builder clears its output children. Keep that operation inside a dedicated workspace output.
@@ -28,7 +29,7 @@ const product = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 const desktop = JSON.parse(await readFile(join(paths.appDirectory, 'package.json'), 'utf8'));
 if (stage.platform !== target.platform || stage.arch !== target.arch || stage.version !== product.version
   || desktop.version !== product.version || stage.electronVersion !== desktop.devDependencies.electron
-  || stage.sqliteVersion !== desktop.dependencies['better-sqlite3']) {
+  || stage.sqliteVersion !== desktop.dependencies['better-sqlite3'] || stage.updateMode !== updateMode) {
   throw new Error('Staging does not match this host or the pinned versions; run bundle-desktop.mjs --stage');
 }
 
@@ -52,11 +53,19 @@ const artifacts = await build({
 });
 if (packed.length === 0) throw new Error('Builder returned no validated packaged application');
 for (const output of packed) {
-  if (step === 'make') {
+  if (step === 'make' || updateMode === 'signed') {
     const feed = parse(await readFile(join(output.resources, 'app-update.yml'), 'utf8'));
     if (feed.provider !== 'github' || feed.owner !== RELEASE_CONFIG.repository.owner
       || feed.repo !== RELEASE_CONFIG.repository.repo || typeof feed.updaterCacheDirName !== 'string') {
       throw new Error('Packaged updater configuration does not match the official repository');
+    }
+    if (updateMode === 'signed' && target.platform === 'win32') {
+      const publishers = typeof feed.publisherName === 'string' ? [feed.publisherName] : feed.publisherName;
+      if (!Array.isArray(publishers) || publishers.length === 0
+        || publishers.some(name => typeof name !== 'string' || name.trim().length === 0)
+        || !publishers.includes(process.env.CUBECROOM_WINDOWS_PUBLISHER_NAME)) {
+        throw new Error('Signed Windows updates require the expected publisher in app-update.yml');
+      }
     }
     output.checkedFiles.push('app-update.yml');
   }
@@ -121,9 +130,10 @@ async function assertResources(resources) {
   }
   const identity = JSON.parse(await readFile(join(resources, 'release-config.json'), 'utf8'));
   if (identity.appId !== RELEASE_CONFIG.appId || identity.repository.owner !== RELEASE_CONFIG.repository.owner
-    || identity.repository.repo !== RELEASE_CONFIG.repository.repo) throw new Error('Packaged release identity differs from source');
+    || identity.repository.repo !== RELEASE_CONFIG.repository.repo || identity.updateMode !== updateMode) throw new Error('Packaged release identity or update mode differs from source');
   const trust = JSON.parse(await readFile(join(resources, 'release-trust.json'), 'utf8'));
   if (!Array.isArray(trust.keys)) throw new Error('Invalid packaged update trust configuration');
+  if (updateMode === 'signed' && trust.keys.length === 0) throw new Error('Signed updates require a packaged public verification key');
   await assertNotices(join(resources, 'legal', 'dependencies'));
   await assertLegalAssets(resources);
   await assertNoUnusedImageLibraries(resources);

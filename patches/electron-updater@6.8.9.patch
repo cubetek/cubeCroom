@@ -1,0 +1,34 @@
+diff --git a/out/windowsExecutableCodeSignatureVerifier.js b/out/windowsExecutableCodeSignatureVerifier.js
+index c9a579eb3a7a21504ad89e663afc0f97399ac169..78657e067027088f11c3b538130eee65387d26cd 100644
+--- a/out/windowsExecutableCodeSignatureVerifier.js
++++ b/out/windowsExecutableCodeSignatureVerifier.js
+@@ -65,7 +65,9 @@ function verifySignature(publisherNames, unescapedTempUpdateFile, logger) {
+                         }
+                     }
+                     catch (error) {
+-                        logger.warn(`Unable to verify LiteralPath of update asset due to missing data.Path. Skipping this step of validation. Message: ${(_a = error.message) !== null && _a !== void 0 ? _a : error.stack}`);
++                        logger.warn(`Unable to verify LiteralPath of update asset. Refusing signature validation. Message: ${(_a = error.message) !== null && _a !== void 0 ? _a : error.stack}`);
++                        reject(error);
++                        return;
+                     }
+                     const subject = (0, builder_util_runtime_1.parseDn)(data.SignerCertificate.Subject);
+                     let match = false;
+@@ -118,14 +120,16 @@ function parseOut(out) {
+ }
+ function handleError(logger, error, stderr, reject) {
+     if (isOldWin6()) {
+-        logger.warn(`Cannot execute Get-AuthenticodeSignature: ${error || stderr}. Ignoring signature validation due to unsupported powershell version. Please upgrade to powershell 3 or higher.`);
++        logger.warn(`Cannot execute Get-AuthenticodeSignature: ${error || stderr}. Refusing signature validation due to unsupported powershell version.`);
++        reject(error || new Error(`Cannot verify Authenticode signature: ${stderr}`));
+         return;
+     }
+     try {
+         (0, child_process_1.execFileSync)(...preparePowerShellExec("ConvertTo-Json test", 10 * 1000));
+     }
+     catch (testError) {
+-        logger.warn(`Cannot execute ConvertTo-Json: ${testError.message}. Ignoring signature validation due to unsupported powershell version. Please upgrade to powershell 3 or higher.`);
++        logger.warn(`Cannot execute ConvertTo-Json: ${testError.message}. Refusing signature validation due to unsupported powershell version.`);
++        reject(testError);
+         return;
+     }
+     if (error != null) {

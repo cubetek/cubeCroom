@@ -6,7 +6,7 @@ import { Button } from '@cubecroom/ui/components/button';
 import { Card } from '@cubecroom/ui/components/card';
 import { useReleases } from '@/lib/releases/use-releases';
 import type { ReleaseState } from '@/lib/releases/client';
-import type { PublishedRelease, ReleaseSource } from '@/lib/releases/data';
+import { RELEASE_VERIFICATION_LABELS, type PublishedRelease, type ReleaseSource } from '@/lib/releases/data';
 
 export function ReleaseVersion({ release }: { release: PublishedRelease }) {
   return <span className="inline-flex flex-wrap items-center gap-2"><span>الإصدار <bdi>{release.version}</bdi></span><span className={release.preview ? 'rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-900' : 'rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-medium text-teal-800'}>{release.preview ? 'تجريبي · Preview' : 'مستقر'}</span></span>;
@@ -41,8 +41,7 @@ export function ReleaseFeedback({ state, source, refresh }: { state: ReleaseStat
   </Card>;
 }
 
-const verificationLabels: Record<string, string> = { SHA512SUMS: 'بصمات SHA-512', 'release-metadata.json': 'بيان الإصدار', 'attestation.json': 'إثبات مصدر البناء' };
 export function ReleaseVerification({ release }: { release: PublishedRelease }) {
   if (!release.verification.length) return null;
-  return <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">{release.verification.map(file => <a key={file.name} href={file.url} className="inline-flex min-h-11 items-center font-medium text-teal-800 underline underline-offset-4">{verificationLabels[file.name]}</a>)}</div>;
+  return <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">{release.verification.map(file => <a key={file.name} href={file.url} className="inline-flex min-h-11 items-center font-medium text-teal-800 underline underline-offset-4">{RELEASE_VERIFICATION_LABELS[file.name]}</a>)}</div>;
 }

@@ -1,11 +1,11 @@
-import { createPrivateKey, sign } from 'node:crypto';
+import { sign } from 'node:crypto';
 import { verifyReleaseManifest } from '@cubecroom/core';
 import { RELEASE_CONFIG } from './config.mjs';
 import { repository } from './common.mjs';
+import { trustedSigningKey } from './signing-key.mjs';
 
 export function signReleaseManifest(payload, keyId, privatePem, trust) {
-  const privateKey = createPrivateKey(privatePem);
-  if (privateKey.asymmetricKeyType !== 'ed25519') throw new Error('The release key must be Ed25519.');
+  const { privateKey } = trustedSigningKey(keyId, privatePem, trust);
   const bytes = Buffer.from(JSON.stringify(payload), 'utf8');
   const envelope = { schemaVersion: 1, keyId, algorithm: 'Ed25519', payload: bytes.toString('base64'), signature: sign(null, bytes, privateKey).toString('base64') };
   verifyReleaseManifest(envelope, trust, { repository: RELEASE_CONFIG.repository, version: payload.version, channel: payload.channel });

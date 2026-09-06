@@ -6,6 +6,7 @@ settings:
 
 patchedDependencies:
   app-builder-lib@26.15.3: 11a4d86e396a3f4c5173d7114789b8ee064b8b2df4357a8548715dd2d958f547
+  electron-updater@6.8.9: 0caeea19cbce47bc226c0b49e4b177bd886bfdb803a4041d12b6be672bf23921
 
 importers:
 
@@ -55,7 +56,10 @@ importers:
         version: 13.0.3
       electron-updater:
         specifier: 6.8.9
-        version: 6.8.9(supports-color@8.1.1)
+        version: 6.8.9(patch_hash=0caeea19cbce47bc226c0b49e4b177bd886bfdb803a4041d12b6be672bf23921)(supports-color@8.1.1)
+      yaml:
+        specifier: 2.9.0
+        version: 2.9.0
     devDependencies:
       '@cubecroom/ai':
         specifier: workspace:*
@@ -9656,7 +9660,7 @@ snapshots:
 
   electron-to-chromium@1.5.420: {}
 
-  electron-updater@6.8.9(supports-color@8.1.1):
+  electron-updater@6.8.9(patch_hash=0caeea19cbce47bc226c0b49e4b177bd886bfdb803a4041d12b6be672bf23921)(supports-color@8.1.1):
     dependencies:
       builder-util-runtime: 9.7.0(supports-color@8.1.1)
       fs-extra: 10.1.0

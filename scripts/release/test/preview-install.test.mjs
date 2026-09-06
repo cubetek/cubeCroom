@@ -7,14 +7,35 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { assertPreserved, assertPreviewRunner } from '../preview-install-smoke.mjs';
+import { assertPreserved, assertPreviewRunner, assertPreviewUpdatesDisabled } from '../preview-install-smoke.mjs';
 import { isInside, safeSmokePath } from '../smoke-paths.mjs';
-import { currentReleaseTarget, RELEASE_CONFIG } from '../config.mjs';
+import { currentReleaseTarget, packagedReleaseConfig, RELEASE_CONFIG, releaseUpdateMode } from '../config.mjs';
 import { createBuilderConfig } from '../../../apps/desktop/electron-builder.config.mjs';
 
 const execute = promisify(execFile);
 const root = resolve(import.meta.dirname, '../../..');
 const require = createRequire(import.meta.url);
+
+test('packaged update mode requires production signing regardless of configured verification keys', () => {
+  for (const env of [{}, { CUBECROOM_PREVIEW_BUILD: '1' }, { CUBECROOM_REQUIRE_SIGNING: '0' }, { CUBECROOM_REQUIRE_SIGNING: 'true' }]) {
+    assert.equal(releaseUpdateMode(env), 'disabled');
+    assert.deepEqual(packagedReleaseConfig(env), { ...RELEASE_CONFIG, updateMode: 'disabled' });
+  }
+  assert.equal(releaseUpdateMode({ CUBECROOM_REQUIRE_SIGNING: '1' }), 'signed');
+  assert.throws(() => releaseUpdateMode({ CUBECROOM_REQUIRE_SIGNING: '1', CUBECROOM_PREVIEW_BUILD: '1' }));
+});
+
+test('preview package evidence accepts nonempty public trust only with explicit disabled mode', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'cubecroom-preview-mode-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  await writeFile(join(directory, 'release-trust.json'), JSON.stringify({ schemaVersion: 1, keys: [{ id: 'synthetic', publicKey: 'public fixture' }] }));
+  await writeFile(join(directory, 'release-config.json'), JSON.stringify({ updateMode: 'disabled' }));
+  await assertPreviewUpdatesDisabled(directory);
+  for (const config of [{ updateMode: 'signed' }, {}]) {
+    await writeFile(join(directory, 'release-config.json'), JSON.stringify(config));
+    await assert.rejects(assertPreviewUpdatesDisabled(directory), /explicitly disable OTA/);
+  }
+});
 
 test('installer mutations require an explicit disposable preview runner and exact source', () => {
   const valid = { CI: 'true', GITHUB_ACTIONS: 'true', CUBECROOM_PREVIEW_BUILD: '1', RELEASE_COMMIT: 'a'.repeat(40) };

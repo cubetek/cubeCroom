@@ -15,6 +15,18 @@ export const RELEASE_CONFIG = Object.freeze({
   ]),
 });
 
+/** A public verification key alone never activates updates in an unsigned build. */
+export function releaseUpdateMode(env = process.env) {
+  if (env.CUBECROOM_REQUIRE_SIGNING === '1' && env.CUBECROOM_PREVIEW_BUILD === '1') {
+    throw new Error('Preview installers cannot use the production signing mode');
+  }
+  return env.CUBECROOM_REQUIRE_SIGNING === '1' ? 'signed' : 'disabled';
+}
+
+export function packagedReleaseConfig(env = process.env) {
+  return { ...RELEASE_CONFIG, updateMode: releaseUpdateMode(env) };
+}
+
 export function currentReleaseTarget(platform = process.platform, arch = process.arch) {
   const target = RELEASE_CONFIG.targets.find((entry) => entry.platform === platform && entry.arch === arch);
   if (!target) throw new Error(`No release target is configured for ${platform}/${arch}`);

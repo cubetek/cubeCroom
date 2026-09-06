@@ -1,16 +1,15 @@
 import { readFile } from 'node:fs/promises';
 import process from 'node:process';
 import { join } from 'node:path';
-import { currentReleaseTarget, RELEASE_CONFIG, releasePaths } from '../../scripts/release/config.mjs';
+import { currentReleaseTarget, RELEASE_CONFIG, releasePaths, releaseUpdateMode } from '../../scripts/release/config.mjs';
 
 /** A programmatic config avoids duplicating release identity in YAML and runtime. */
 export async function createBuilderConfig({ root, outDirectory, afterPack }) {
   const paths = releasePaths(root);
   const buildResources = join(paths.appDirectory, 'build');
   const desktop = JSON.parse(await readFile(join(paths.appDirectory, 'package.json'), 'utf8'));
-  const requireSigning = process.env.CUBECROOM_REQUIRE_SIGNING === '1';
+  const requireSigning = releaseUpdateMode() === 'signed';
   const preview = process.env.CUBECROOM_PREVIEW_BUILD === '1';
-  if (preview && requireSigning) throw new Error('Preview installers cannot use the production signing mode');
   const publisherName = process.env.CUBECROOM_WINDOWS_PUBLISHER_NAME;
   if (requireSigning && process.platform === 'win32' && (!process.env.CSC_LINK || !publisherName)) {
     throw new Error('Official Windows builds require CSC_LINK and CUBECROOM_WINDOWS_PUBLISHER_NAME');

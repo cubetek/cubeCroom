@@ -27,6 +27,14 @@ export async function assertPreserved(files) {
   for (const { file, sha256 } of files) assert.equal(await digest(file), sha256, `Installer changed teacher data: ${file}`);
 }
 
+export async function assertPreviewUpdatesDisabled(resources) {
+  const config = JSON.parse(await readFile(join(resources, 'release-config.json'), 'utf8'));
+  const trust = JSON.parse(await readFile(join(resources, 'release-trust.json'), 'utf8'));
+  assert.equal(config.updateMode, 'disabled', 'Preview artifacts must explicitly disable OTA');
+  assert.equal(trust.schemaVersion, 1);
+  assert.ok(Array.isArray(trust.keys), 'Packaged verification keys must remain available in the expected format');
+}
+
 async function run(file, args, options = {}) {
   const env = { ...process.env, ...options.env };
   if (file === 'pwsh.exe') for (const name of Object.keys(env)) if (name.toLowerCase() === 'psmodulepath') delete env[name];
@@ -81,9 +89,8 @@ export async function main() {
   }
 
   async function verifyNoOta(resources) {
-    const trust = JSON.parse(await readFile(join(resources, 'release-trust.json'), 'utf8'));
-    assert.deepEqual(trust.keys, [], 'Preview artifacts must not enable OTA');
-    report.checks.push('empty packaged update trust keeps preview OTA unavailable');
+    await assertPreviewUpdatesDisabled(resources);
+    report.checks.push('explicit disabled update mode keeps preview OTA unavailable with packaged verification keys');
   }
 
   async function uninstall() {

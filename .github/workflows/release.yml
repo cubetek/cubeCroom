@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   prepare:
-    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && vars.RELEASE_AUTOMATION_ENABLED == 'true'
+    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.RELEASE_AUTOMATION_ENABLED == 'true')
     runs-on: ubuntu-24.04
     environment: release-automation
     outputs:
@@ -48,15 +48,25 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
-      - name: Keep an unfinished draft from advancing release history
+      - name: Check automatic release preparation setup
         if: github.event_name == 'push'
+        id: automation
+        env:
+          RELEASE_APP_CONFIGURED: ${{ vars.RELEASE_APP_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}
+        run: |
+          echo "configured=$RELEASE_APP_CONFIGURED" >> "$GITHUB_OUTPUT"
+          if [[ "$RELEASE_APP_CONFIGURED" != "true" ]]; then
+            echo "Automatic Release Please preparation is skipped until RELEASE_APP_ID and RELEASE_APP_PRIVATE_KEY are configured. Manual release dispatch remains available." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Keep an unfinished draft from advancing release history
+        if: github.event_name == 'push' && steps.automation.outputs.configured == 'true'
         id: draft
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/release/pending-draft.mjs
       # App-created Release PRs trigger normal CI. GITHUB_TOKEN-created PRs do not.
       - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-        if: github.event_name == 'push' && steps.draft.outputs.pending != 'true'
+        if: github.event_name == 'push' && steps.automation.outputs.configured == 'true' && steps.draft.outputs.pending != 'true'
         id: app-token
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
@@ -67,7 +77,7 @@ jobs:
           permission-pull-requests: write
           permission-issues: write
       - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
-        if: github.event_name == 'push' && steps.draft.outputs.pending != 'true'
+        if: github.event_name == 'push' && steps.automation.outputs.configured == 'true' && steps.draft.outputs.pending != 'true'
         id: please
         with:
           token: ${{ steps.app-token.outputs.token }}

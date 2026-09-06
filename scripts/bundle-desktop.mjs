@@ -3,7 +3,7 @@ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { verifyNative } from './rebuild-native.mjs';
-import { currentReleaseTarget, RELEASE_CONFIG, releasePaths } from './release/config.mjs';
+import { currentReleaseTarget, packagedReleaseConfig, RELEASE_CONFIG, releasePaths } from './release/config.mjs';
 import { generateNotices } from './release/notices.mjs';
 import { PUBLIC_LEGAL_DIRECTORIES, writeLegalAssets } from './release/legal-assets.mjs';
 import { checkBrandAssets } from './brand.mjs';
@@ -14,6 +14,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const paths = releasePaths(root);
 const stage = process.argv.includes('--stage');
 const target = currentReleaseTarget();
+const runtimeReleaseConfig = packagedReleaseConfig();
 const app = paths.appDirectory;
 const dist = join(app, 'dist-app');
 const rootPackage = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
@@ -112,9 +113,10 @@ if (stage) {
   }
   await cp(join(root, 'LICENSE'), join(paths.stagedApp, 'LICENSE'));
   await cp(join(root, 'scripts', 'release', 'trust.json'), join(paths.stagedResources, 'release-trust.json'));
-  await writeFile(join(paths.stagedResources, 'release-config.json'), `${JSON.stringify(RELEASE_CONFIG, null, 2)}\n`);
+  await writeFile(join(paths.stagedResources, 'release-config.json'), `${JSON.stringify(runtimeReleaseConfig, null, 2)}\n`);
   await writeFile(join(paths.stageDirectory, 'stage.json'), `${JSON.stringify({
     version: rootPackage.version, platform: target.platform, arch: target.arch,
+    updateMode: runtimeReleaseConfig.updateMode,
     electronVersion: electron.electron, sqliteVersion: appPackage.dependencies['better-sqlite3'],
   }, null, 2)}\n`);
   console.log(`Staged ${RELEASE_CONFIG.productName} ${rootPackage.version}: ${paths.stageDirectory}`);

@@ -131,10 +131,18 @@ try {
   await evaluate("Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('الإعدادات')).click()");
   await until(() => evaluate('Boolean(document.querySelector("[data-update-settings]"))'));
   const state = await evaluate('window.cubecroom.updateState()');
-  assert.ok(['unavailable', 'idle'].includes(state.phase), JSON.stringify(state));
+  const resources = process.platform === 'darwin' ? resolve(dirname(executable), '..', 'Resources') : join(dirname(executable), 'resources');
+  const releaseConfig = JSON.parse(await readFile(join(resources, 'release-config.json'), 'utf8'));
+  assert.ok(['disabled', 'signed'].includes(releaseConfig.updateMode), 'Package must declare its update mode');
+  const updateUnavailable = releaseConfig.updateMode === 'disabled' || (process.platform === 'linux' && !process.env.APPIMAGE);
+  assert.equal(state.phase, updateUnavailable ? 'unavailable' : 'idle', JSON.stringify(state));
   assert.equal(state.currentVersion, version);
-  // A local package without production trust must not contact the update feed.
-  if (state.phase === 'unavailable') assert.equal(await evaluate('window.cubecroom.updateCheck().then(s => s.phase)'), 'unavailable');
+  // Public keys can be present in preview packages; disabled mode must remain a no-op.
+  if (updateUnavailable) {
+    for (const method of ['updateCheck', 'updateDownload', 'updateInstall']) {
+      assert.equal(await evaluate(`window.cubecroom.${method}().then(s => s.phase)`), 'unavailable');
+    }
+  }
   assert.equal(await evaluate('window.cubecroom.updateChannel("beta").then(s => s.channel)'), 'beta');
   assert.equal(await evaluate('window.cubecroom.updateState().then(s => s.channel)'), 'beta');
   await send('Page.reload');
