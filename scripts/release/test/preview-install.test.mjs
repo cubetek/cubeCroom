@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { access, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { assertPreserved, assertPreviewRunner } from '../preview-install-smoke.mjs';
-import { safeSmokePath } from '../smoke-paths.mjs';
+import { isInside, safeSmokePath } from '../smoke-paths.mjs';
+import { currentReleaseTarget, RELEASE_CONFIG } from '../config.mjs';
 import { createBuilderConfig } from '../../../apps/desktop/electron-builder.config.mjs';
 
 const execute = promisify(execFile);
@@ -75,6 +76,43 @@ test('preview ad-hoc signing does not alter production mode and AppImage argumen
   } finally {
     for (const [key, value] of Object.entries(saved)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
   }
+});
+
+test('real builder AppImage expansion retains the centrally configured public architecture', async () => {
+  const { expandMacro } = require('app-builder-lib/out/util/macroExpander.js');
+  const builderRequire = createRequire(require.resolve('app-builder-lib/package.json'));
+  const { Arch, getArtifactArchName } = builderRequire('builder-util');
+  assert.equal(getArtifactArchName(Arch.x64, 'AppImage'), 'x86_64', 'Exercise the upstream naming mismatch');
+  const config = await createBuilderConfig({ root });
+  const built = expandMacro(config.appImage.artifactName, getArtifactArchName(Arch.x64, 'AppImage'), { version: '0.1.0' }, { os: 'linux', ext: 'AppImage' });
+  const expected = RELEASE_CONFIG.artifactName.replace('${version}', '0.1.0').replace('${os}', 'linux')
+    .replace('${arch}', currentReleaseTarget().arch).replace('${ext}', 'AppImage');
+  assert.equal(built, expected);
+  assert.ok(!built.includes('x86_64'));
+});
+
+test('packaged smoke writes failure evidence when profile and data override the report directory', async t => {
+  const directory = await mkdtemp(join(tmpdir(), 'cubecroom-smoke-report-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  let failure;
+  try {
+    await execute(process.execPath, [join(root, 'scripts/test-packaged.mjs')], {
+      cwd: root, timeout: 20_000,
+      env: {
+        ...process.env, CUBECROOM_SMOKE_REUSE: '0',
+        CUBECROOM_SMOKE_EXECUTABLE: join(directory, 'missing-application.exe'),
+        CUBECROOM_SMOKE_PROFILE: join(directory, 'profile'), CUBECROOM_SMOKE_DATA: join(directory, 'data'),
+      },
+    });
+  } catch (error) { failure = error; }
+  assert.equal(failure?.code, 1, 'A missing application is a recorded test failure');
+  const result = JSON.parse(failure.stdout.trim());
+  assert.equal(result.passed, false);
+  assert.match(result.error, /ENOENT/);
+  assert.ok(isInside(join(root, '.cubeflow/reports/packaged-smoke'), result.report));
+  t.after(() => rm(result.report, { recursive: true, force: true }));
+  assert.ok((await stat(join(result.report, 'runtime.log'))).isFile());
+  assert.deepEqual(JSON.parse(await readFile(join(result.report, 'result.json'), 'utf8')), result);
 });
 
 test('patched real AppRun preserves arguments and propagates sandbox launch failure without fallback', async t => {

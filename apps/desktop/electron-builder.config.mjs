@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import process from 'node:process';
 import { join } from 'node:path';
-import { RELEASE_CONFIG, releasePaths } from '../../scripts/release/config.mjs';
+import { currentReleaseTarget, RELEASE_CONFIG, releasePaths } from '../../scripts/release/config.mjs';
 
 /** A programmatic config avoids duplicating release identity in YAML and runtime. */
 export async function createBuilderConfig({ root, outDirectory, afterPack }) {
@@ -70,7 +70,11 @@ export async function createBuilderConfig({ root, outDirectory, afterPack }) {
       icon: join(buildResources, 'icon.png'),
     },
     // The pinned pnpm patch also removes AppRun's automatic sandbox-disable fallback.
-    appImage: { executableArgs: [] },
+    appImage: {
+      executableArgs: [],
+      // Builder calls AppImage x64 "x86_64"; keep the public matrix's arch in its filename.
+      artifactName: RELEASE_CONFIG.artifactName.replace('${arch}', currentReleaseTarget().arch),
+    },
     afterPack,
   };
 }

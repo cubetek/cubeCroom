@@ -20,6 +20,7 @@ const data = process.env.CUBECROOM_SMOKE_DATA
 assert.notEqual(profile, data, 'Smoke profile and teacher data must be separate');
 const reuse = process.env.CUBECROOM_SMOKE_REUSE === '1';
 if (reuse && (!process.env.CUBECROOM_SMOKE_PROFILE || !process.env.CUBECROOM_SMOKE_DATA)) throw new Error('Reusing smoke data requires explicit isolated paths');
+await mkdir(report, { recursive: true });
 await mkdir(profile, { recursive: true });
 await mkdir(data, { recursive: true });
 if (reuse) await rm(join(profile, 'DevToolsActivePort'), { force: true });
