@@ -1,8 +1,6 @@
 name: Release
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       tag:
@@ -19,25 +17,24 @@ permissions:
 
 defaults:
   run:
-    # GitHub's bash wrapper fails on the first unsuccessful command on all four runners.
     shell: bash
 
-# Serialize release creation, retries, and publication. Do not cancel a publisher midway.
+# Serialize all platform builds, retries and publication. Never cancel a publisher.
 concurrency:
   group: official-release-${{ github.repository }}
   cancel-in-progress: false
 
 jobs:
   prepare:
-    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.RELEASE_AUTOMATION_ENABLED == 'true')
+    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    environment: release-automation
     outputs:
       ready: ${{ steps.resolve.outcome == 'success' }}
       tag: ${{ steps.resolve.outputs.tag }}
       version: ${{ steps.resolve.outputs.version }}
       commit: ${{ steps.resolve.outputs.commit }}
       channel: ${{ steps.resolve.outputs.channel }}
+      mode: ${{ steps.resolve.outputs.mode }}
       created_at: ${{ steps.resolve.outputs.created_at }}
       matrix: ${{ steps.resolve.outputs.matrix }}
     steps:
@@ -48,54 +45,67 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
-      - name: Check automatic release preparation setup
-        if: github.event_name == 'push'
-        id: automation
-        env:
-          RELEASE_APP_CONFIGURED: ${{ vars.RELEASE_APP_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}
-        run: |
-          echo "configured=$RELEASE_APP_CONFIGURED" >> "$GITHUB_OUTPUT"
-          if [[ "$RELEASE_APP_CONFIGURED" != "true" ]]; then
-            echo "Automatic Release Please preparation is skipped until RELEASE_APP_ID and RELEASE_APP_PRIVATE_KEY are configured. Manual release dispatch remains available." >> "$GITHUB_STEP_SUMMARY"
-          fi
-      - name: Keep an unfinished draft from advancing release history
-        if: github.event_name == 'push' && steps.automation.outputs.configured == 'true'
-        id: draft
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/release/pending-draft.mjs
-      # App-created Release PRs trigger normal CI. GITHUB_TOKEN-created PRs do not.
-      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-        if: github.event_name == 'push' && steps.automation.outputs.configured == 'true' && steps.draft.outputs.pending != 'true'
-        id: app-token
-        with:
-          app-id: ${{ vars.RELEASE_APP_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ${{ github.event.repository.name }}
-          permission-contents: write
-          permission-pull-requests: write
-          permission-issues: write
-      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
-        if: github.event_name == 'push' && steps.automation.outputs.configured == 'true' && steps.draft.outputs.pending != 'true'
-        id: please
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          config-file: .github/release-please-config.json
-          manifest-file: .github/.release-please-manifest.json
-          target-branch: main
-      - name: Resolve and authorize the exact draft commit
-        if: github.event_name == 'workflow_dispatch' || steps.please.outputs.release_created == 'true'
+      - name: Resolve and authorize the exact draft commit and committed release policy
         id: resolve
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag || steps.please.outputs.tag_name }}
-          RELEASE_COMMIT: ${{ inputs.commit || steps.please.outputs.sha }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_COMMIT: ${{ inputs.commit }}
         run: node scripts/release/resolve.mjs
+
+  preview:
+    needs: prepare
+    if: needs.prepare.outputs.ready == 'true' && needs.prepare.outputs.mode == 'preview'
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    with:
+      source_commit: ${{ needs.prepare.outputs.commit }}
+      build_installers: true
+
+  publish-preview:
+    needs: [prepare, preview]
+    if: needs.prepare.outputs.ready == 'true' && needs.prepare.outputs.mode == 'preview'
+    runs-on: ubuntu-24.04
+    environment: release-publish
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      attestations: read
+    env:
+      RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+      RELEASE_COMMIT: ${{ needs.prepare.outputs.commit }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+      # These artifacts can only come from this run's successful reusable CI.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: preview-installers-${{ needs.prepare.outputs.commit }}
+          path: dist/preview-release
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: preview-provenance-${{ needs.prepare.outputs.commit }}
+          path: dist/preview-provenance
+      - name: Install the public provenance bundle
+        run: |
+          node --input-type=module -e "import { readdirSync, copyFileSync } from 'node:fs'; const files = readdirSync('dist/preview-provenance'); if (files.length !== 1 || !files[0].endsWith('.json')) throw new Error('Expected one provenance bundle'); copyFileSync('dist/preview-provenance/' + files[0], 'dist/preview-release/attestation.json');"
+      - name: Publish complete preview installers with checksums and verified provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PUBLIC_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLIC_PUBLISH_ENABLED }}
+        run: node scripts/release/publish-preview.mjs
 
   build:
     needs: prepare
-    if: needs.prepare.outputs.ready == 'true'
+    if: needs.prepare.outputs.ready == 'true' && needs.prepare.outputs.mode == 'signed'
     name: Package ${{ matrix.id }}
     runs-on: ${{ matrix.runner }}
     environment: release-signing

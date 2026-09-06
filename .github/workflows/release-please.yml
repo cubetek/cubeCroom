@@ -1,0 +1,59 @@
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-please-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && vars.RELEASE_AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+      - name: Keep an unfinished draft from advancing release history
+        id: draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/pending-draft.mjs
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+        if: steps.draft.outputs.pending != 'true'
+        id: please
+        with:
+          token: ${{ github.token }}
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
+          target-branch: main
+      # Explicit dispatch avoids GITHUB_TOKEN event recursion/PR approval requirements.
+      # The PR CI workflow is read-only and receives no signing or publication secrets.
+      - name: Start CI for the exact release PR revision
+        if: steps.please.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PR: ${{ steps.please.outputs.pr }}
+        run: node scripts/release/dispatch.mjs pr
+      - name: Build the merged release from its exact draft commit
+        if: steps.please.outputs.release_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.please.outputs.tag_name }}
+          RELEASE_COMMIT: ${{ steps.please.outputs.sha }}
+        run: node scripts/release/dispatch.mjs release

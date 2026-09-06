@@ -15,6 +15,14 @@ export const RELEASE_CONFIG = Object.freeze({
   ]),
 });
 
+/** Match electron-builder's configured artifact template on every native platform. */
+export function releaseArtifactNames(target, version) {
+  const os = { win32: 'win', darwin: 'mac', linux: 'linux' }[target.platform];
+  if (!os) throw new Error(`Unsupported release artifact platform: ${target.platform}`);
+  return target.extensions.map((extension) => RELEASE_CONFIG.artifactName
+    .replace('${version}', version).replace('${os}', os).replace('${arch}', target.arch).replace('${ext}', extension.slice(1)));
+}
+
 /** A public verification key alone never activates updates in an unsigned build. */
 export function releaseUpdateMode(env = process.env) {
   if (env.CUBECROOM_REQUIRE_SIGNING === '1' && env.CUBECROOM_PREVIEW_BUILD === '1') {

@@ -84,15 +84,13 @@ test('manual readiness has read-only permissions and secret access only in the f
   }
 });
 
-test('manual release is independent of automatic App setup while incomplete automatic setup is skipped', async () => {
+test('manual release remains independent of Release Please and preserves native signing gates', async () => {
   const workflow = parse(await readFile(new URL('../../../.github/workflows/release.yml', import.meta.url), 'utf8'));
   const prepare = workflow.jobs.prepare;
-  assert.equal(prepare.if, "github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || vars.RELEASE_AUTOMATION_ENABLED == 'true')");
-  const setup = prepare.steps.find((step) => step.id === 'automation');
-  assert.equal(setup.if, "github.event_name == 'push'");
-  assert.equal(setup.env.RELEASE_APP_CONFIGURED, "${{ vars.RELEASE_APP_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}");
-  for (const id of ['draft', 'app-token', 'please']) assert.ok(prepare.steps.find((step) => step.id === id).if.includes("steps.automation.outputs.configured == 'true'"));
-  assert.equal(prepare.steps.find((step) => step.id === 'resolve').if, "github.event_name == 'workflow_dispatch' || steps.please.outputs.release_created == 'true'");
+  assert.equal(prepare.if, "github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main'");
+  assert.equal(JSON.stringify(prepare).includes('secrets.'), false);
+  assert.equal(workflow.on.push, undefined);
+  assert.ok(workflow.on.workflow_dispatch.inputs.commit.required);
   assert.deepEqual(workflow.jobs.publish.needs, ['prepare', 'build']);
   assert.equal(workflow.jobs.build.steps.find((step) => step.run?.includes('node scripts/package-app.mjs make')).env.CUBECROOM_REQUIRE_SIGNING, '1');
 });

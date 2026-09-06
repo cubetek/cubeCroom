@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
-import { currentReleaseTarget, packagedRuntimePaths, RELEASE_CONFIG, releasePaths } from './config.mjs';
+import { currentReleaseTarget, packagedRuntimePaths, RELEASE_CONFIG, releaseArtifactNames, releasePaths } from './config.mjs';
 import { isInside, safeSmokePath } from './smoke-paths.mjs';
 
 const execute = promisify(execFile);
@@ -58,9 +58,8 @@ export async function main() {
   await safeSmokePath(output, { root, kind: 'executable' });
   assert.ok(isInside(root, output), 'Installer artifacts must be in the workspace');
   const version = JSON.parse(await readFile(join(root, 'package.json'), 'utf8')).version;
-  const os = { win32: 'win', darwin: 'mac', linux: 'linux' }[target.platform];
-  const asset = extension => join(output, RELEASE_CONFIG.artifactName
-    .replace('${version}', version).replace('${os}', os).replace('${arch}', target.arch).replace('${ext}', extension.slice(1)));
+  const artifactNames = releaseArtifactNames(target, version);
+  const asset = extension => join(output, artifactNames[target.extensions.indexOf(extension)]);
   for (const extension of target.extensions) assert.ok((await lstat(asset(extension))).isFile());
   const qa = await mkdtemp(join(tmpdir(), 'cubecroom-preview-'));
   const profile = join(qa, 'profile');

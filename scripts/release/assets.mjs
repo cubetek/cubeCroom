@@ -2,14 +2,13 @@ import { copyFile, lstat, mkdir, readdir, writeFile } from 'node:fs/promises';
 import { resolve, basename } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { parse, stringify } from 'yaml';
-import { RELEASE_CONFIG } from './config.mjs';
+import { RELEASE_CONFIG, releaseArtifactNames } from './config.mjs';
 import { readJson, repository, sha512 } from './common.mjs';
 
 export function metadataName(platform, channel) {
   const prefix = channel === 'stable' ? 'latest' : 'beta';
   return `${prefix}${platform === 'darwin' ? '-mac' : platform === 'linux' ? '-linux' : ''}.yml`;
 }
-const osName = { win32: 'win', darwin: 'mac', linux: 'linux' };
 const safeName = (value) => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value) && basename(value) === value;
 export function validateMetadata(metadata, identity, files) {
   if (metadata?.version !== identity.version || !Array.isArray(metadata.files) || metadata.files.length === 0) throw new Error('Missing or mismatched updater metadata.');
@@ -28,7 +27,7 @@ export function validateMetadata(metadata, identity, files) {
 }
 
 export async function inspectTarget(directory, target, identity, { requireReport = true } = {}) {
-  const expectedNames = target.extensions.map((ext) => `CubeCroom-${identity.version}-${osName[target.platform]}-${target.arch}${ext}`);
+  const expectedNames = releaseArtifactNames(target, identity.version);
   const metadataFile = metadataName(target.platform, identity.channel);
   const files = [];
   for (const name of await readdir(directory)) {
