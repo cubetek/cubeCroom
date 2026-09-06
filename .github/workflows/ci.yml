@@ -7,6 +7,15 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+    inputs:
+      source_commit:
+        description: Exact release commit authorized by the calling main workflow
+        type: string
+        required: true
+      build_installers:
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       build_installers:
@@ -15,7 +24,7 @@ on:
         default: false
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ${{ github.workflow }}-ci-${{ github.ref }}-${{ inputs.source_commit }}
   cancel-in-progress: true
 
 defaults:
@@ -30,15 +39,22 @@ jobs:
       matrix: ${{ steps.targets.outputs.matrix }}
       build-installers: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && inputs.build_installers }}
       tag: ${{ steps.preview.outputs.tag }}
-      commit: ${{ steps.preview.outputs.commit }}
+      commit: ${{ steps.source.outputs.commit }}
       created-at: ${{ steps.preview.outputs.created-at }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          ref: ${{ inputs.source_commit || github.sha }}
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version-file: .nvmrc
+      - name: Bind every build and artifact to the checked-out source
+        id: source
+        env:
+          EXPECTED_COMMIT: ${{ inputs.source_commit || github.sha }}
+        run: |
+          node --input-type=module -e "import { execFileSync } from 'node:child_process'; import { appendFileSync } from 'node:fs'; const sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(); if (!/^[a-f0-9]{40}$/.test(process.env.EXPECTED_COMMIT || '') || sha !== process.env.EXPECTED_COMMIT) throw new Error('CI source commit mismatch'); appendFileSync(process.env.GITHUB_OUTPUT, 'commit=' + sha + '\n');"
       - name: Export the central release targets
         id: targets
         run: |
@@ -47,7 +63,7 @@ jobs:
         id: preview
         if: github.event_name == 'workflow_dispatch' && github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && inputs.build_installers
         env:
-          RELEASE_COMMIT: ${{ github.sha }}
+          RELEASE_COMMIT: ${{ steps.source.outputs.commit }}
         run: node scripts/release/preview.mjs configure
 
   verify:
@@ -70,6 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          ref: ${{ needs.configure.outputs.commit }}
           persist-credentials: false
 
       - name: Export the exact preview source identity for subsequent checks
@@ -97,6 +114,9 @@ jobs:
 
       - name: فحص الأنواع
         run: pnpm typecheck
+
+      - name: Verify one product version across the release PR
+        run: pnpm version:check
 
       # Lint once; runtime and native package checks run on every configured target.
       - name: التدقيق
@@ -179,7 +199,7 @@ jobs:
       - name: Retain native validation packages without publishing a release
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: validation-${{ matrix.id }}-${{ github.sha }}
+          name: validation-${{ matrix.id }}-${{ needs.configure.outputs.commit }}
           path: dist/validation/*
           if-no-files-found: error
           compression-level: 0
@@ -229,7 +249,7 @@ jobs:
         run: node scripts/release/preview.mjs assemble
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: preview-installers-${{ github.sha }}
+          name: preview-installers-${{ needs.configure.outputs.commit }}
           path: dist/preview-release/*
           if-no-files-found: error
           compression-level: 0
@@ -251,7 +271,7 @@ jobs:
       - name: Download the successful native validation packages
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          pattern: validation-*-${{ github.sha }}
+          pattern: validation-*-${{ needs.configure.outputs.commit }}
           path: dist/validation-attest
 
       - name: Check the archived bytes before attestation
@@ -270,7 +290,7 @@ jobs:
       - name: Retain the provenance verification bundle
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: build-provenance-${{ github.sha }}
+          name: build-provenance-${{ needs.configure.outputs.commit }}
           path: ${{ steps.attest.outputs.bundle-path }}
           if-no-files-found: error
           overwrite: true
@@ -280,7 +300,7 @@ jobs:
         if: needs.configure.outputs.build-installers == 'true'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: preview-installers-${{ github.sha }}
+          name: preview-installers-${{ needs.configure.outputs.commit }}
           path: dist/preview-release
       - name: Check the final preview installer and metadata hashes
         if: needs.configure.outputs.build-installers == 'true'
@@ -297,7 +317,7 @@ jobs:
         if: needs.configure.outputs.build-installers == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: preview-provenance-${{ github.sha }}
+          name: preview-provenance-${{ needs.configure.outputs.commit }}
           path: ${{ steps.preview.outputs.bundle-path }}
           if-no-files-found: error
           overwrite: true

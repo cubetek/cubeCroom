@@ -3,6 +3,7 @@
   "description": "استخدام البرنامج والمساهمة في تطويره والتواصل.",
   "pages": [
     "license",
+    "release-process",
     "contributing"
   ]
 }

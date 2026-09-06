@@ -152,7 +152,7 @@ test('workflow files pin Actions and keep signing isolated from pull requests', 
   assert.deepEqual(attestation.permissions, { contents: 'read', 'id-token': 'write', attestations: 'write' });
   assert.equal(attestation.steps.some((step) => step.uses?.startsWith('actions/checkout@')), false);
   const attestationDownload = attestation.steps.find((step) => step.uses?.startsWith('actions/download-artifact@'));
-  assert.deepEqual(attestationDownload.with, { pattern: 'validation-*-${{ github.sha }}', path: 'dist/validation-attest' });
+  assert.deepEqual(attestationDownload.with, { pattern: 'validation-*-${{ needs.configure.outputs.commit }}', path: 'dist/validation-attest' });
   const attestationSigner = attestation.steps.find((step) => step.uses?.startsWith('actions/attest-build-provenance@'));
   assert.deepEqual(attestationSigner.with, { 'subject-path': 'dist/validation-attest/*/*.tar.gz', 'create-storage-record': false });
   for (const job of [ci.jobs.verify, release.jobs.build]) {
