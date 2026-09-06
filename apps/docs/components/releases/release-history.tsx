@@ -30,7 +30,7 @@ export function ReleaseHistory({ source }: { source: ReleaseSource }) {
   return <>
     <ReleaseFeedback state={state} source={source} refresh={refresh} />
     {catalog?.current && <p className="mb-7 flex flex-wrap items-center gap-3 text-sm text-slate-600">متاح للتنزيل: <Link href="/download" className="font-semibold text-teal-800 hover:underline"><ReleaseVersion release={catalog.current} /></Link></p>}
-    <div className="grid gap-6">{catalog?.history.slice(0, visible).map((release, index) => <HistoryEntry key={release.tag} release={release} expanded={index === 0} />)}</div>
+    <div className="grid grid-cols-1 gap-6">{catalog?.history.slice(0, visible).map((release, index) => <HistoryEntry key={release.tag} release={release} expanded={index === 0} />)}</div>
     {catalog && catalog.history.length > visible && <Button className="mt-7" variant="secondary" onClick={() => setVisible(value => value + 10)}>عرض إصدارات أقدم</Button>}
     <p className="mt-8 text-sm leading-8 text-slate-500">{catalog?.limitReached ? 'يعرض السجل أحدث 100 إصدار، وتتوفر الإصدارات الأقدم على GitHub. ' : 'تُقرأ النسخ وتواريخها وملاحظاتها من الإصدارات المنشورة على GitHub. '}<a href={`${source.repositoryUrl}/releases`} className="font-medium text-teal-800 underline">افتح سجل GitHub الكامل</a>.</p>
     <noscript><p className="mt-5">لعرض سجل التغييرات دون JavaScript، افتح <a href={`${source.repositoryUrl}/releases`}>الإصدارات على GitHub</a>.</p></noscript>
