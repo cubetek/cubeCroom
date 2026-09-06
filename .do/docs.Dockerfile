@@ -7,6 +7,7 @@ ENV CI=true NEXT_TELEMETRY_DISABLED=1
 COPY package.json /tmp/cubecroom-package.json
 RUN corepack enable && corepack prepare "$(node -p "require('/tmp/cubecroom-package.json').packageManager")" --activate
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches ./patches
 COPY apps/docs/package.json ./apps/docs/package.json
 COPY packages/ui/package.json ./packages/ui/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json

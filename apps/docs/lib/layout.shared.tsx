@@ -10,6 +10,7 @@ export function baseOptions(): BaseLayoutProps {
     },
     links: [
       { text: 'تنزيل التطبيق', url: '/download' },
+      { text: 'سجل التغييرات', url: '/changelog' },
       { text: 'الرخصة والمساهمة', url: '/docs/project/license' },
       { text: 'عن CubeCroom', url: '/' },
     ],

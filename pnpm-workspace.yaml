@@ -14,6 +14,10 @@ packages:
 # ملاحظة: في pnpm 11 لا تُقرأ هذه الإعدادات من .npmrc — مكانها هنا.
 nodeLinker: hoisted
 
+# Preserve Chromium sandboxing in the pinned AppImage launcher generator.
+patchedDependencies:
+  app-builder-lib@26.15.3: patches/app-builder-lib@26.15.3.patch
+
 # pnpm لا يشغّل سكربتات ما بعد التثبيت إلا لما يُسمح به صراحةً.
 allowBuilds:
   # Version 13 ships N-API prebuilds; no ABI-specific install step is needed.

@@ -1,9 +1,10 @@
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import { packagedApplicationPaths, releasePaths } from './release/config.mjs';
+import { safeSmokePath } from './release/smoke-paths.mjs';
 
 // Exercise the shipped protocol/preload/native portal with a fresh, isolated profile.
 // The existing Windows/macOS/Linux packaging configuration owns every binary path.
@@ -12,11 +13,18 @@ const paths = releasePaths(root);
 const output = process.env.CUBECROOM_OUT_DIR === undefined ? paths.outDirectory : resolve(paths.appDirectory, process.env.CUBECROOM_OUT_DIR);
 const report = resolve(root, '.cubeflow/reports/packaged-smoke', String(Date.now()));
 const version = JSON.parse(await readFile(join(root, 'package.json'), 'utf8')).version;
-const profile = join(report, 'profile');
-const data = join(report, 'data');
+const profile = process.env.CUBECROOM_SMOKE_PROFILE
+  ? await safeSmokePath(process.env.CUBECROOM_SMOKE_PROFILE, { root }) : join(report, 'profile');
+const data = process.env.CUBECROOM_SMOKE_DATA
+  ? await safeSmokePath(process.env.CUBECROOM_SMOKE_DATA, { root }) : join(report, 'data');
+assert.notEqual(profile, data, 'Smoke profile and teacher data must be separate');
+const reuse = process.env.CUBECROOM_SMOKE_REUSE === '1';
+if (reuse && (!process.env.CUBECROOM_SMOKE_PROFILE || !process.env.CUBECROOM_SMOKE_DATA)) throw new Error('Reusing smoke data requires explicit isolated paths');
 await mkdir(profile, { recursive: true });
 await mkdir(data, { recursive: true });
-const { executable } = packagedApplicationPaths(output);
+if (reuse) await rm(join(profile, 'DevToolsActivePort'), { force: true });
+const executable = process.env.CUBECROOM_SMOKE_EXECUTABLE
+  ? await safeSmokePath(process.env.CUBECROOM_SMOKE_EXECUTABLE, { root, kind: 'executable' }) : packagedApplicationPaths(output).executable;
 const env = { ...process.env, CUBECROOM_USER_DATA_DIR: profile, CUBECROOM_DATA_DIR: data };
 delete env.ELECTRON_RUN_AS_NODE;
 for (const name of Object.keys(env)) {
@@ -104,8 +112,15 @@ try {
   await send('Runtime.enable');
   await until(() => evaluate('Boolean(window.cubecroom && document.body.innerText.length > 20)'));
   let boot = await evaluate('window.cubecroom.bootState()');
-  assert.equal(boot.status, 'onboarding');
-  boot = await evaluate(`window.cubecroom.completeOnboarding(${JSON.stringify({ name: 'معلم اختبار الحزمة', dataDirectory: data })})`);
+  if (reuse) {
+    assert.equal(boot.status, 'ready', 'Installation preserves completed onboarding');
+    const previous = await evaluate('window.cubecroom.classesList({})');
+    assert.ok(previous.some(item => item.name === 'فصل اختبار الحزمة'), 'Installation preserves the teacher class');
+    results.checks.push('existing onboarding and class preserved across installation');
+  } else {
+    assert.equal(boot.status, 'onboarding');
+    boot = await evaluate(`window.cubecroom.completeOnboarding(${JSON.stringify({ name: 'معلم اختبار الحزمة', dataDirectory: data })})`);
+  }
   assert.equal(boot.status, 'ready');
   assert.equal(boot.dataDirectory, data);
   await evaluate('window.cubecroom.writeSetting({key:"checkUpdatesAutomatically",value:"false"})');

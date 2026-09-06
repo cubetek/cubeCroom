@@ -147,8 +147,8 @@ test('workflow files pin Actions and keep signing isolated from pull requests', 
   assert.deepEqual(ci.permissions, { contents: 'read' });
   for (const job of [ci.jobs.configure, ci.jobs.verify]) assert.equal(job.permissions, undefined);
   const attestation = ci.jobs.attest;
-  assert.equal(attestation.needs, 'verify');
-  assert.equal(attestation.if, "github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')");
+  assert.deepEqual(attestation.needs, ['configure', 'verify', 'preview']);
+  assert.equal(attestation.if, "always() && !cancelled() && needs.verify.result == 'success' && (needs.preview.result == 'success' || needs.preview.result == 'skipped') && github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')");
   assert.deepEqual(attestation.permissions, { contents: 'read', 'id-token': 'write', attestations: 'write' });
   assert.equal(attestation.steps.some((step) => step.uses?.startsWith('actions/checkout@')), false);
   const attestationDownload = attestation.steps.find((step) => step.uses?.startsWith('actions/download-artifact@'));

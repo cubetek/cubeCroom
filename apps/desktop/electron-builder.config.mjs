@@ -9,6 +9,8 @@ export async function createBuilderConfig({ root, outDirectory, afterPack }) {
   const buildResources = join(paths.appDirectory, 'build');
   const desktop = JSON.parse(await readFile(join(paths.appDirectory, 'package.json'), 'utf8'));
   const requireSigning = process.env.CUBECROOM_REQUIRE_SIGNING === '1';
+  const preview = process.env.CUBECROOM_PREVIEW_BUILD === '1';
+  if (preview && requireSigning) throw new Error('Preview installers cannot use the production signing mode');
   const publisherName = process.env.CUBECROOM_WINDOWS_PUBLISHER_NAME;
   if (requireSigning && process.platform === 'win32' && (!process.env.CSC_LINK || !publisherName)) {
     throw new Error('Official Windows builds require CSC_LINK and CUBECROOM_WINDOWS_PUBLISHER_NAME');
@@ -60,11 +62,15 @@ export async function createBuilderConfig({ root, outDirectory, afterPack }) {
       category: 'public.app-category.education',
       hardenedRuntime: true,
       notarize: requireSigning,
+      // A local signature permits native loading; it does not claim Developer ID trust.
+      ...(preview ? { identity: '-' } : {}),
     },
     linux: {
       target: ['AppImage'], category: 'Education', executableName: RELEASE_CONFIG.productName,
       icon: join(buildResources, 'icon.png'),
     },
+    // The pinned pnpm patch also removes AppRun's automatic sandbox-disable fallback.
+    appImage: { executableArgs: [] },
     afterPack,
   };
 }

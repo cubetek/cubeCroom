@@ -8,6 +8,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      build_installers:
+        description: Build preview installers for the current product version (official main only)
+        type: boolean
+        default: false
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -23,6 +28,10 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.targets.outputs.matrix }}
+      build-installers: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && inputs.build_installers }}
+      tag: ${{ steps.preview.outputs.tag }}
+      commit: ${{ steps.preview.outputs.commit }}
+      created-at: ${{ steps.preview.outputs.created-at }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -34,6 +43,12 @@ jobs:
         id: targets
         run: |
           node --input-type=module -e "import { appendFileSync } from 'node:fs'; import { RELEASE_CONFIG } from './scripts/release/config.mjs'; appendFileSync(process.env.GITHUB_OUTPUT, 'matrix=' + JSON.stringify({ include: RELEASE_CONFIG.targets }) + '\n');"
+      - name: Bind requested preview installers to the product version and source commit
+        id: preview
+        if: github.event_name == 'workflow_dispatch' && github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && inputs.build_installers
+        env:
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: node scripts/release/preview.mjs configure
 
   verify:
     needs: configure
@@ -50,11 +65,20 @@ jobs:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       TURBO_TELEMETRY_DISABLED: '1'
       NEXT_TELEMETRY_DISABLED: '1'
+      CUBECROOM_PREVIEW_BUILD: ${{ needs.configure.outputs.build-installers == 'true' && '1' || '0' }}
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
+
+      - name: Export the exact preview source identity for subsequent checks
+        if: needs.configure.outputs.build-installers == 'true'
+        env:
+          RELEASE_TAG: ${{ needs.configure.outputs.tag }}
+          RELEASE_COMMIT: ${{ needs.configure.outputs.commit }}
+        run: |
+          node -e "const fs = require('node:fs'); for (const name of ['RELEASE_TAG', 'RELEASE_COMMIT']) fs.appendFileSync(process.env.GITHUB_ENV, name + '=' + process.env[name] + '\n');"
 
       # package.json#packageManager is the single source of the pnpm version.
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
@@ -100,9 +124,14 @@ jobs:
           CUBECROOM_OUT_DIR: out-ci
           CUBECROOM_REQUIRE_SIGNING: '0'
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          BUILD_INSTALLERS: ${{ needs.configure.outputs.build-installers }}
         run: |
           node scripts/bundle-desktop.mjs --stage
-          node scripts/package-app.mjs package
+          if [[ "$BUILD_INSTALLERS" == "true" ]]; then
+            node scripts/package-app.mjs make
+          else
+            node scripts/package-app.mjs package
+          fi
 
       - name: Run the packaged application with isolated test data
         env:
@@ -114,6 +143,33 @@ jobs:
           else
             node scripts/test-packaged.mjs
           fi
+
+      - name: Verify the actual preview installers
+        if: needs.configure.outputs.build-installers == 'true'
+        env:
+          CUBECROOM_OUT_DIR: out-ci
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            xvfb-run -a node scripts/release/preview-install-smoke.mjs
+          else
+            node scripts/release/preview-install-smoke.mjs
+          fi
+
+      - name: Retain verified preview binaries and internal build evidence
+        if: needs.configure.outputs.build-installers == 'true'
+        env:
+          CUBECROOM_OUT_DIR: out-ci
+        run: node scripts/release/preview.mjs collect
+
+      - name: Upload preview target for assembly
+        if: needs.configure.outputs.build-installers == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: preview-target-${{ matrix.id }}
+          path: dist/preview-target/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
 
       - name: Archive the validated application and checksums
         env:
@@ -142,10 +198,47 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  preview:
+    name: Assemble the complete preview installer set
+    needs: [configure, verify]
+    if: needs.configure.outputs.build-installers == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.configure.outputs.commit }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: preview-target-*
+          path: dist/preview-input
+      - name: Revalidate every target and exclude updater feeds from the public preview
+        env:
+          RELEASE_TAG: ${{ needs.configure.outputs.tag }}
+          RELEASE_COMMIT: ${{ needs.configure.outputs.commit }}
+          PREVIEW_CREATED_AT: ${{ needs.configure.outputs.created-at }}
+        run: node scripts/release/preview.mjs assemble
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: preview-installers-${{ github.sha }}
+          path: dist/preview-release/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
   attest:
     name: Attest validated archives from the official main branch
-    needs: verify
-    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: [configure, verify, preview]
+    if: always() && !cancelled() && needs.verify.result == 'success' && (needs.preview.result == 'success' || needs.preview.result == 'skipped') && github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -179,6 +272,33 @@ jobs:
         with:
           name: build-provenance-${{ github.sha }}
           path: ${{ steps.attest.outputs.bundle-path }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 7
+
+      - name: Download the assembled preview installers
+        if: needs.configure.outputs.build-installers == 'true'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: preview-installers-${{ github.sha }}
+          path: dist/preview-release
+      - name: Check the final preview installer and metadata hashes
+        if: needs.configure.outputs.build-installers == 'true'
+        working-directory: dist/preview-release
+        run: sha512sum --check --strict SHA512SUMS
+      - name: Attest the final preview binaries and metadata
+        if: needs.configure.outputs.build-installers == 'true'
+        id: preview
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/preview-release/*
+          create-storage-record: false
+      - name: Retain the preview verification bundle
+        if: needs.configure.outputs.build-installers == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: preview-provenance-${{ github.sha }}
+          path: ${{ steps.preview.outputs.bundle-path }}
           if-no-files-found: error
           overwrite: true
           retention-days: 7

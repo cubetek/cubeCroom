@@ -7,6 +7,8 @@ import { LandingLink } from '@/components/landing/landing-link';
 import { EmiratiMotif } from '@/components/landing/emirati-motif';
 import { BrandSignature } from '@/components/landing/brand-signature';
 import { ProductShowcase } from '@/components/landing/product-showcase';
+import { CurrentVersion } from '@/components/releases/release-status';
+import { RELEASE_SOURCE } from '@/lib/releases/source';
 import { communityLinks, features, guideHighlights, questions, steps } from '@/components/landing/content';
 
 export const metadata: Metadata = {
@@ -28,6 +30,7 @@ export default function LandingPage() {
             <a href="#features" className="inline-flex min-h-11 items-center hover:text-teal-700">لماذا CubeCroom؟</a>
             <a href="#how-it-works" className="inline-flex min-h-11 items-center hover:text-teal-700">كيف يعمل</a>
             <Link href="/download" className="inline-flex min-h-11 items-center hover:text-teal-700">تنزيل التطبيق</Link>
+            <Link href="/changelog" className="inline-flex min-h-11 items-center hover:text-teal-700">سجل التغييرات</Link>
             <a href="#questions" className="inline-flex min-h-11 items-center hover:text-teal-700">أسئلة شائعة</a>
             <a href="#community" className="inline-flex min-h-11 items-center hover:text-teal-700">المجتمع والتواصل</a>
           </nav>
@@ -53,6 +56,7 @@ export default function LandingPage() {
               <LandingLink href="/docs/start/getting-started">جهّز فصلك الأول</LandingLink>
               <LandingLink href="#product" secondary>شاهد البرنامج</LandingLink>
             </div>
+            <CurrentVersion source={RELEASE_SOURCE} />
             <Link href="/docs/start/getting-started#student" className={`${textLink} mt-4`}>أنا طالب، كيف أدخل؟ <ArrowLeft className="size-4" aria-hidden="true" /></Link>
             <p className="mt-6 flex items-center gap-2 text-sm text-slate-500"><Check className="size-4 text-teal-700" aria-hidden="true" /> بلا حساب للبدء. والمساعد الذكي اختياري.</p>
           </div>
@@ -205,6 +209,7 @@ export default function LandingPage() {
           <Link href="/" aria-label="CubeCroom — الرئيسية"><BrandSignature /></Link>
           <Link href="/docs/project/license" className="inline-flex min-h-11 items-center hover:text-teal-700">الرخصة</Link>
           <Link href="/docs/project/contributing" className="inline-flex min-h-11 items-center hover:text-teal-700">المساهمة</Link>
+          <Link href="/changelog" className="inline-flex min-h-11 items-center hover:text-teal-700">سجل التغييرات</Link>
           <Link href="/docs" className="inline-flex min-h-11 items-center hover:text-teal-700">دليل الاستخدام <ArrowLeft className="ms-2 size-4" aria-hidden="true" /></Link>
         </div>
       </footer>

@@ -17,7 +17,7 @@ const searchIndex = (text) => {
 if (args[0] === '--url') {
   const base = new URL(args[1]);
   assert(['https:', 'http:'].includes(base.protocol), 'Use an HTTP(S) site URL');
-  const routes = ['/', '/docs/', '/docs/start/getting-started/', '/download/', '/api/search', '/brand/mark.png', '/favicon.ico'];
+  const routes = ['/', '/docs/', '/docs/start/getting-started/', '/download/', '/changelog/', '/api/search', '/brand/mark.png', '/favicon.ico'];
   await Promise.all(routes.map(async (route) => {
     const response = await fetch(new URL(route, base), { signal: AbortSignal.timeout(30_000) });
     assert.equal(response.status, 200, `${route}: HTTP ${response.status}`);
@@ -36,7 +36,7 @@ if (args[0] === '--url') {
     const file = join(directory, entry.name);
     return entry.isDirectory() ? files(file) : [file];
   });
-  for (const file of ['index.html', 'docs/index.html', 'download/index.html', '404.html', 'api/search', 'brand/mark.png', 'brand/logo.png', 'favicon.ico']) {
+  for (const file of ['index.html', 'docs/index.html', 'download/index.html', 'changelog/index.html', '404.html', 'api/search', 'brand/mark.png', 'brand/logo.png', 'favicon.ico']) {
     assert(isFile(join(output, file)), `Missing static output: ${file}`);
   }
   searchIndex(readFileSync(join(output, 'api/search'), 'utf8'));
