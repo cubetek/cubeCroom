@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #0F766E; } a:hover { color: #115E59; }
+  </style>
+</helmet>
+<div dir="rtl" style="box-sizing: border-box; width: 100%; min-height: 100%; padding: 36px; background: #F8FAFC; color: #0F172A; font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.7;">
+
+  <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid #E2E8F0;">
+    <div style="font-size: 22px; font-weight: 700; line-height: 1.4;">الأساسيات في الاستعمال</div>
+    <div style="color: #64748B; font-size: 13px;">الحكم على لوحة الألوان يكون وهي تعمل، لا وهي مربّعات. اللون الأساسي هنا قابل للتبديل من شريط الضبط أعلى اللوح.</div>
+  </div>
+
+  <div style="margin-top: 24px; font-size: 16px; font-weight: 600;">تسلسل الأزرار — ثلاث درجات فقط</div>
+  <div style="color: #64748B; font-size: 13px; margin-top: 2px;">تنفيذاً لقاعدة «إجراء أساسي واحد في كل سياق»: الأساسي مملوء، والثانوي محدَّد، والباقي شفاف.</div>
+  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px;">
+    <div style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 20px; border-radius: 10px; background: {{accent}}; color: #FFFFFF; font-weight: 600; font-size: 14px;">تشغيل دخول الطلاب</div>
+    <div style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 20px; border-radius: 10px; background: #FFFFFF; border: 1px solid #7C8CA0; color: #0F172A; font-weight: 600; font-size: 14px;">حفظ كمسودة</div>
+    <div style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border-radius: 10px; background: transparent; color: #334155; font-weight: 500; font-size: 14px;">إلغاء</div>
+    <div style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 20px; border-radius: 10px; background: #B91C1C; color: #FFFFFF; font-weight: 600; font-size: 14px;">إنهاء دخول الطلاب</div>
+    <div style="display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 10px; background: #F5F3FF; border: 1px solid #DDD6FE; color: #5B21B6; font-weight: 600; font-size: 14px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l1.75 4.55 4.55 1.75-4.55 1.75L12 15.8l-1.75-4.55L5.7 9.5l4.55-1.75Z"></path><path d="M18 15.6l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7Z"></path></svg>
+      <span>مساعدة الذكاء الاصطناعي</span>
+    </div>
+    <div style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 20px; border-radius: 10px; background: #F1F5F9; color: #94A3B8; font-weight: 600; font-size: 14px;">نشر الدرس</div>
+    <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #64748B;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="7.5" x2="12" y2="12.5"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>
+      <span>أضف عنواناً للدرس أولاً</span>
+    </div>
+  </div>
+  <div style="margin-top: 10px; font-size: 12px; color: #334155;">الزر المعطّل تباينه <b style="font-weight: 600;">2.34:1</b> ولا يجوز أن يحمل المعنى وحده — لذلك يرافقه دائماً سطر يشرح سبب التعطيل، كما في المثال.</div>
+  <div style="margin-top: 6px; font-size: 12px; color: #64748B; font-family: 'IBM Plex Mono', monospace;">primary {{accent}} · hover {{accentHover}}</div>
+
+  <div style="margin-top: 30px; font-size: 16px; font-weight: 600;">الحقول</div>
+  <div style="color: #64748B; font-size: 13px; margin-top: 2px;">تسمية فعلية فوق كل حقل — لا اعتماد على placeholder. ورسالة الخطأ تشرح كيفية التصحيح لا وجوده فقط.</div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 14px;">
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 13px; font-weight: 500;">اسم الفصل</div>
+      <div style="height: 40px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; background: #FFFFFF; border: 1px solid #7C8CA0; color: #64748B; font-size: 14px;">مثال: الصف السادس — علوم</div>
+      <div style="font-size: 12px; color: #64748B;">الحالة الافتراضية</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 13px; font-weight: 500;">اسم الفصل</div>
+      <div style="height: 40px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; background: #FFFFFF; border: 1px solid #7C8CA0; outline: 2px solid {{accent}}; outline-offset: 2px; color: #0F172A; font-size: 14px;">الصف السادس — علوم</div>
+      <div style="font-size: 12px; color: #64748B;">مُركَّز بلوحة المفاتيح</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="font-size: 13px; font-weight: 500;">مفتاح API</div>
+      <div style="height: 40px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; background: #FFFFFF; border: 1px solid #991B1B; color: #0F172A; font-size: 14px; font-family: 'IBM Plex Mono', monospace;">••••••••••••</div>
+      <div style="display: flex; align-items: flex-start; gap: 6px; color: #991B1B; font-size: 12px; line-height: 1.5;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 3px;"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="7.5" x2="12" y2="12.5"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>
+        <span>تعذّر التحقق من المفتاح. تأكّد من نسخه كاملاً ثم أعد المحاولة.</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px; font-size: 16px; font-weight: 600;">تطبيق حيّ — T09 مشاركة الدخول</div>
+  <div style="color: #64748B; font-size: 13px; margin-top: 2px;">أهم شاشة في المنتج حسب المستند. هنا يظهر ما إذا كانت اللوحة تخدم مبدأ «الحالة أولاً».</div>
+
+  <div style="margin-top: 14px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; box-shadow: 0 1px 2px rgba(15,23,42,.06); overflow: hidden;">
+
+    <div style="display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #E2E8F0;">
+      <div style="width: 26px; height: 26px; border-radius: 8px; background: {{accent}}; flex-shrink: 0;"></div>
+      <div style="font-size: 18px; font-weight: 600;">الصف السادس — علوم</div>
+      <div style="display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 6px; background: #ECFDF5; border: 1px solid #A7F3D0; color: #166534; font-size: 12px; font-weight: 600;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span>دخول الطلاب متاح</span>
+      </div>
+      <div style="flex-grow: 1;"></div>
+      <div style="display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 16px; border-radius: 10px; background: #B91C1C; color: #FFFFFF; font-weight: 600; font-size: 13px;">إنهاء دخول الطلاب</div>
+    </div>
+
+    <div style="display: flex; gap: 24px; padding: 22px 20px;">
+
+      <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+        <div style="padding: 14px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px;">
+          <svg width="132" height="132" viewBox="0 0 33 33" fill="#0F172A" shape-rendering="crispEdges">
+            <path d="M0 0h7v7H0z" fill="none" stroke="#0F172A" stroke-width="1"></path>
+            <path d="M2 2h3v3H2z"></path>
+            <path d="M26 0h7v7h-7z" fill="none" stroke="#0F172A" stroke-width="1"></path>
+            <path d="M28 2h3v3h-3z"></path>
+            <path d="M0 26h7v7H0z" fill="none" stroke="#0F172A" stroke-width="1"></path>
+            <path d="M2 28h3v3H2z"></path>
+            <path d="M9 1h2v2H9zM13 0h2v2h-2zM17 2h2v2h-2zM21 1h2v2h-2zM10 5h2v2h-2zM15 4h3v2h-3zM19 6h2v2h-2zM23 4h2v2h-2zM1 9h2v2H1zM5 10h2v2H5zM9 9h3v3H9zM14 10h2v3h-2zM18 9h2v2h-2zM22 10h3v2h-3zM27 9h2v2h-2zM31 10h2v2h-2zM3 13h2v2H3zM7 14h2v2H7zM11 13h2v3h-2zM16 14h3v2h-3zM21 13h2v2h-2zM25 14h2v2h-2zM29 13h3v2h-3zM1 17h3v2H1zM6 18h2v2H6zM10 17h2v2h-2zM14 18h3v2h-3zM19 17h2v3h-2zM23 18h2v2h-2zM27 17h2v2h-2zM31 18h2v2h-2zM4 21h2v2H4zM8 22h3v2H8zM13 21h2v2h-2zM17 22h2v2h-2zM21 21h3v2h-3zM26 22h2v2h-2zM30 21h2v2h-2zM9 26h2v2H9zM13 27h3v2h-3zM18 26h2v2h-2zM22 27h2v2h-2zM26 26h2v3h-2zM30 27h2v2h-2zM10 30h3v2h-3zM15 31h2v2h-2zM19 30h2v2h-2zM23 31h3v2h-3zM28 30h2v2h-2z"></path>
+          </svg>
+        </div>
+        <div style="font-size: 12px; color: #64748B;">امسح الرمز أو استخدم الرابط</div>
+      </div>
+
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 14px;">
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div dir="ltr" style="flex-grow: 1; height: 40px; display: flex; align-items: center; padding: 0 12px; border-radius: 6px; background: #F1F5F9; border: 1px solid #E2E8F0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; text-align: left;">http://192.168.1.24:4317/join</div>
+          <div style="display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 18px; border-radius: 10px; background: {{accent}}; color: #FFFFFF; font-weight: 600; font-size: 13px; white-space: nowrap;">نسخ الرابط</div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex-grow: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px;">
+            <div style="font-size: 12px; color: #64748B;">طلاب متصلون الآن</div>
+            <div style="font-size: 26px; font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums;">١٨</div>
+          </div>
+          <div style="flex-grow: 1; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 12px 14px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #92400E;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+              <span>بانتظار الموافقة</span>
+            </div>
+            <div style="font-size: 26px; font-weight: 700; line-height: 1.3; color: #92400E; font-variant-numeric: tabular-nums;">٣</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 8px; padding: 12px 14px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; color: #166534; font-size: 13px; line-height: 1.6;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 3px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span>جاهز — الطلاب على نفس شبكة Wi-Fi يستطيعون الدخول.</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
+          <span>تفاصيل تقنية</span>
+          <span style="color: #64748B; font-size: 12px;">— مطوية افتراضياً، للدعم الفني فقط</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid #E2E8F0;">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: #F8FAFC; font-size: 13px; font-weight: 600; color: #475569;">طلبات الدخول</div>
+      <div style="display: flex; align-items: center; gap: 14px; padding: 12px 20px; border-top: 1px solid #E2E8F0;">
+        <div style="width: 32px; height: 32px; border-radius: 999px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #475569; flex-shrink: 0;">ر</div>
+        <div style="width: 190px; font-size: 14px;">ريم عبدالله المطيري</div>
+        <div style="width: 90px; font-size: 12px; color: #64748B; font-variant-numeric: tabular-nums;">قبل ٣ دقائق</div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 12px; font-weight: 600;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+          <span>بانتظار الموافقة</span>
+        </div>
+        <div style="flex-grow: 1;"></div>
+        <div style="display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 16px; border-radius: 8px; background: #15803D; color: #FFFFFF; font-weight: 600; font-size: 13px;">قبول</div>
+        <div style="display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 16px; border-radius: 8px; background: #FFFFFF; border: 1px solid #7C8CA0; color: #991B1B; font-weight: 600; font-size: 13px;">رفض</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px; padding: 12px 20px; border-top: 1px solid #E2E8F0; background: #F8FAFC;">
+        <div style="width: 32px; height: 32px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #475569; flex-shrink: 0;">خ</div>
+        <div style="width: 190px; font-size: 14px;">خالد بن سعيد</div>
+        <div style="width: 90px; font-size: 12px; color: #64748B; font-variant-numeric: tabular-nums;">قبل دقيقة</div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: #ECFDF5; border: 1px solid #A7F3D0; color: #166534; font-size: 12px; font-weight: 600;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span>مقبول</span>
+        </div>
+        <div style="flex-grow: 1;"></div>
+        <div style="font-size: 12px; color: #64748B;">دخل الفصل</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 20px; padding: 14px 16px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; font-size: 13px; color: #334155; line-height: 1.7;">
+    ملاحظة على المثال: رمز QR ومحتوى الأسماء والأرقام عناصر نائبة للتوضيح فقط — الغرض هنا الحكم على الخط واللون والكثافة، لا اعتماد تخطيط الشاشة. تصميم T09 نفسه يأتي في مرحلة الشاشات.
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#0F766E","options":["#0F766E","#1D4ED8","#4338CA","#B45309"],"section":"اللون الأساسي"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent || '#0F766E';
+    const hovers = {
+      '#0F766E': '#115E59',
+      '#1D4ED8': '#1E40AF',
+      '#4338CA': '#3730A3',
+      '#B45309': '#92400E'
+    };
+    return { accent: accent, accentHover: hovers[accent.toUpperCase()] || accent };
+  }
+}
+</script>
+</body>
+</html>

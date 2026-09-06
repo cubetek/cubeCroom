@@ -1,0 +1,1915 @@
+{
+  "schemaVersion": 1,
+  "collectedAt": "2026-09-06T08:18:17.844Z",
+  "status": "initial-inventory-unreviewed",
+  "scope": "External dependencies declared directly in current workspace package manifests; locally installed metadata and top-level notice filenames where available.",
+  "limitations": [
+    "Not a resolved transitive graph.",
+    "Does not establish which packages or versions ship in a release.",
+    "A package license field and notice filename are not a compatibility or provenance decision.",
+    "Current workspace may contain uncommitted changes; source manifest hashes identify this snapshot.",
+    "Electron runtime, Chromium notices, bundled native libraries, website images, screenshots and historical source rights require separate review."
+  ],
+  "manifestSha256": {
+    "apps/desktop/package.json": "6b9a442d8a0536fe1429770558074b526ec4ea2541e6d58d0835aee008f5b4af",
+    "apps/docs/package.json": "8dcc464a1befb700835147d6d2052b6095af7111bb0eeb0f035737dd980861bb",
+    "apps/student-web/package.json": "c252a17386f7f8b86cdd0d6f932155043faa666ebbd12d12d505067794f085db",
+    "apps/teacher-ui/package.json": "0a78e2e52f83e841d5614bb6f7eebb44086ff3c84a0b3ee295bffb3a18ac3a11",
+    "package.json": "b73771f81050f9cd8851ef7c9c7e72186eac30eb416b75a605f644acdb39e014",
+    "packages/ai/package.json": "780c86788320aedfbe70c6ab16675037e554159e4aae6febba89477572b518d2",
+    "packages/contracts/package.json": "b78cc4f188f3cb4853ec9bfa0d6096146dba2eae003ae126ff72423bd142a8a5",
+    "packages/core/package.json": "daa3aca1a105283a49d74085e17fb287219ef44a96e3e12173c7ca5c7c0588c5",
+    "packages/db/package.json": "0c444f8d279908c91431548e8faccf489c1f04926d967be2fbc9dcd69ea0c22c",
+    "packages/ui/package.json": "3aee6623dad89bf6763c8d4c866d3343f1cb63eabc7389a784a86f4f9dba1e43"
+  },
+  "copiedLicenses": [
+    {
+      "package": "@fontsource/ibm-plex-sans-arabic",
+      "version": "5.3.0",
+      "source": "node_modules/@fontsource/ibm-plex-sans-arabic/LICENSE",
+      "destination": "docs/legal/third-party-licenses/ibm-plex-sans-arabic-LICENSE.txt",
+      "sha256": "1c32ddc3fc6efd167cdcbe475195287f2dc26ed1a4c92fbe31c87ceaffe44f98"
+    },
+    {
+      "package": "@fontsource/ibm-plex-mono",
+      "version": "5.3.0",
+      "source": "node_modules/@fontsource/ibm-plex-mono/LICENSE",
+      "destination": "docs/legal/third-party-licenses/ibm-plex-mono-LICENSE.txt",
+      "sha256": "23b0a9d0c6d3f140a0b77e483c5cfa6bba574325ef5cb189ed9f2fec4884533f"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@ai-sdk/anthropic",
+      "declarations": [
+        {
+          "manifest": "packages/ai/package.json",
+          "field": "dependencies",
+          "declaredRange": "^4.0.49"
+        }
+      ],
+      "installed": {
+        "version": "4.0.49",
+        "declaredLicense": "Apache-2.0",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/vercel/ai",
+          "directory": "packages/anthropic"
+        },
+        "homepage": "https://ai-sdk.dev/docs"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@ai-sdk/anthropic/LICENSE"
+      ]
+    },
+    {
+      "name": "@ai-sdk/google",
+      "declarations": [
+        {
+          "manifest": "packages/ai/package.json",
+          "field": "dependencies",
+          "declaredRange": "^4.0.63"
+        }
+      ],
+      "installed": {
+        "version": "4.0.63",
+        "declaredLicense": "Apache-2.0",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/vercel/ai",
+          "directory": "packages/google"
+        },
+        "homepage": "https://ai-sdk.dev/docs"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@ai-sdk/google/LICENSE"
+      ]
+    },
+    {
+      "name": "@ai-sdk/openai",
+      "declarations": [
+        {
+          "manifest": "packages/ai/package.json",
+          "field": "dependencies",
+          "declaredRange": "^4.0.57"
+        }
+      ],
+      "installed": {
+        "version": "4.0.57",
+        "declaredLicense": "Apache-2.0",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/vercel/ai",
+          "directory": "packages/openai"
+        },
+        "homepage": "https://ai-sdk.dev/docs"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@ai-sdk/openai/LICENSE"
+      ]
+    },
+    {
+      "name": "@eslint/js",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.18.0"
+        }
+      ],
+      "installed": {
+        "version": "9.39.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/eslint/eslint.git",
+          "directory": "packages/js"
+        },
+        "homepage": "https://eslint.org"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@eslint/js/LICENSE"
+      ]
+    },
+    {
+      "name": "@fontsource/ibm-plex-mono",
+      "declarations": [
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "dependencies",
+          "declaredRange": "^5.3.0"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^5.3.0"
+        }
+      ],
+      "installed": {
+        "version": "5.3.0",
+        "declaredLicense": "OFL-1.1",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/fontsource/font-files.git",
+          "directory": "fonts/google/ibm-plex-mono"
+        },
+        "homepage": "https://fontsource.org/fonts/ibm-plex-mono"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@fontsource/ibm-plex-mono/LICENSE"
+      ]
+    },
+    {
+      "name": "@fontsource/ibm-plex-sans-arabic",
+      "declarations": [
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "dependencies",
+          "declaredRange": "^5.3.0"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^5.3.0"
+        }
+      ],
+      "installed": {
+        "version": "5.3.0",
+        "declaredLicense": "OFL-1.1",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/fontsource/font-files.git",
+          "directory": "fonts/google/ibm-plex-sans-arabic"
+        },
+        "homepage": "https://fontsource.org/fonts/ibm-plex-sans-arabic"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@fontsource/ibm-plex-sans-arabic/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-checkbox",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.4"
+        }
+      ],
+      "installed": {
+        "version": "1.3.11",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/checkbox"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-checkbox/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-dialog",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.6"
+        }
+      ],
+      "installed": {
+        "version": "1.1.23",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/dialog"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-dialog/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-direction",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.0"
+        }
+      ],
+      "installed": {
+        "version": "1.1.4",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/direction"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-direction/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-dropdown-menu",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^2.1.6"
+        }
+      ],
+      "installed": {
+        "version": "2.1.24",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/dropdown-menu"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-dropdown-menu/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-label",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^2.1.2"
+        }
+      ],
+      "installed": {
+        "version": "2.1.15",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/label"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-label/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-progress",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.2"
+        }
+      ],
+      "installed": {
+        "version": "1.1.16",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/progress"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-progress/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-radio-group",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.2.3"
+        }
+      ],
+      "installed": {
+        "version": "1.4.7",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/radio-group"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-radio-group/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-scroll-area",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.2.3"
+        }
+      ],
+      "installed": {
+        "version": "1.2.18",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/scroll-area"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-scroll-area/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-select",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^2.1.6"
+        }
+      ],
+      "installed": {
+        "version": "2.3.7",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/select"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-select/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-separator",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.2"
+        }
+      ],
+      "installed": {
+        "version": "1.1.15",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/separator"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-separator/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-slot",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.2"
+        }
+      ],
+      "installed": {
+        "version": "1.3.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/slot"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-slot/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-switch",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.3"
+        }
+      ],
+      "installed": {
+        "version": "1.3.7",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/switch"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-switch/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-tabs",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.3"
+        }
+      ],
+      "installed": {
+        "version": "1.1.21",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/tabs"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-tabs/LICENSE"
+      ]
+    },
+    {
+      "name": "@radix-ui/react-tooltip",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.8"
+        }
+      ],
+      "installed": {
+        "version": "1.2.16",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/radix-ui/primitives.git",
+          "directory": "packages/react/tooltip"
+        },
+        "homepage": "https://radix-ui.com/primitives"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@radix-ui/react-tooltip/LICENSE"
+      ]
+    },
+    {
+      "name": "@tailwindcss/postcss",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        }
+      ],
+      "installed": {
+        "version": "4.3.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/tailwindlabs/tailwindcss.git",
+          "directory": "packages/@tailwindcss-postcss"
+        },
+        "homepage": "https://tailwindcss.com"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tailwindcss/postcss/LICENSE"
+      ]
+    },
+    {
+      "name": "@tiptap/core",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages/core"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/core/LICENSE.md"
+      ]
+    },
+    {
+      "name": "@tiptap/extension-list",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages/extension-list"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/extension-list/LICENSE.md"
+      ]
+    },
+    {
+      "name": "@tiptap/extension-placeholder",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages-deprecated/extension-placeholder"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/extension-placeholder/LICENSE.md"
+      ]
+    },
+    {
+      "name": "@tiptap/extension-table",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages/extension-table"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/extension-table/LICENSE.md"
+      ]
+    },
+    {
+      "name": "@tiptap/pm",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages/pm"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/pm/LICENSE"
+      ]
+    },
+    {
+      "name": "@tiptap/react",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages/react"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/react/LICENSE.md"
+      ]
+    },
+    {
+      "name": "@tiptap/starter-kit",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "3.31.3"
+        }
+      ],
+      "installed": {
+        "version": "3.31.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/ueberdosis/tiptap",
+          "directory": "packages/starter-kit"
+        },
+        "homepage": "https://tiptap.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@tiptap/starter-kit/LICENSE.md"
+      ]
+    },
+    {
+      "name": "@types/better-sqlite3",
+      "declarations": [
+        {
+          "manifest": "packages/db/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^7.6.12"
+        }
+      ],
+      "installed": {
+        "version": "7.6.13",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/better-sqlite3"
+        },
+        "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/better-sqlite3"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@types/better-sqlite3/LICENSE"
+      ]
+    },
+    {
+      "name": "@types/mdx",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^2.0.13"
+        }
+      ],
+      "installed": {
+        "version": "2.0.14",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/mdx"
+        },
+        "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/mdx"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@types/mdx/LICENSE"
+      ]
+    },
+    {
+      "name": "@types/node",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        },
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        },
+        {
+          "manifest": "packages/ai/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        },
+        {
+          "manifest": "packages/core/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        },
+        {
+          "manifest": "packages/db/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^22.10.5"
+        }
+      ],
+      "installed": {
+        "version": "22.20.1",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/node"
+        },
+        "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@types/node/LICENSE"
+      ]
+    },
+    {
+      "name": "@types/qrcode",
+      "declarations": [
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^1.5.5"
+        }
+      ],
+      "installed": {
+        "version": "1.5.6",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/qrcode"
+        },
+        "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/qrcode"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@types/qrcode/LICENSE"
+      ]
+    },
+    {
+      "name": "@types/react",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.7"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.7"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.7"
+        }
+      ],
+      "installed": {
+        "version": "19.2.18",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/react"
+        },
+        "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@types/react/LICENSE"
+      ]
+    },
+    {
+      "name": "@types/react-dom",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.3"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.3"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^19.0.0"
+        }
+      ],
+      "installed": {
+        "version": "19.2.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+          "directory": "types/react-dom"
+        },
+        "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-dom"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@types/react-dom/LICENSE"
+      ]
+    },
+    {
+      "name": "@wdio/cli",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.9.1"
+        }
+      ],
+      "installed": {
+        "version": "9.31.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/webdriverio/webdriverio.git",
+          "directory": "packages/wdio-cli"
+        },
+        "homepage": "https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-cli"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@wdio/cli/LICENSE"
+      ]
+    },
+    {
+      "name": "@wdio/local-runner",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.9.1"
+        }
+      ],
+      "installed": {
+        "version": "9.31.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/webdriverio/webdriverio.git",
+          "directory": "packages/wdio-local-runner"
+        },
+        "homepage": "https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-local-runner"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@wdio/local-runner/LICENSE"
+      ]
+    },
+    {
+      "name": "@wdio/mocha-framework",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.9.0"
+        }
+      ],
+      "installed": {
+        "version": "9.31.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/webdriverio/webdriverio.git",
+          "directory": "packages/wdio-mocha-framework"
+        },
+        "homepage": "https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-mocha-framework"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@wdio/mocha-framework/LICENSE"
+      ]
+    },
+    {
+      "name": "@wdio/spec-reporter",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.9.0"
+        }
+      ],
+      "installed": {
+        "version": "9.31.2",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/webdriverio/webdriverio.git",
+          "directory": "packages/wdio-spec-reporter"
+        },
+        "homepage": "https://github.com/webdriverio/webdriverio/tree/main/packages/wdio-spec-reporter"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/@wdio/spec-reporter/LICENSE"
+      ]
+    },
+    {
+      "name": "ai",
+      "declarations": [
+        {
+          "manifest": "packages/ai/package.json",
+          "field": "dependencies",
+          "declaredRange": "^7.0.91"
+        }
+      ],
+      "installed": {
+        "version": "7.0.91",
+        "declaredLicense": "Apache-2.0",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/vercel/ai",
+          "directory": "packages/ai"
+        },
+        "homepage": "https://ai-sdk.dev/docs"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/ai/LICENSE"
+      ]
+    },
+    {
+      "name": "better-sqlite3",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "dependencies",
+          "declaredRange": "13.0.3"
+        },
+        {
+          "manifest": "packages/db/package.json",
+          "field": "dependencies",
+          "declaredRange": "13.0.3"
+        }
+      ],
+      "installed": {
+        "version": "13.0.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/WiseLibs/better-sqlite3.git"
+        },
+        "homepage": "http://github.com/WiseLibs/better-sqlite3"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/better-sqlite3/LICENSE"
+      ]
+    },
+    {
+      "name": "class-variance-authority",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^0.7.1"
+        }
+      ],
+      "installed": {
+        "version": "0.7.1",
+        "declaredLicense": "Apache-2.0",
+        "repository": "https://github.com/joe-bell/cva.git",
+        "homepage": "https://github.com/joe-bell/cva#readme"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/class-variance-authority/LICENSE"
+      ]
+    },
+    {
+      "name": "clsx",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^2.1.1"
+        }
+      ],
+      "installed": {
+        "version": "2.1.1",
+        "declaredLicense": "MIT",
+        "repository": "lukeed/clsx",
+        "homepage": null
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/clsx/license"
+      ]
+    },
+    {
+      "name": "cmdk",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.1.1"
+        }
+      ],
+      "installed": {
+        "version": "1.1.1",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/pacocoursey/cmdk.git",
+          "directory": "cmdk"
+        },
+        "homepage": "https://github.com/pacocoursey/cmdk#readme"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/cmdk/LICENSE.md"
+      ]
+    },
+    {
+      "name": "concurrently",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.1.2"
+        }
+      ],
+      "installed": {
+        "version": "9.2.4",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/open-cli-tools/concurrently.git"
+        },
+        "homepage": null
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/concurrently/LICENSE"
+      ]
+    },
+    {
+      "name": "drizzle-kit",
+      "declarations": [
+        {
+          "manifest": "packages/db/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^0.30.2"
+        }
+      ],
+      "installed": {
+        "version": "0.30.6",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/drizzle-team/drizzle-orm.git"
+        },
+        "homepage": "https://orm.drizzle.team"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": []
+    },
+    {
+      "name": "drizzle-orm",
+      "declarations": [
+        {
+          "manifest": "packages/db/package.json",
+          "field": "dependencies",
+          "declaredRange": "^0.38.4"
+        }
+      ],
+      "installed": {
+        "version": "0.38.4",
+        "declaredLicense": "Apache-2.0",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/drizzle-team/drizzle-orm.git"
+        },
+        "homepage": "https://orm.drizzle.team"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": []
+    },
+    {
+      "name": "electron",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "44.2.0"
+        }
+      ],
+      "installed": {
+        "version": "44.2.0",
+        "declaredLicense": "MIT",
+        "repository": "https://github.com/electron/electron",
+        "homepage": null
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/electron/LICENSE"
+      ]
+    },
+    {
+      "name": "electron-builder",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "26.15.3"
+        }
+      ],
+      "installed": {
+        "version": "26.15.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/electron-userland/electron-builder.git",
+          "directory": "packages/electron-builder"
+        },
+        "homepage": "https://github.com/electron-userland/electron-builder"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/electron-builder/LICENSE"
+      ]
+    },
+    {
+      "name": "electron-updater",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "dependencies",
+          "declaredRange": "6.8.9"
+        }
+      ],
+      "installed": {
+        "version": "6.8.9",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/electron-userland/electron-builder.git",
+          "directory": "packages/electron-updater"
+        },
+        "homepage": "https://github.com/electron-userland/electron-builder"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/electron-updater/LICENSE"
+      ]
+    },
+    {
+      "name": "esbuild",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^0.19.12"
+        }
+      ],
+      "installed": {
+        "version": "0.19.12",
+        "declaredLicense": "MIT",
+        "repository": "https://github.com/evanw/esbuild",
+        "homepage": null
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/esbuild/LICENSE.md"
+      ]
+    },
+    {
+      "name": "eslint",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.18.0"
+        }
+      ],
+      "installed": {
+        "version": "9.39.5",
+        "declaredLicense": "MIT",
+        "repository": "eslint/eslint",
+        "homepage": "https://eslint.org"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/eslint/LICENSE"
+      ]
+    },
+    {
+      "name": "eslint-plugin-react-hooks",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.1.0"
+        }
+      ],
+      "installed": {
+        "version": "5.2.0",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/facebook/react.git",
+          "directory": "packages/eslint-plugin-react-hooks"
+        },
+        "homepage": "https://react.dev/"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/eslint-plugin-react-hooks/LICENSE"
+      ]
+    },
+    {
+      "name": "fumadocs-core",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^15.8.5"
+        }
+      ],
+      "installed": {
+        "version": "15.8.5",
+        "declaredLicense": "MIT",
+        "repository": "github:fuma-nama/fumadocs",
+        "homepage": "https://fumadocs.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/fumadocs-core/LICENSE"
+      ]
+    },
+    {
+      "name": "fumadocs-mdx",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^12.0.3"
+        }
+      ],
+      "installed": {
+        "version": "12.0.3",
+        "declaredLicense": "MIT",
+        "repository": "github:fuma-nama/fumadocs",
+        "homepage": "https://fumadocs.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/fumadocs-mdx/LICENSE"
+      ]
+    },
+    {
+      "name": "fumadocs-ui",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^15.8.5"
+        }
+      ],
+      "installed": {
+        "version": "15.8.5",
+        "declaredLicense": "MIT",
+        "repository": "github:fuma-nama/fumadocs",
+        "homepage": "https://fumadocs.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/fumadocs-ui/LICENSE"
+      ]
+    },
+    {
+      "name": "globals",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^15.14.0"
+        }
+      ],
+      "installed": {
+        "version": "15.15.0",
+        "declaredLicense": "MIT",
+        "repository": "sindresorhus/globals",
+        "homepage": null
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/globals/license"
+      ]
+    },
+    {
+      "name": "lucide-react",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^0.475.0"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^0.475.0"
+        }
+      ],
+      "installed": {
+        "version": "0.475.0",
+        "declaredLicense": "ISC",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/lucide-icons/lucide.git",
+          "directory": "packages/lucide-react"
+        },
+        "homepage": "https://lucide.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/lucide-react/LICENSE"
+      ]
+    },
+    {
+      "name": "multicast-dns",
+      "declarations": [
+        {
+          "manifest": "packages/core/package.json",
+          "field": "dependencies",
+          "declaredRange": "^7.2.5"
+        }
+      ],
+      "installed": {
+        "version": "7.2.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/mafintosh/multicast-dns.git"
+        },
+        "homepage": "https://github.com/mafintosh/multicast-dns"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/multicast-dns/LICENSE"
+      ]
+    },
+    {
+      "name": "next",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^15.1.4"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "dependencies",
+          "declaredRange": "^15.1.4"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^15.1.4"
+        }
+      ],
+      "installed": {
+        "version": "15.5.25",
+        "declaredLicense": "MIT",
+        "repository": "vercel/next.js",
+        "homepage": "https://nextjs.org"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/next/license.md"
+      ]
+    },
+    {
+      "name": "qrcode",
+      "declarations": [
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.5.4"
+        }
+      ],
+      "installed": {
+        "version": "1.5.4",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git://github.com/soldair/node-qrcode.git"
+        },
+        "homepage": "http://github.com/soldair/node-qrcode"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/qrcode/license"
+      ]
+    },
+    {
+      "name": "react",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "dependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "peerDependencies",
+          "declaredRange": "^19.0.0"
+        }
+      ],
+      "installed": {
+        "version": "19.2.8",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/react/react.git",
+          "directory": "packages/react"
+        },
+        "homepage": "https://react.dev/"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/react/LICENSE"
+      ]
+    },
+    {
+      "name": "react-dom",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "dependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "dependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^19.0.0"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "peerDependencies",
+          "declaredRange": "^19.0.0"
+        }
+      ],
+      "installed": {
+        "version": "19.2.8",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/react/react.git",
+          "directory": "packages/react-dom"
+        },
+        "homepage": "https://react.dev/"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/react-dom/LICENSE"
+      ]
+    },
+    {
+      "name": "tailwind-merge",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^3.0.1"
+        }
+      ],
+      "installed": {
+        "version": "3.6.0",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/dcastil/tailwind-merge.git"
+        },
+        "homepage": "https://github.com/dcastil/tailwind-merge"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/tailwind-merge/LICENSE.md"
+      ]
+    },
+    {
+      "name": "tailwindcss",
+      "declarations": [
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^4.0.0"
+        }
+      ],
+      "installed": {
+        "version": "4.3.3",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/tailwindlabs/tailwindcss.git",
+          "directory": "packages/tailwindcss"
+        },
+        "homepage": "https://tailwindcss.com"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/tailwindcss/LICENSE"
+      ]
+    },
+    {
+      "name": "turbo",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^2.3.3"
+        }
+      ],
+      "installed": {
+        "version": "2.10.12",
+        "declaredLicense": "MIT",
+        "repository": "https://github.com/vercel/turborepo",
+        "homepage": "https://turborepo.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/turbo/LICENSE"
+      ]
+    },
+    {
+      "name": "tw-animate-css",
+      "declarations": [
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "dependencies",
+          "declaredRange": "^1.2.4"
+        }
+      ],
+      "installed": {
+        "version": "1.4.0",
+        "declaredLicense": "MIT",
+        "repository": "Wombosvideo/tw-animate-css",
+        "homepage": "https://github.com/Wombosvideo/tw-animate-css#readme"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/tw-animate-css/LICENSE"
+      ]
+    },
+    {
+      "name": "typescript",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "apps/docs/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "apps/student-web/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "apps/teacher-ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "packages/ai/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "packages/contracts/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "packages/core/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "packages/db/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        },
+        {
+          "manifest": "packages/ui/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^5.7.3"
+        }
+      ],
+      "installed": {
+        "version": "5.9.3",
+        "declaredLicense": "Apache-2.0",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/microsoft/TypeScript.git"
+        },
+        "homepage": "https://www.typescriptlang.org/"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/typescript/LICENSE.txt"
+      ]
+    },
+    {
+      "name": "typescript-eslint",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "^8.20.0"
+        }
+      ],
+      "installed": {
+        "version": "8.69.0",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/typescript-eslint/typescript-eslint.git",
+          "directory": "packages/typescript-eslint"
+        },
+        "homepage": "https://typescript-eslint.io/packages/typescript-eslint"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/typescript-eslint/LICENSE"
+      ]
+    },
+    {
+      "name": "wait-on",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^8.0.2"
+        }
+      ],
+      "installed": {
+        "version": "8.0.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "http://github.com/jeffbski/wait-on.git"
+        },
+        "homepage": null
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/wait-on/LICENSE"
+      ]
+    },
+    {
+      "name": "wdio-electron-service",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^8.0.2"
+        }
+      ],
+      "installed": {
+        "version": "8.2.2",
+        "declaredLicense": "MIT",
+        "repository": null,
+        "homepage": "https://github.com/webdriverio-community/wdio-electron-service"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/wdio-electron-service/LICENSE"
+      ]
+    },
+    {
+      "name": "webdriverio",
+      "declarations": [
+        {
+          "manifest": "apps/desktop/package.json",
+          "field": "devDependencies",
+          "declaredRange": "^9.9.1"
+        }
+      ],
+      "installed": {
+        "version": "9.31.5",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/webdriverio/webdriverio.git",
+          "directory": "packages/webdriverio"
+        },
+        "homepage": "https://webdriver.io"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/webdriverio/LICENSE"
+      ]
+    },
+    {
+      "name": "yaml",
+      "declarations": [
+        {
+          "manifest": "package.json",
+          "field": "devDependencies",
+          "declaredRange": "2.9.0"
+        }
+      ],
+      "installed": {
+        "version": "2.9.0",
+        "declaredLicense": "ISC",
+        "repository": "github:eemeli/yaml",
+        "homepage": "https://eemeli.org/yaml/"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/yaml/LICENSE"
+      ]
+    },
+    {
+      "name": "zod",
+      "declarations": [
+        {
+          "manifest": "packages/contracts/package.json",
+          "field": "dependencies",
+          "declaredRange": "^3.24.1"
+        }
+      ],
+      "installed": {
+        "version": "3.25.76",
+        "declaredLicense": "MIT",
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/colinhacks/zod.git"
+        },
+        "homepage": "https://zod.dev"
+      },
+      "status": "local-metadata-only-not-legally-reviewed",
+      "noticeFiles": [
+        "node_modules/zod/LICENSE"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Noto+Sans+Arabic:wght@400;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #0F766E; } a:hover { color: #115E59; }
+  </style>
+</helmet>
+<div dir="rtl" style="box-sizing: border-box; width: 100%; min-height: 100%; padding: 32px; background: #FFFFFF; color: #0F172A; font-family: 'Almarai', system-ui, sans-serif; line-height: 1.7;">
+
+  <div style="display: flex; align-items: flex-start; gap: 12px; padding-bottom: 16px; border-bottom: 2px solid #CBD5E1;">
+    <div style="display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; background: #475569; color: #FFFFFF; font-weight: 700; font-size: 16px; flex-shrink: 0;">C</div>
+    <div style="flex-grow: 1;">
+      <div style="font-size: 20px; font-weight: 700; line-height: 1.3;">Almarai + Noto Sans Arabic</div>
+      <div style="font-size: 12px; color: #64748B;">‏Almarai للواجهة · Noto Sans Arabic للقراءة · رخصة SIL OFL 1.1</div>
+    </div>
+  </div>
+
+  <div style="font-size: 32px; font-weight: 700; line-height: 1.35; margin-top: 22px;">دخول الطلاب متاح الآن</div>
+
+  <div style="display: flex; flex-direction: column; gap: 3px; margin-top: 18px;">
+    <div style="font-size: 11px; color: #64748B; font-family: 'IBM Plex Mono', monospace;">الأوزان المتاحة — أربعة فقط (300 / 400 / 700 / 800)</div>
+    <div style="font-size: 17px; font-weight: 400;">‏400 — إنشاء درس جديد ونشره للفصل</div>
+    <div style="font-size: 17px; font-weight: 700;">‏700 — إنشاء درس جديد ونشره للفصل</div>
+    <div style="font-size: 17px; font-weight: 800;">‏800 — إنشاء درس جديد ونشره للفصل</div>
+  </div>
+
+  <div style="margin-top: 22px; padding: 14px 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px;">
+    <div style="font-size: 11px; color: #64748B; font-family: 'IBM Plex Mono', monospace;">المزج العربي/اللاتيني — الاختبار الحاسم</div>
+    <div style="font-size: 15px; margin-top: 6px; line-height: 1.75;">اربط مفتاح API الخاص بك، ثم اختر النموذج الافتراضي من مزوّد الذكاء الاصطناعي.</div>
+    <div style="font-size: 13px; color: #334155; margin-top: 8px;">النموذج: <span style="font-family: 'IBM Plex Mono', monospace;">claude-sonnet-4.5</span> · الحالة: متصل</div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 11px; color: #64748B; font-family: 'IBM Plex Mono', monospace;">كثافة الجدول عند 13px — T10 طلبات الدخول</div>
+    <div style="margin-top: 8px; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; background: #F1F5F9; padding: 8px 12px; font-size: 12px; font-weight: 700; color: #475569;">
+        <div>اسم الطالب</div><div>وقت الطلب</div><div>الحالة</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 9px 12px; font-size: 13px; border-top: 1px solid #E2E8F0;">
+        <div>ريم عبدالله المطيري</div><div style="font-variant-numeric: tabular-nums;">‏٩:٤١ ص</div><div style="color: #92400E; font-weight: 700;">بانتظار الموافقة</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 9px 12px; font-size: 13px; border-top: 1px solid #E2E8F0;">
+        <div>خالد بن سعيد</div><div style="font-variant-numeric: tabular-nums;">‏٩:٤٢ ص</div><div style="color: #166534; font-weight: 700;">مقبول</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 11px; color: #64748B; font-family: 'IBM Plex Mono', monospace;">القراءة الطويلة عند 18px / 1.85 — S06 بخط Noto Sans Arabic</div>
+    <div style="font-family: 'Noto Sans Arabic', system-ui, sans-serif; font-size: 18px; line-height: 1.85; margin-top: 6px;">تبدأ دورة الماء حين تسخّن أشعة الشمس سطح البحار والأنهار، فيتحوّل جزء من الماء إلى بخارٍ يصعد إلى طبقات الجو العليا.</div>
+  </div>
+
+  <div style="margin-top: 22px; padding-top: 16px; border-top: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-size: 13px; color: #334155;"><b style="font-weight: 700; color: #0F172A;">لماذا:</b> هندسي ونظيف جداً، والعناوين فيه حادّة وواضحة عند الأحجام الكبيرة.</div>
+    <div style="font-size: 13px; color: #334155;"><b style="font-weight: 700; color: #0F172A;">المقابل:</b> لا وزن 500 أو 600 — والقفزة من 400 إلى 700 تجعل التدرّج البصري في واجهة كثيفة أخشن. ولا لاتيني ولا مونوسبيس مطابق. عملياً هذا يضعف مطلبين من مطالب المستند دفعةً واحدة.</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

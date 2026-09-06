@@ -1,0 +1,9 @@
+{
+  "title": "النتائج",
+  "description": "قراءة الإجابات وتصحيحها وتصديرها.",
+  "pages": [
+    "t17-submissions",
+    "t17-export",
+    "activity-review"
+  ]
+}

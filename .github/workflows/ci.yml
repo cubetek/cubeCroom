@@ -1,0 +1,183 @@
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  configure:
+    name: Read the supported platform matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+      - name: Export the central release targets
+        id: targets
+        run: |
+          node --input-type=module -e "import { appendFileSync } from 'node:fs'; import { RELEASE_CONFIG } from './scripts/release/config.mjs'; appendFileSync(process.env.GITHUB_OUTPUT, 'matrix=' + JSON.stringify({ include: RELEASE_CONFIG.targets }) + '\n');"
+
+  verify:
+    needs: configure
+    name: ${{ matrix.id }} · source and packaged smoke
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.configure.outputs.matrix) }}
+
+    env:
+      # Defer Electron's binary download until packaging; source checks do not launch it.
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      TURBO_TELEMETRY_DISABLED: '1'
+      NEXT_TELEMETRY_DISABLED: '1'
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      # package.json#packageManager is the single source of the pnpm version.
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          # النسخة من `.nvmrc` لا مكتوبةً هنا: رقمان لنسخة واحدة يفترقان،
+          # ويومَ يفترقان يُفحص المشروع على ما لا يُطوَّر عليه.
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      # DoD المرحلة صفر: «تشغيل نظيف على جهاز بلا حالة سابقة».
+      # frozen-lockfile يضمن أن ما يُبنى هو ما في القفل لا ما يُحلّ لحظياً.
+      - name: تثبيت التبعيات
+        run: pnpm install --frozen-lockfile
+
+      - name: فحص الأنواع
+        run: pnpm typecheck
+
+      # Lint once; runtime and native package checks run on every configured target.
+      - name: التدقيق
+        if: matrix.platform == 'linux'
+        run: pnpm lint
+
+      - name: البناء
+        run: pnpm build
+
+      - name: الاختبارات
+        run: pnpm test
+
+      - name: فحص قواعد الإصدار وبيانات التحديث
+        run: node --test scripts/release/test/*.test.mjs
+
+      - name: فحص خدمة التحديث وحماية الحفظ
+        run: node --test scripts/test-updates.mjs scripts/test-update-flush.mjs
+
+      - name: فحص الدخان
+        run: pnpm smoke
+
+      - name: Package the already built application without release credentials
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: ''
+          CUBECROOM_OUT_DIR: out-ci
+          CUBECROOM_REQUIRE_SIGNING: '0'
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          node scripts/bundle-desktop.mjs --stage
+          node scripts/package-app.mjs package
+
+      - name: Run the packaged application with isolated test data
+        env:
+          CUBECROOM_OUT_DIR: out-ci
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            xvfb-run -a node scripts/test-packaged.mjs
+          else
+            node scripts/test-packaged.mjs
+          fi
+
+      - name: Archive the validated application and checksums
+        env:
+          CUBECROOM_OUT_DIR: out-ci
+        run: node scripts/release/archive-validation.mjs
+
+      - name: Retain native validation packages without publishing a release
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: validation-${{ matrix.id }}-${{ github.sha }}
+          path: dist/validation/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Retain packaged smoke diagnostics after failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: packaged-smoke-${{ matrix.id }}
+          path: |
+            .cubeflow/reports/packaged-smoke/*/runtime.log
+            .cubeflow/reports/packaged-smoke/*/settings-updates.png
+            .cubeflow/reports/packaged-smoke/*/result.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+  attest:
+    name: Attest validated archives from the official main branch
+    needs: verify
+    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      # A separate job keeps OIDC and write permissions away from PR/source execution.
+      # Omitting run-id/repository downloads only artifacts from this workflow run.
+      - name: Download the successful native validation packages
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: validation-*-${{ github.sha }}
+          path: dist/validation-attest
+
+      - name: Check the archived bytes before attestation
+        run: |
+          for directory in dist/validation-attest/*/; do
+            (cd "$directory" && sha512sum --check --strict SHA512SUMS)
+          done
+
+      - name: Sign GitHub build provenance for the validation archives
+        id: attest
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/validation-attest/*/*.tar.gz
+          create-storage-record: false
+
+      - name: Retain the provenance verification bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: build-provenance-${{ github.sha }}
+          path: ${{ steps.attest.outputs.bundle-path }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 7

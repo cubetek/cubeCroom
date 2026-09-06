@@ -1,0 +1,11 @@
+{
+  "title": "الحصة",
+  "description": "فتح الدخول، وقبول الطلاب، وإنهاء الحصة.",
+  "pages": [
+    "teacher-access",
+    "t10-requests",
+    "t10-approved",
+    "t09-confirm-end",
+    "t09-stopped"
+  ]
+}

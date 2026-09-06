@@ -1,0 +1,6 @@
+/.next
+/.source
+/out
+next-env.d.ts
+
+/.next-dev

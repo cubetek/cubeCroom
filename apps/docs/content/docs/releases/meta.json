@@ -1,0 +1,10 @@
+{
+  "title": "التثبيت والتحديث",
+  "description": "تنزيل التطبيق وتحديثه وحماية البيانات وحل المشكلات.",
+  "pages": [
+    "installation",
+    "updates",
+    "backups",
+    "troubleshooting"
+  ]
+}

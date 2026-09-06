@@ -1,0 +1,14 @@
+{
+  "title": "الدروس",
+  "description": "كتابة الدرس ونشره للطلاب.",
+  "pages": [
+    "lesson-editor",
+    "lesson-published",
+    "teacher-lesson",
+    "lesson-attachments",
+    "lesson-ai-drawer",
+    "prepare-a-lesson",
+    "edit-lesson-details",
+    "publish-and-follow-up"
+  ]
+}

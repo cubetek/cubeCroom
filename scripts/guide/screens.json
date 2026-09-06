@@ -1,0 +1,1009 @@
+{
+  "description": "Existing verified screenshots and annotations retained from the generated guide. Refresh from an actual visual run with pnpm guide --refresh-screens.",
+  "screens": [
+    {
+      "slug": "welcome",
+      "title": "أول تشغيل — شاشة الترحيب",
+      "device": "المعلم",
+      "src": "/screens/welcome.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "b0fadd7cccebbed21a7242aba0a0ca1e8af9bd46275631102dde362c27aba300"
+    },
+    {
+      "slug": "profile",
+      "title": "تعريف بنفسك — الاسم",
+      "device": "المعلم",
+      "src": "/screens/profile.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "54dcdf9d7186a21d918dbebe36d17bfa6022659e44cb9a239b08d3c06abde26e"
+    },
+    {
+      "slug": "profile-filled",
+      "title": "الاسم بعد كتابته",
+      "device": "المعلم",
+      "src": "/screens/profile-filled.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "76826bc1bc6a0a009d1f0a553d1bd81afc79ff004b6c9c4656197acf2a49a962"
+    },
+    {
+      "slug": "data-location",
+      "title": "أين تُحفظ بياناتك",
+      "device": "المعلم",
+      "src": "/screens/data-location.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "43260d14cfa130128fa2481baaf2c3e9230bcbd06c68bf2e62d071d0748044b3"
+    },
+    {
+      "slug": "home",
+      "title": "الرئيسية — حالة الحصة أمامك",
+      "device": "المعلم",
+      "src": "/screens/home.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "672968cb1d48cb34c31a0b4c6f79076cb35a3f8994cadb9eb1735efa97ce959c"
+    },
+    {
+      "slug": "classes-empty",
+      "title": "الفصول — قبل إنشاء أوّل فصل",
+      "device": "المعلم",
+      "src": "/screens/classes-empty.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "f803b9c8022af2fcbded407ea169a28febac5ff0916806377edfbf8d22172999"
+    },
+    {
+      "slug": "class-dialog",
+      "title": "إنشاء فصل جديد",
+      "device": "المعلم",
+      "src": "/screens/class-dialog.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "7361c2ff9dae6a317426bf2ea0d211a4f8bc7d9667510024d6285d77f5c38bc0"
+    },
+    {
+      "slug": "classes-list",
+      "title": "الفصول بعد الإنشاء",
+      "device": "المعلم",
+      "src": "/screens/classes-list.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "07d3a30d5c120c3801a500e009671ce094cb3c3ffb62efd602978a1b6386d335"
+    },
+    {
+      "slug": "class-view",
+      "title": "داخل الفصل — الدروس والمحتوى",
+      "device": "المعلم",
+      "src": "/screens/class-view.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "c72f8bca171d75a7ad9ca97afa4c4b6383905e5466c38ed151c29f19f39dcdbf"
+    },
+    {
+      "slug": "teacher-classes",
+      "title": "T06 — فصول المعلم",
+      "device": "المعلم",
+      "src": "/screens/teacher-classes.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "الصف السادس — علوم",
+          "text": "الفصل الذي سيدخله الطلاب. كل حصة تُفتح لفصل واحد.",
+          "rect": {
+            "x": 809,
+            "y": 159,
+            "w": 156,
+            "h": 24
+          }
+        }
+      ],
+      "sha256": "a8284e8a8617544c5fdb3eed37a81ca30962e9228e488bc1a630612c2485b91a"
+    },
+    {
+      "slug": "class-overview",
+      "title": "نظرة عامة على الفصل",
+      "device": "المعلم",
+      "src": "/screens/class-overview.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "f321921eb01af6f98f6c1469d553207743597808500f1fd4b67478634fa83f4e"
+    },
+    {
+      "slug": "class-students",
+      "title": "الطلاب — من دخل الفصل",
+      "device": "المعلم",
+      "src": "/screens/class-students.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "6332654aa361ba93bdac4ffc04553819018127279431f067e15bc0b8ca1f5cfa"
+    },
+    {
+      "slug": "lesson-editor",
+      "title": "صفحة الدرس الجاهزة",
+      "device": "المعلم",
+      "src": "/screens/lesson-editor.png",
+      "view": {
+        "width": 1280,
+        "height": 800,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "2ac48a8d77ec4753338a0a8d7304df2786a3fd5fc2345ff5e739c2c644581a7a"
+    },
+    {
+      "slug": "lesson-published",
+      "title": "الدرس بعد نشره للطلاب",
+      "device": "المعلم",
+      "src": "/screens/lesson-published.png",
+      "view": {
+        "width": 1280,
+        "height": 800,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "8f675c220ec60e8327937ffe20c6175c2410c598ef48fd5c5c5263d0e6e654dd"
+    },
+    {
+      "slug": "teacher-lesson",
+      "title": "تحرير المكوّنات التعليمية",
+      "device": "المعلم",
+      "src": "/screens/teacher-lesson.png",
+      "view": {
+        "width": 1280,
+        "height": 800,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "395cfa43002edaa5185ee97d282617e0f3fe852284ff26ec2b161ebe26b4c8ff"
+    },
+    {
+      "slug": "lesson-attachments",
+      "title": "مرفقات الدرس",
+      "device": "المعلم",
+      "src": "/screens/lesson-attachments.png",
+      "view": {
+        "dpr": 1,
+        "height": 800,
+        "width": 1280
+      },
+      "marks": [],
+      "sha256": "10fdc0cf7f3db9d000575c0ada7a4d9e421328baad9793108d523ef30967acfa"
+    },
+    {
+      "slug": "lesson-ai-drawer",
+      "title": "وكيل إعداد الدرس",
+      "device": "المعلم",
+      "src": "/screens/lesson-ai-drawer.png",
+      "view": {
+        "width": 1280,
+        "height": 800,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "4cf77b7abd9ba9da6b5b0b8548fad17090c4c837b6c39477f537972708207784"
+    },
+    {
+      "slug": "teacher-activity",
+      "title": "T16 — بناء النشاط",
+      "device": "المعلم",
+      "src": "/screens/teacher-activity.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "علّم الإجابة الصحيحة",
+          "text": "مفتاح الإجابة يبقى عند المعلم — لا يُرسل إلى المتصفّح.",
+          "rect": {
+            "x": 769,
+            "y": 299,
+            "w": 98,
+            "h": 19
+          }
+        },
+        {
+          "n": 2,
+          "at": "ما الذي يجعل الغيوم تبقى في السماء؟",
+          "text": "نصّ السؤال كما سيقرؤه الطالب.",
+          "rect": {
+            "x": 64,
+            "y": 115,
+            "w": 300,
+            "h": 33
+          }
+        }
+      ],
+      "sha256": "5e6d3d24fbba15358eb9f014c69ccac85f015458845b9f5585cca4561c2a5072"
+    },
+    {
+      "slug": "class-activities",
+      "title": "الأنشطة والنتائج",
+      "device": "المعلم",
+      "src": "/screens/class-activities.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "1e29afc0d8c4cbd8fb8bfa2d8026e7c0bde8b12ef7611f0911cfa265d1223a05"
+    },
+    {
+      "slug": "activity-generator",
+      "title": "توليد أسئلة من الدرس",
+      "device": "المعلم",
+      "src": "/screens/activity-generator.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "668951d54b1b8103ef327ff2d52a7c3ae6f72831cc62d82546bb2169a04c751f"
+    },
+    {
+      "slug": "teacher-access",
+      "title": "T09 — مشاركة الحصة",
+      "device": "المعلم",
+      "src": "/screens/teacher-access.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "٢١٩ ٧٠٦",
+          "text": "رمز الحصة: يُكتب على السبورة، ويكتبه كل طالب مع اسمه.",
+          "rect": {
+            "x": 45,
+            "y": 493,
+            "w": 647,
+            "h": 51
+          }
+        },
+        {
+          "n": 2,
+          "at": "cubecroom.local",
+          "text": "عنوانٌ بالاسم يُعلَن على الشبكة — أقصر من الأرقام وأقلّ خطأً.",
+          "rect": {
+            "x": 158,
+            "y": 332,
+            "w": 534,
+            "h": 44
+          }
+        },
+        {
+          "n": 3,
+          "at": "http://192.168.4.20:4317",
+          "text": "العنوان الرقمي يبقى معروضاً: بعض الشبكات تمنع إعلان الاسم.",
+          "rect": {
+            "x": 150,
+            "y": 416,
+            "w": 542,
+            "h": 44
+          }
+        }
+      ],
+      "sha256": "1af40a6d57845b1499a8493a47a4834eb47b3ed937b2994dea9a48bede65e1c9"
+    },
+    {
+      "slug": "t10-requests",
+      "title": "T10 — طلبات الدخول",
+      "device": "المعلم",
+      "src": "/screens/t10-requests.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "ريم عبدالله",
+          "text": "كل طلب يحمل اسمه ووقته. لا يدخل أحد قبل أن يبتّ المعلم فيه.",
+          "rect": {
+            "x": 862,
+            "y": 352,
+            "w": 61,
+            "h": 24
+          }
+        },
+        {
+          "n": 2,
+          "at": "قبول",
+          "text": "القبول نقرة واحدة — الحصة لا تحتمل حواراً لكل طالب.",
+          "rect": {
+            "x": 111,
+            "y": 355,
+            "w": 26,
+            "h": 20
+          }
+        }
+      ],
+      "sha256": "b82accc1e7635602211938684c24ba2c2160f03a1ce6e218b0e95b1dcf712d70"
+    },
+    {
+      "slug": "t10-approved",
+      "title": "T10 — الطلب بعد قبوله",
+      "device": "المعلم",
+      "src": "/screens/t10-approved.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "b3c495a3c36c5fdd3740f42803d475259a2150957a6e32ded9f2cde8a046e75b"
+    },
+    {
+      "slug": "t09-confirm-end",
+      "title": "T09 — تأكيد إنهاء الحصة",
+      "device": "المعلم",
+      "src": "/screens/t09-confirm-end.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "سيتوقف الرابط والرمز",
+          "text": "الإنهاء يُسأل عنه: زرٌّ يقطع الحصة لا يُنقر سهواً.",
+          "rect": {
+            "x": 425,
+            "y": 328,
+            "w": 446,
+            "h": 48
+          }
+        },
+        {
+          "n": 2,
+          "at": "إبقاء الدخول مفتوحاً",
+          "text": "التراجع هو الخيار الأسهل — والإنهاء يحتاج قصداً.",
+          "rect": {
+            "x": 518,
+            "y": 403,
+            "w": 111,
+            "h": 24
+          }
+        }
+      ],
+      "sha256": "c6afca99a4b0283c91b19b9128d4fd6d6dec9110672cfc4d777822208d47709c"
+    },
+    {
+      "slug": "t09-stopped",
+      "title": "T09 — بعد إنهاء الحصة",
+      "device": "المعلم",
+      "src": "/screens/t09-stopped.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "دخول الطلاب متوقف",
+          "text": "الباب يُغلق فعلاً: تُوقَف عملية خادم الطلاب، فلا يبقى مسار يُحجب.",
+          "rect": {
+            "x": 845,
+            "y": 213,
+            "w": 104,
+            "h": 16
+          }
+        }
+      ],
+      "sha256": "d963d4737063499b77a07b271c7004b1a140eb7b4bf581e76e93d6e341eaf31d"
+    },
+    {
+      "slug": "s01-join",
+      "title": "S01 — الانضمام إلى الفصل",
+      "device": "الطالب",
+      "src": "/screens/s01-join.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "رمز الحصة",
+          "text": "الرمز أولاً: بلاه لا يصل الطلب أصلاً.",
+          "rect": {
+            "x": 377,
+            "y": 254,
+            "w": 510,
+            "h": 23
+          }
+        },
+        {
+          "n": 2,
+          "at": "اسمك",
+          "text": "الاسم كما يريد المعلم أن يراه. لا حساب ولا كلمة مرور.",
+          "rect": {
+            "x": 377,
+            "y": 380,
+            "w": 510,
+            "h": 23
+          }
+        },
+        {
+          "n": 3,
+          "at": "الصف السادس — علوم",
+          "text": "اسم الفصل يطمئن الطالب أنه في المكان الصحيح.",
+          "rect": {
+            "x": 377,
+            "y": 84,
+            "w": 510,
+            "h": 28
+          }
+        }
+      ],
+      "sha256": "edfe4b723c556d1326db2323c3f1025f45ab3119ce3260b80a943402c48a707c"
+    },
+    {
+      "slug": "s01-wrong-code",
+      "title": "S01 — رمز غير مطابق",
+      "device": "الطالب",
+      "src": "/screens/s01-wrong-code.png",
+      "view": {
+        "width": 1249,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "غير مطابق",
+          "text": "الرسالة تقول ماذا يفعل الطالب لا أنه أخطأ: يسأل معلمه عن الرمز.",
+          "rect": {
+            "x": 387,
+            "y": 601,
+            "w": 452,
+            "h": 21
+          }
+        }
+      ],
+      "sha256": "34f5f4330e676e7a5b1bc60c9a0072071928e3125d3911ac3e16d7e017b9b112"
+    },
+    {
+      "slug": "s02-pending",
+      "title": "S02 — بانتظار موافقة المعلم",
+      "device": "الطالب",
+      "src": "/screens/s02-pending.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "بانتظار الموافقة",
+          "text": "الطلب لا يمنح وصولاً: لا درس ولا نشاط قبل موافقة المعلم.",
+          "rect": {
+            "x": 737,
+            "y": 371,
+            "w": 115,
+            "h": 21
+          }
+        },
+        {
+          "n": 2,
+          "at": "ريم عبدالله",
+          "text": "الاسم الذي وصل جهاز المعلم — يستطيع الطالب تعديله وإعادة الإرسال.",
+          "rect": {
+            "x": 392,
+            "y": 443,
+            "w": 480,
+            "h": 28
+          }
+        }
+      ],
+      "sha256": "600e346d9724085be553b07ea93f9217dcd9debd5c27f5bdcc570effa2f2a14f"
+    },
+    {
+      "slug": "s03-rejected",
+      "title": "S03 — لم يُقبل الطلب",
+      "device": "الطالب",
+      "src": "/screens/s03-rejected.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "لم تُحفظ عنك",
+          "text": "الرفض لا يترك أثراً عن الطالب — ولا يُغلق الباب أمامه.",
+          "rect": {
+            "x": 377,
+            "y": 392,
+            "w": 510,
+            "h": 28
+          }
+        },
+        {
+          "n": 2,
+          "at": "إعادة المحاولة",
+          "text": "الرفض قابل لإعادة المحاولة دائماً (قرار C4).",
+          "rect": {
+            "x": 586,
+            "y": 444,
+            "w": 91,
+            "h": 28
+          }
+        }
+      ],
+      "sha256": "23c53ed7ea6bd8952a3aa98714aee9822d2592292ff6258222e58d95e7db0ccb"
+    },
+    {
+      "slug": "s04-home",
+      "title": "S04 — رئيسية الطالب",
+      "device": "الطالب",
+      "src": "/screens/s04-home.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "سارة العتيبي",
+          "text": "اسم المعلم والفصل: الطالب يعرف أنه دخل الصفّ الصحيح.",
+          "rect": {
+            "x": 178,
+            "y": 48,
+            "w": 958,
+            "h": 21
+          }
+        },
+        {
+          "n": 2,
+          "at": "الدروس",
+          "text": "شريط سفليّ بثلاثة تبويبات: الرئيسية · الدروس · الأنشطة.",
+          "rect": {
+            "x": 955,
+            "y": 657,
+            "w": 84,
+            "h": 52
+          }
+        }
+      ],
+      "sha256": "14fcba08981534110161ba6d845985568da1f646a5fb4dc56d5410ee90c0d809"
+    },
+    {
+      "slug": "s05-lessons",
+      "title": "S05 — دروس الطالب",
+      "device": "الطالب",
+      "src": "/screens/s05-lessons.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "دورة الماء في الطبيعة",
+          "text": "الدروس المنشورة وحدها. المسودة لا تظهر هنا ولا تُفتح برابطها.",
+          "rect": {
+            "x": 879,
+            "y": 152,
+            "w": 230,
+            "h": 28
+          }
+        }
+      ],
+      "sha256": "f2927b7191368eed15c9d6a14f67c3306167c7f853f12661119b0c21edcbc467"
+    },
+    {
+      "slug": "s06-viewer",
+      "title": "صفحة الدرس للطالب",
+      "device": "الطالب",
+      "src": "/screens/s06-viewer.png",
+      "view": {
+        "width": 1024,
+        "height": 915,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "c0ef5225a0ab96c51e3026b4774513f6fcbc392405c33f38891ef83c52eccb08"
+    },
+    {
+      "slug": "s07-activities",
+      "title": "S07 — أنشطة الطالب",
+      "device": "الطالب",
+      "src": "/screens/s07-activities.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "سؤال قصير عن الدرس",
+          "text": "الأنشطة المنشورة وحدها، وكل واحد يحمل حالته.",
+          "rect": {
+            "x": 896,
+            "y": 119,
+            "w": 213,
+            "h": 28
+          }
+        }
+      ],
+      "sha256": "92a53728daf6d17ce67ce6d222b65300b5523be0907a2eab2d85fe17fb6bf0a0"
+    },
+    {
+      "slug": "s07-question",
+      "title": "S07 — الإجابة عن السؤال",
+      "device": "الطالب",
+      "src": "/screens/s07-question.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "ما الذي يجعل الغيوم تبقى في السماء؟",
+          "text": "السؤال كما كتبه المعلم.",
+          "rect": {
+            "x": 387,
+            "y": 170,
+            "w": 722,
+            "h": 33
+          }
+        },
+        {
+          "n": 2,
+          "at": "لأن قطراتها صغيرة جداً",
+          "text": "الخيارات تصل بلا علامة صواب: مفتاح الإجابة لا يغادر جهاز المعلم.",
+          "rect": {
+            "x": 917,
+            "y": 225,
+            "w": 147,
+            "h": 28
+          }
+        }
+      ],
+      "sha256": "154fce22d207321293104fbc69c9cb21a46e93ebfa00bfbeec7111ab2feff606"
+    },
+    {
+      "slug": "s08-submitted",
+      "title": "S08 — تم إرسال الإجابة",
+      "device": "الطالب",
+      "src": "/screens/s08-submitted.png",
+      "view": {
+        "width": 1264,
+        "height": 749,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "تم إرسال إجابتك",
+          "text": "إيصالٌ بختم وقت: الطالب يعرف أن إجابته وصلت فعلاً.",
+          "rect": {
+            "x": 136,
+            "y": 80,
+            "w": 992,
+            "h": 32
+          }
+        },
+        {
+          "n": 2,
+          "at": "وقت الإرسال",
+          "text": "الوقت من جهاز المعلم لا من جهاز الطالب.",
+          "rect": {
+            "x": 153,
+            "y": 279,
+            "w": 958,
+            "h": 21
+          }
+        }
+      ],
+      "sha256": "873c56b50e91496e133c93d2b03616f2e594176c18f1d8d0fbf9b0a9f9052f89"
+    },
+    {
+      "slug": "s09-lost",
+      "title": "S09 — انقطع الاتصال، والطالب على عارض الدرس",
+      "device": "الطالب",
+      "src": "/screens/s09-lost.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "انقطع الاتصال بجهاز معلمك",
+          "text": "لا يُقال «أنهى معلمك الحصة» جزماً: الخروج من Wi-Fi يعطي الأثر نفسه.",
+          "rect": {
+            "x": 485,
+            "y": 348,
+            "w": 310,
+            "h": 32
+          }
+        },
+        {
+          "n": 2,
+          "at": "محفوظ عنده",
+          "text": "الطمأنة أولاً — الطالب يخاف على ما أرسله قبل أن يسأل عن السبب.",
+          "rect": {
+            "x": 502,
+            "y": 497,
+            "w": 252,
+            "h": 42
+          }
+        }
+      ],
+      "sha256": "5ac4ad151b4e0e3f07d238bd600daea2765389f8bf71c14379008448b448c3dc"
+    },
+    {
+      "slug": "s09-ended",
+      "title": "S09 — انتهت الحصة (حصةٌ جديدة، ورمزٌ قديم)",
+      "device": "الطالب",
+      "src": "/screens/s09-ended.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "انتهت الحصة",
+          "text": "هنا يُجزم بالسبب: الخادم ردّ ورفض الرمز — لا صمت يُخمَّن.",
+          "rect": {
+            "x": 485,
+            "y": 348,
+            "w": 310,
+            "h": 32
+          }
+        },
+        {
+          "n": 2,
+          "at": "حتى يشغّلها مرة أخرى",
+          "text": "ورمز الحصة القديم لا يفتح الجديدة: يُطلب الدخول من أوله.",
+          "rect": {
+            "x": 485,
+            "y": 390,
+            "w": 310,
+            "h": 84
+          }
+        }
+      ],
+      "sha256": "cc9e30a5a375572072de101e0f79065a10034dde3853e4cfe9a4aa3d420173f9"
+    },
+    {
+      "slug": "t17-submissions",
+      "title": "T17 — إجابات الطلاب",
+      "device": "المعلم",
+      "src": "/screens/t17-submissions.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "ريم عبدالله",
+          "text": "إجابة الطالب في قاعدة المعلم — لا في متصفّح الطالب.",
+          "rect": {
+            "x": 661,
+            "y": 531,
+            "w": 322,
+            "h": 57
+          }
+        }
+      ],
+      "sha256": "866b5375c4783a4366a026561c5bd478e178d101d405857a483b130b5182f859"
+    },
+    {
+      "slug": "t17-export",
+      "title": "T17 — تصدير النتائج",
+      "device": "المعلم",
+      "src": "/screens/t17-export.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [
+        {
+          "n": 1,
+          "at": "تصدير النتائج",
+          "text": "يخرج الملفّ إلى مجلد على الجهاز — لا رفع ولا حساب.",
+          "rect": {
+            "x": 779,
+            "y": 479,
+            "w": 69,
+            "h": 20
+          }
+        },
+        {
+          "n": 2,
+          "at": "فتح المجلد",
+          "text": "ولا يُملى على المعلم مسار: نقرةٌ تفتح المجلد الذي كُتب فيه.",
+          "rect": {
+            "x": 481,
+            "y": 406,
+            "w": 56,
+            "h": 20
+          }
+        }
+      ],
+      "sha256": "b9bb713317717503961d89caa3806e09d3b6e2f40a5fac524dd04d21573ec556"
+    },
+    {
+      "slug": "activity-review",
+      "title": "مراجعة إجابات الطلاب",
+      "device": "المعلم",
+      "src": "/screens/activity-review.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "c8baa02370719f57000b1ad0f3fbda34edf347508b636d0bf1e551c7782cd82b"
+    },
+    {
+      "slug": "diagnostics",
+      "title": "تشخيص الاتصال",
+      "device": "المعلم",
+      "src": "/screens/diagnostics.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "c64e06353fa7c070caab1620a6ed50228f4a40f10d1875052efb2ca66a942be2"
+    },
+    {
+      "slug": "backup",
+      "title": "النسخ الاحتياطي",
+      "device": "المعلم",
+      "src": "/screens/backup.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "1d1f48cb0a567b8ce7e39abda552770a5c633e6b8011f014d1a3b05eff07e98e"
+    },
+    {
+      "slug": "t21-export",
+      "title": "تصدير سجلّ التشخيص",
+      "device": "المعلم",
+      "src": "/screens/t21-export.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "210879e63dbb5e01ef54a11e9ad9a396bc4cd4834eea5da6d91bb49eeab7d635"
+    },
+    {
+      "slug": "t22-port",
+      "title": "منفذ بوابة الطلاب",
+      "device": "المعلم",
+      "src": "/screens/t22-port.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "5b1de8f8ab6ad8746a605feb9e9c75935fa058440d5fe989ea4608bb3fb76d39"
+    },
+    {
+      "slug": "nav-files",
+      "title": "الملفات — كل ما رُفع في مكان واحد",
+      "device": "المعلم",
+      "src": "/screens/nav-files.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "f94657ed063010ada25d46bfcd777f0be9371da6ebb3275970e413ec6a2a34b2"
+    },
+    {
+      "slug": "nav-ai",
+      "title": "الذكاء الاصطناعي — سحابي أو محلي",
+      "device": "المعلم",
+      "src": "/screens/nav-ai.png",
+      "view": {
+        "dpr": 1,
+        "height": 735,
+        "width": 1264
+      },
+      "marks": [],
+      "sha256": "4c37cf0bf68ddb82458f97958004a96440605a156b8f6e2df997254fc925b466"
+    },
+    {
+      "slug": "nav-settings",
+      "title": "الإعدادات والتحديثات",
+      "device": "المعلم",
+      "src": "/screens/nav-settings.png",
+      "view": {
+        "width": 1280,
+        "height": 800,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "98d317787a6ecbb25542ca00a64b3289f51265f7aae5dc5b42761c53aabd3d89"
+    }
+  ]
+}

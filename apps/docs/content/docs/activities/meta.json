@@ -1,0 +1,9 @@
+{
+  "title": "الأنشطة",
+  "description": "أسئلة يجيب عنها الطلاب.",
+  "pages": [
+    "teacher-activity",
+    "class-activities",
+    "activity-generator"
+  ]
+}

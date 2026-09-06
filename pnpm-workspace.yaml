@@ -1,0 +1,27 @@
+packages:
+  - apps/*
+  - packages/*
+
+# node_modules مسطّحة بملفات حقيقية لا symlinks.
+#
+# السبب: `next build` بوضع standalone يتتبّع الملفات وينسخها، فيحاكي بنية
+# pnpm الرمزية بإنشاء symlinks — وويندوز يرفضها بـ EPERM ما لم يكن
+# Developer Mode مفعّلاً. والـ PRD يستهدف Windows 11 x64 أولاً (§23)،
+# فلا يصحّ أن يتوقف البناء على إعداد في نظام كل مطوّر.
+#
+# التبعيات الأصلية تُنسخ إلى staging مستقل، ولا يُعاد بناء شجرة التطوير.
+#
+# ملاحظة: في pnpm 11 لا تُقرأ هذه الإعدادات من .npmrc — مكانها هنا.
+nodeLinker: hoisted
+
+# pnpm لا يشغّل سكربتات ما بعد التثبيت إلا لما يُسمح به صراحةً.
+allowBuilds:
+  # Version 13 ships N-API prebuilds; no ABI-specific install step is needed.
+  better-sqlite3: false
+  electron-winstaller: false
+  electron: true
+  # سائقا Edge و Firefox يأتيان مع WebdriverIO ولا يُستعملان: الفحص يقود
+  # Electron وحدها. فلا يُنزَّلان.
+  edgedriver: false
+  geckodriver: false
+  esbuild: true

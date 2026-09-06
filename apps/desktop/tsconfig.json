@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    "noEmit": false,
+    // preload.cts يُصدَّر CommonJS (‎.cjs) — شرط تشغيله داخل sandbox.
+    // verbatimModuleSyntax يمنع صياغة ESM داخل ملف CJS، فيُطفأ هنا وحده.
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src"]
+}

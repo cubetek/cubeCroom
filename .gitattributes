@@ -1,0 +1,5 @@
+# Preserve original legal text bytes and their recorded upstream hashes on every OS.
+LICENSE -text
+CODE_OF_CONDUCT.md -text
+docs/legal/third-party-licenses/*.txt -text
+docs/legal/spdx-license-texts/*.txt -text

@@ -1,0 +1,19 @@
+{
+  "title": "ما يراه الطالب",
+  "description": "الرحلة كاملة من جهاز الطالب.",
+  "pages": [
+    "s01-join",
+    "s01-wrong-code",
+    "s02-pending",
+    "s03-rejected",
+    "s04-home",
+    "s05-lessons",
+    "s06-viewer",
+    "s07-activities",
+    "s07-question",
+    "s08-submitted",
+    "s09-lost",
+    "s09-ended",
+    "student-help"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "description": "Provenance of adopted standard texts; these records add no license conditions.",
+  "sources": [
+    {
+      "file": "LICENSE",
+      "name": "GNU Affero General Public License v3.0 only",
+      "source": "https://raw.githubusercontent.com/spdx/license-list-data/v3.26.0/text/AGPL-3.0-only.txt",
+      "sourceSha256": "d8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee",
+      "adaptation": "None; byte-for-byte copy of the SPDX standard license text."
+    },
+    {
+      "file": "docs/legal/cla-individual.md",
+      "name": "Harmony Individual Contributor License Agreement 1.0",
+      "source": "https://www.harmonyagreements.org/docs/ha-cla-i-v1.odt",
+      "sourceSha256": "319226a66a26ee8e5a2d126bb5a738d51adfb788291d628cbb2657dceaea5085",
+      "adaptation": "Option Five; contributor-type alternatives selected; project, instructions and UAE jurisdiction filled; optional extra Media licenses omitted; Markdown formatting."
+    },
+    {
+      "file": "docs/legal/cla-entity.md",
+      "name": "Harmony Entity Contributor License Agreement 1.0",
+      "source": "https://www.harmonyagreements.org/docs/ha-cla-e-v1.odt",
+      "sourceSha256": "df669346ddb37c60623c93c455f701a29c9cfe32fa5b004a0f349cd2a69b736d",
+      "adaptation": "Option Five; contributor-type alternatives selected; project, instructions and UAE jurisdiction filled; optional extra Media licenses omitted; Markdown formatting."
+    }
+  ]
+}

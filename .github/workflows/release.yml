@@ -1,0 +1,207 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing draft tag, for example v0.2.0
+        required: true
+        type: string
+      commit:
+        description: Exact 40-character commit SHA targeted by that draft
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # GitHub's bash wrapper fails on the first unsuccessful command on all four runners.
+    shell: bash
+
+# Serialize release creation, retries, and publication. Do not cancel a publisher midway.
+concurrency:
+  group: official-release-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.repository == 'cubetek/cubeCroom' && github.ref == 'refs/heads/main' && vars.RELEASE_AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    environment: release-automation
+    outputs:
+      ready: ${{ steps.resolve.outcome == 'success' }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      version: ${{ steps.resolve.outputs.version }}
+      commit: ${{ steps.resolve.outputs.commit }}
+      channel: ${{ steps.resolve.outputs.channel }}
+      created_at: ${{ steps.resolve.outputs.created_at }}
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+      - name: Keep an unfinished draft from advancing release history
+        if: github.event_name == 'push'
+        id: draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/pending-draft.mjs
+      # App-created Release PRs trigger normal CI. GITHUB_TOKEN-created PRs do not.
+      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        if: github.event_name == 'push' && steps.draft.outputs.pending != 'true'
+        id: app-token
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+      - uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
+        if: github.event_name == 'push' && steps.draft.outputs.pending != 'true'
+        id: please
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
+          target-branch: main
+      - name: Resolve and authorize the exact draft commit
+        if: github.event_name == 'workflow_dispatch' || steps.please.outputs.release_created == 'true'
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag || steps.please.outputs.tag_name }}
+          RELEASE_COMMIT: ${{ inputs.commit || steps.please.outputs.sha }}
+        run: node scripts/release/resolve.mjs
+
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.ready == 'true'
+    name: Package ${{ matrix.id }}
+    runs-on: ${{ matrix.runner }}
+    environment: release-signing
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    env:
+      TURBO_TELEMETRY_DISABLED: '1'
+      NEXT_TELEMETRY_DISABLED: '1'
+      RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+      RELEASE_COMMIT: ${{ needs.prepare.outputs.commit }}
+      RELEASE_TARGET: ${{ matrix.id }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Source validation on the target runner
+        run: pnpm verify
+      - name: Select isolated output directory
+        id: paths
+        run: node -e "require('node:fs').appendFileSync(process.env.GITHUB_OUTPUT, 'out=' + require('node:path').resolve('dist/release-target') + '\n')"
+      - name: Build, sign, and notarize without publishing
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: ''
+          CUBECROOM_OUT_DIR: ${{ steps.paths.outputs.out }}
+          CUBECROOM_REQUIRE_SIGNING: '1'
+          CSC_LINK: ${{ matrix.platform == 'win32' && secrets.WINDOWS_CSC_LINK || matrix.platform == 'darwin' && secrets.MAC_CSC_LINK || '' }}
+          CSC_KEY_PASSWORD: ${{ matrix.platform == 'win32' && secrets.WINDOWS_CSC_KEY_PASSWORD || matrix.platform == 'darwin' && secrets.MAC_CSC_KEY_PASSWORD || '' }}
+          CUBECROOM_WINDOWS_PUBLISHER_NAME: ${{ vars.WINDOWS_PUBLISHER_NAME }}
+          APPLE_ID: ${{ matrix.platform == 'darwin' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ matrix.platform == 'darwin' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ matrix.platform == 'darwin' && vars.APPLE_TEAM_ID || '' }}
+        run: |
+          node scripts/release/preflight.mjs
+          node scripts/bundle-desktop.mjs --stage
+          node scripts/package-app.mjs make
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            xvfb-run -a node scripts/test-packaged.mjs
+          else
+            node scripts/test-packaged.mjs
+          fi
+          node scripts/release/verify-target.mjs
+      - name: Retain packaged smoke diagnostics after failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: packaged-smoke-${{ matrix.id }}
+          path: |
+            .cubeflow/reports/packaged-smoke/*/runtime.log
+            .cubeflow/reports/packaged-smoke/*/settings-updates.png
+            .cubeflow/reports/packaged-smoke/*/result.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ matrix.id }}
+          path: |
+            dist/release-target/*.exe
+            dist/release-target/*.dmg
+            dist/release-target/*.zip
+            dist/release-target/*.AppImage
+            dist/release-target/*.yml
+            dist/release-target/*.blockmap
+            dist/release-target/packaging-checks-*.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+          overwrite: true
+
+  publish:
+    needs: [prepare, build]
+    if: needs.prepare.outputs.ready == 'true'
+    runs-on: ubuntu-24.04
+    environment: release-publish
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+      RELEASE_COMMIT: ${{ needs.prepare.outputs.commit }}
+      RELEASE_CREATED_AT: ${{ needs.prepare.outputs.created_at }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Build the shared manifest verifier
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --filter @cubecroom/core... build
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          path: dist/release-input
+      - name: Assemble all targets and sign the release manifest
+        env:
+          RELEASE_SIGNING_KEY_ID: ${{ vars.RELEASE_SIGNING_KEY_ID }}
+          RELEASE_SIGNING_PRIVATE_KEY: ${{ secrets.RELEASE_SIGNING_PRIVATE_KEY }}
+        run: node scripts/release/assemble.mjs
+      - name: Publish the reviewed release and verify anonymous downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PUBLIC_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLIC_PUBLISH_ENABLED }}
+        run: node scripts/release/publish.mjs

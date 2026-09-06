@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788491455854,
+      "tag": "0000_mushy_boomerang",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1788531853457,
+      "tag": "0001_dazzling_colleen_wing",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788676799698,
+      "tag": "0002_noisy_chat",
+      "breakpoints": true
+    }
+  ]
+}

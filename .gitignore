@@ -1,0 +1,37 @@
+# Local project memory, diagnostic reports and runtime data are not public source.
+.cubeflow/
+
+# build
+node_modules/
+dist/
+dist-app/
+dist-electron/
+*.tsbuildinfo
+.vite/
+
+# local
+.env
+.env.local
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.key
+*.pem
+out-next/
+.next/
+.next-dev/
+.turbo/
+apps/teacher-ui/public/legal/
+apps/student-web/public/legal/
+
+# مخرجات التغليف — تُبنى ولا تُحفظ.
+apps/desktop/out*/
+apps/desktop/pack*/
+apps/desktop/screenshots/
+apps/desktop/.wdio-data/
+apps/desktop/.wdio-userdata/
+apps/desktop/[0-9]*
+
+# packaged build output (root-level)
+/pack[0-9]*/

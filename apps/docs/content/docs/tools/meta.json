@@ -1,0 +1,13 @@
+{
+  "title": "أدوات ومساعدة",
+  "description": "النسخ الاحتياطي، والتشخيص، والإعدادات.",
+  "pages": [
+    "diagnostics",
+    "backup",
+    "t21-export",
+    "t22-port",
+    "nav-files",
+    "nav-ai",
+    "nav-settings"
+  ]
+}

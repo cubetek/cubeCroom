@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "inputs": {
+    "packages/ui/assets/brand/mark-source.png": "5481ea63860f467ddfe382e84656a8ed5c3c1ecf2683c4d43594c339f770564f",
+    "packages/ui/assets/brand/logo-source.png": "e4451d787543886d7a4220a3f46a7a39ba0805c9963f7950ef2991cf021b7f56",
+    "scripts/brand.mjs": "f3f7d65f8bf7218d5d1ce23923863c9e8835ede1401e76929b9010e8da85f255"
+  },
+  "outputs": {
+    "apps/desktop/build/icon.png": "afe9dffd1d8e738814d1f03548f2d43b85d2db41d0829e4a660261465d99769b",
+    "apps/desktop/build/icon.ico": "a4b1e6af97714d3a6f365c7ee10ac6ebec18226d9fcae3b3b0b3351f66b4142f",
+    "apps/desktop/build/icon.icns": "c0cda0f355cedfc15d9a5515388c93b8969d13cdde55b3b1371e58d385914c1f",
+    "apps/teacher-ui/public/brand/mark.png": "7ab63894a696ca54f5c18ca1e07aa98fe32698baaa94427f9f6c2048f37b0cb6",
+    "apps/teacher-ui/public/brand/logo.png": "a20dd6211c670d9790d168cc417de8e246f1f20e6ebc0507cbf633291e435174",
+    "apps/teacher-ui/app/icon.png": "7df60e04aef7e257ea3859539de3ee8a799a04991bf46cb01bcf894b399a5fd2",
+    "apps/teacher-ui/app/apple-icon.png": "7fe25ec3a5170ce62dffe85f7acff327a0bbae5ccfee6c5559d0358d891ca184",
+    "apps/teacher-ui/app/favicon.ico": "a4b1e6af97714d3a6f365c7ee10ac6ebec18226d9fcae3b3b0b3351f66b4142f",
+    "apps/student-web/public/brand/mark.png": "7ab63894a696ca54f5c18ca1e07aa98fe32698baaa94427f9f6c2048f37b0cb6",
+    "apps/student-web/public/brand/logo.png": "a20dd6211c670d9790d168cc417de8e246f1f20e6ebc0507cbf633291e435174",
+    "apps/student-web/app/icon.png": "7df60e04aef7e257ea3859539de3ee8a799a04991bf46cb01bcf894b399a5fd2",
+    "apps/student-web/app/apple-icon.png": "7fe25ec3a5170ce62dffe85f7acff327a0bbae5ccfee6c5559d0358d891ca184",
+    "apps/student-web/app/favicon.ico": "a4b1e6af97714d3a6f365c7ee10ac6ebec18226d9fcae3b3b0b3351f66b4142f",
+    "apps/docs/public/brand/mark.png": "7ab63894a696ca54f5c18ca1e07aa98fe32698baaa94427f9f6c2048f37b0cb6",
+    "apps/docs/public/brand/logo.png": "a20dd6211c670d9790d168cc417de8e246f1f20e6ebc0507cbf633291e435174",
+    "apps/docs/app/icon.png": "7df60e04aef7e257ea3859539de3ee8a799a04991bf46cb01bcf894b399a5fd2",
+    "apps/docs/app/apple-icon.png": "7fe25ec3a5170ce62dffe85f7acff327a0bbae5ccfee6c5559d0358d891ca184",
+    "apps/docs/app/favicon.ico": "a4b1e6af97714d3a6f365c7ee10ac6ebec18226d9fcae3b3b0b3351f66b4142f"
+  }
+}

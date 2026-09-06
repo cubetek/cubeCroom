@@ -1,0 +1,53 @@
+{
+  "name": "cubecroom",
+  "version": "0.1.0",
+  "private": true,
+  "description": "منصة صفّية محلية بالكامل: تطبيق سطح مكتب للمعلم، وبوابة ويب للطلاب على الشبكة المحلية.",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @cubecroom/desktop dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint .",
+    "smoke": "node scripts/smoke.mjs",
+    "rebuild:electron": "node scripts/rebuild-native.mjs electron",
+    "rebuild:node": "node scripts/rebuild-native.mjs node",
+    "verify": "pnpm typecheck && pnpm lint && pnpm build && pnpm test && pnpm test:updates && pnpm test:release && pnpm smoke",
+    "test": "turbo run test",
+    "test:providers": "node scripts/test-providers.mjs",
+    "test:lesson-editor": "node scripts/test-lesson-editor.mjs",
+    "test:ai-education": "node scripts/test-ai-education.mjs",
+    "load": "node scripts/load.mjs",
+    "package": "pnpm build && node scripts/bundle-desktop.mjs --stage && node scripts/package-app.mjs package",
+    "make": "pnpm build && node scripts/bundle-desktop.mjs --stage && node scripts/package-app.mjs make",
+    "test:release": "node --test scripts/release/test/*.test.mjs",
+    "test:updates": "node --test scripts/test-updates.mjs scripts/test-update-flush.mjs",
+    "test:packaged": "node scripts/test-packaged.mjs",
+    "e2e": "node scripts/e2e.mjs",
+    "guide": "node scripts/guide.mjs",
+    "brand": "node scripts/brand.mjs",
+    "guide:dev": "pnpm --filter @cubecroom/docs dev"
+  },
+  "devDependencies": {
+    "@cubecroom/core": "workspace:*",
+    "@cubecroom/db": "workspace:*",
+    "@eslint/js": "^9.18.0",
+    "electron-builder": "26.15.3",
+    "eslint": "^9.18.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "sharp": "0.35.4",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0",
+    "yaml": "2.9.0"
+  },
+  "license": "AGPL-3.0-only",
+  "author": {
+    "name": "CUBETEK ARTIFICIAL INTELLIGENCE - SOLE PROPRIETORSHIP L.L.C.",
+    "email": "info@cubetek.dev"
+  }
+}

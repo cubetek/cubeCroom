@@ -1,0 +1,33 @@
+{
+  "name": "@cubecroom/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "منطق النطاق المستقل عن Electron — مخزن الملفات المحلي وتصنيفها.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@cubecroom/db": "workspace:*",
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@cubecroom/contracts": "workspace:*",
+    "multicast-dns": "^7.2.5"
+  },
+  "license": "AGPL-3.0-only"
+}

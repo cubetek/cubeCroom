@@ -1,0 +1,411 @@
+/*
+ * `source(none)` — المسح الآليّ مطفأ، والمصادر تُسجَّل صراحةً.
+ *
+ * **وهذا ما يمنع خادم التطوير من الدوران بلا توقف.**
+ *
+ * المسح الآليّ يمشي شجرة المشروع ويستثني ما في `.gitignore`. وفي مستودع
+ * كهذا لا يصمد ذلك: كل واجهة كانت تضبط `base` على مجلدها في
+ * `postcss.config.mjs` ليدخل شيفرتها المسح، وTailwind عندها يقرأ
+ * `.gitignore` من `base` فما دونه — و`.gitignore` الوحيد عند جذر المستودع.
+ * فتضيع قاعدتاه `out-next/` و`.next/`، ويدخل **مخرَج البناء** في المسح.
+ *
+ * وهنا تُغلق الحلقة: HMR يكتب `out-next/static/webpack/*.hot-update.*` عند كل
+ * تصريف، فيراها المسح تغييراً في المصدر، فيُبطل الأنماط، فيُعاد التصريف،
+ * فيُكتب مزيد. قِيست: **١١٩ إعادة تصريف في ست ثوانٍ من السكون**، ولا سطر في
+ * السجلّ يقول لماذا — «✓ Compiled» بلا سبب، إلى ما لا نهاية.
+ *
+ * ونقلُ `base` إلى جذر المستودع لا يشفيه (قِيس: ٥٦ دورة). فيُقطع السبب من
+ * أصله: لا مسح آليّ أصلاً، بل قائمةٌ مكتوبة — كل واجهة تسجّل مجلداتها في
+ * ورقتها، وهذه الورقة تسجّل مجلدها. وما لا يُذكر لا يُمسح، فمخرَج البناء
+ * خارج الحساب بالتعريف لا بالاستثناء.
+ */
+@import 'tailwindcss' source(none);
+
+/*
+ * حركات الطبقات العائمة — `animate-in` و`fade-in` و`slide-in-from-*`.
+ *
+ * **وليست زينة.** `Presence` في Radix ينتظر حدث `animationend` قبل أن يُزيل
+ * المكوّن من الشجرة. فبلا إطارات مفاتيح حقيقية لا يتأخّر الإزالةَ شيء —
+ * والانتقال (`transition`) وحده لا يكفي لأنه لا يُطلق ذلك الحدث أصلاً.
+ *
+ * وأثر غيابها صامت: من ينسخ نافذةً من مصدر shadcn يجدها تعمل بلا حركة، ولا
+ * شيء يقول له إن الأصناف التي كتبها لم تُبنَ.
+ */
+@import 'tw-animate-css';
+
+/* Shared components are outside each app's automatic source scan. */
+@source '../';
+
+/**
+ * تهيئة Tailwind للمنتج — **وهي كلّ الأنماط المكتوبة بيد في المستودع**.
+ *
+ * لا ملفات `*.module.css`. القيم المحسوبة وقت التشغيل تُمرّر كمتغيرات CSS
+ * إلى أدوات Tailwind، كما في شريط التقدم. كل تنسيق في
+ * الواجهتين يُكتب أدواتِ Tailwind ومكوّناتِ shadcn، ومصدرها جميعاً ما في هذا
+ * الملفّ.
+ *
+ * و`@theme` ليست «CSS مكتوبة بيد»: هي **إعداد الإطار نفسه** — بديل
+ * `tailwind.config.js` في الإصدار الرابع. فما هنا تعريفُ سلّم، لا تنسيقُ شاشة.
+ *
+ * ═══ المصدر ═══
+ *
+ * كل قيمة أدناه منقولة عن `docs/design/05-foundations.md` المعتمد، وكانت
+ * تعيش في `packages/ui/src/tokens.css` قبل الهجرة. ونِسَبُ التباين المكتوبة
+ * بجانب الألوان **محسوبة بمعادلة WCAG 2.1 لا مقدَّرة** — فهي جزء من القيمة
+ * لا تعليقٌ عليها.
+ *
+ * ولا يُعدَّل هذا الملفّ ابتداءً: أيّ تغيير يبدأ من `05-foundations.md`.
+ *
+ * ═══ وshadcn يستعير ولا يُملي ═══
+ *
+ * مكوّنات shadcn تطلب `--background` و`--primary` وأخواتها، وتأتي بلوحة
+ * `neutral` افتراضية. ولو تُركت لغطّت لوحةً مقيسةً بأخرى لم يقس أحد تباينها
+ * في هذا المنتج. فالأسماء أدناه معرَّفةٌ **بقيم CubeCroom**: تعمل المكوّنات
+ * كما هي، وتخرج بألوان المنتج ونِسَبه.
+ */
+
+@theme {
+  /* ══ الخطوط ══
+   * مضمَّنة محلياً مع الحزمة لا من CDN — قرار A4: التطبيق يعمل بلا إنترنت.
+   *
+   * **والأسماء تأتي من `next/font` لا تُكتب هنا.** كل تطبيق يستدعيه في
+   * `app/fonts.ts` فيولّد له اسم عائلةٍ مُعمّى ويضعه في هذه الرموز على
+   * `<html>`. واسمٌ مكتوب بيد («IBM Plex Sans Arabic») يطابق الخطّ المثبَّت
+   * على نظام القارئ إن وُجد، ولا يطابق شيئاً إن لم يوجد — فيبدو أن الخطّ
+   * يعمل عند من ثبّته وحده. وهذا ما كان.
+   *
+   * والاحتياطيّ يبقى بعدهما: تطبيقٌ لم يُوصل خطّه بعد يُقرأ بـ`system-ui`
+   * ولا يخرج بلا خطّ.
+   *
+   * ═══ عائلتان للنصّ ═══
+   *
+   * `arabic` أولاً ثمّ `latin`: الملفّان مجموعتا محارف منفصلتان من التصميم
+   * نفسه، والمتصفّح يهبط بينهما **لكل محرف** — فالعربية من الأولى، والقيم
+   * التقنية والأرقام اللاتينية من الثانية، بلا قفزةٍ بصرية بينهما.
+   */
+  --font-sans: var(--font-plex-arabic), var(--font-plex-latin), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* ══ المحايدة ══ */
+  --color-canvas: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f5f9;
+  --color-hairline: #e2e8f0; /* فواصل زخرفية فقط */
+  --color-border-input: #7c8ca0; /* 3.43:1 — يحقق 3:1 لحدود عناصر التفاعل */
+  --color-text: #0f172a; /* 17.85:1 */
+  --color-text-2: #334155; /* 10.35:1 */
+  --color-text-muted: #64748b; /* 4.76:1 على surface · 4.55:1 على canvas */
+
+  /* ══ الدور الأساسي ══ */
+  --color-primary: #0f766e; /* أبيض فوقه 5.47:1 */
+  --color-primary-hover: #115e59; /* أبيض فوقه 7.58:1 */
+  --color-primary-soft: #f0fdfa;
+  --color-primary-on-soft: #115e59; /* 7.27:1 على primary-soft */
+
+  /* ══ أسطح الحالة ══
+   * كلٌّ ثلاثة: سطح وحدّ ونصّ. ولا تُختصر إلى لون واحد — القاعدة أن الحالة
+   * تُعرض بأيقونة ونصّ معاً، فلا يُحمَّل اللونُ وحده المعنى.
+   */
+  --color-ok-bg: #ecfdf5;
+  --color-ok-border: #a7f3d0;
+  --color-ok-text: #166534; /* 6.77:1 */
+  --color-pending-bg: #fffbeb;
+  --color-pending-border: #fde68a;
+  --color-pending-text: #92400e; /* 6.84:1 */
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fecaca;
+  --color-error-text: #991b1b; /* 7.60:1 */
+  --color-draft-bg: #f1f5f9;
+  --color-draft-border: #cbd5e1;
+  --color-draft-text: #475569; /* 6.92:1 */
+  --color-ai-bg: #f5f3ff;
+  --color-ai-border: #ddd6fe;
+  --color-ai-text: #5b21b6; /* 8.19:1 */
+
+  /* ══ الحالة الصلبة ══ */
+  --color-success: #15803d; /* 5.02:1 */
+  --color-warning: #b45309; /* 5.02:1 */
+  --color-danger: #b91c1c; /* 6.47:1 — الإجراء المدمّر وحده */
+  --color-ai: #6d28d9; /* 7.10:1 */
+
+  /* ══ أسماء shadcn — بقيم ما فوقها ══ */
+  --color-background: var(--color-canvas);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text);
+
+  /*
+   * `#ffffff` صراحةً: هو **الطرف المقيس** في نسبة 5.47:1 أعلاه، لا لونٌ
+   * يُختار الآن. وتغييره يُبطل القياس.
+   */
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-surface-2);
+  --color-secondary-foreground: var(--color-text-2);
+  --color-muted: var(--color-surface-2);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-accent: var(--color-primary-soft);
+  --color-accent-foreground: var(--color-primary-on-soft);
+  --color-destructive: var(--color-danger);
+  --color-destructive-foreground: #ffffff;
+
+  /*
+   * `border` فاصلٌ زخرفيّ و`input` حدُّ حقل — والتمييز مقصود: الثاني وحده
+   * يحقّق 3:1 المطلوبة لعناصر التفاعل. وخلطهما يُسقط حدود الحقول تحت الحدّ.
+   */
+  --color-border: var(--color-hairline);
+  --color-input: var(--color-border-input);
+  --color-ring: var(--color-primary);
+
+  /* ══ المسافات ══
+   * `--spacing` وحدةُ السلّم لا مقاس: Tailwind يضربها في الرقم، فـ`p-4` تعطي
+   * 16px و`gap-6` تعطي 24px — وهو سلّم الأربعة المعتمد نفسه.
+   */
+  --spacing: 4px;
+
+  /* ══ الزوايا ══ لكلٍّ معناها: شارة · زرّ · بطاقة · لوحة QR في T09. */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* ══ الظلال ══ */
+  --shadow-1: 0 1px 2px rgb(15 23 42 / 6%); /* card ساكن */
+  --shadow-2: 0 4px 12px rgb(15 23 42 / 8%); /* card مرفوع · dropdown */
+  --shadow-3: 0 12px 32px rgb(15 23 42 / 14%); /* drawer · dialog · toast */
+
+  /* ══ المقاسات ══ */
+  --height-control: 40px;
+  --height-control-sm: 32px; /* داخل صفوف الجداول */
+  --width-sidebar: 256px;
+  --width-sidebar-collapsed: 64px;
+  --width-content-max: 1120px;
+
+  /* ══ الحركة ══ */
+  --ease-motion: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ══ مقياسا النصّ ══
+   * **اثنان لا واحد، وبأسماء متمايزة عمداً.** جذر المعلّم 14px وجذر الطالب
+   * 16px، والمقياسان مستقلّان في المصدر. واسمٌ واحد يعني مقاسين حسب التطبيق
+   * يجعل الصنف الواحد يفعل شيئين — فلا يعرف قارئ الشيفرة أيّهما.
+   */
+  --text-t-display: 28px;
+  --text-t-display--line-height: 1.35;
+  --text-t-display--font-weight: 700;
+  --text-t-h1: 22px;
+  --text-t-h1--line-height: 1.4;
+  --text-t-h1--font-weight: 700;
+  --text-t-h2: 18px;
+  --text-t-h2--line-height: 1.45;
+  --text-t-h2--font-weight: 600;
+  --text-t-h3: 16px;
+  --text-t-h3--line-height: 1.5;
+  --text-t-h3--font-weight: 600;
+  --text-t-body: 14px;
+  --text-t-body--line-height: 1.7;
+  --text-t-label: 13px;
+  --text-t-label--line-height: 1.5;
+  --text-t-label--font-weight: 500;
+  --text-t-caption: 12px;
+  --text-t-caption--line-height: 1.55;
+  --text-t-badge: 12px;
+  --text-t-badge--line-height: 1.3;
+  --text-t-badge--font-weight: 600;
+  --text-t-mono: 13px;
+  --text-t-mono--line-height: 1.6;
+
+  --text-s-h1: 24px;
+  --text-s-h1--line-height: 1.35;
+  --text-s-h1--font-weight: 700;
+  --text-s-h2: 20px;
+  --text-s-h2--line-height: 1.4;
+  --text-s-h2--font-weight: 600;
+  --text-s-body: 16px;
+  --text-s-body--line-height: 1.75;
+  --text-s-label: 15px;
+  --text-s-label--line-height: 1.5;
+  --text-s-label--font-weight: 500;
+  --text-s-caption: 13px;
+  --text-s-caption--line-height: 1.6;
+  --text-s-reading: 18px; /* نصّ الدرس في S06 */
+  --text-s-reading--line-height: 1.85;
+  --text-s-reading-h: 21px;
+  --text-s-reading-h--line-height: 1.45;
+
+  /* ══ نقاط التوقّف ══
+   * **نقطتان مقيستان، لا سلّم Tailwind العامّ.**
+   *
+   * `tablet` عند 700px: اللوحيّ الرأسيّ — المدى الذي لم يكن يغطّيه شيء.
+   * `wide` عند 900px: الحدّ الذي تتوسّع عنده بوابة الطالب في القرار D15.
+   *
+   * ونقاط Tailwind الافتراضية (sm/md/lg) تبقى متاحة لمن يحتاجها، لكنّ هاتين
+   * هما المعتمدتان في المصدر.
+   */
+  --breakpoint-tablet: 700px;
+  --breakpoint-wide: 900px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+ * واجهة الطالب — مساحات لمس أكبر
+ *
+ * القاعدة في المصدر: عناصر تفاعل الطالب 44px لا 40px. ويُبدَّل الرمز نفسه
+ * فتتبعه كلّ أداة مشتقّة منه (`h-control`) بلا أن تُكتب قاعدة ثانية.
+ * ══════════════════════════════════════════════════════════════════ */
+@layer base {
+  :root[data-app='student'] {
+    --height-control: 44px;
+  }
+
+  /*
+   * الحدّ الافتراضي في Tailwind v4 لونه `currentColor`. فكلّ `border` بلا
+   * لونٍ صريح يخرج بلون النصّ — خطٌّ أسود مكان فاصلٍ رمادي. يُردّ مرة واحدة.
+   */
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-border);
+  }
+
+  html {
+    /*
+     * الأرقام عربية لما يراه المستخدم — القرار D6. والقيم التقنية (الروابط ·
+     * IP/Port · أسماء النماذج) تُلفّ في الأداة `ltr-island` أدناه.
+     */
+    font-variant-numeric: tabular-nums;
+    /* التتبّع يفكّك اتصال الحروف العربية. */
+    letter-spacing: 0;
+  }
+
+  /*
+   * ارتفاعٌ كامل على الوثيقة — **وبلاه لا يملأ التطبيق نافذته**.
+   *
+   * قشرة المعلم تبني تخطيطها على `height: 100%`، والنسبة المئوية تُحلّ على
+   * ارتفاع الأب. و`html` و`body` بلا ارتفاع معلن، فيرتدّ الحساب إلى ارتفاع
+   * المحتوى: قِيس ٥٣٢px داخل نافذةٍ ارتفاعها ٩١٤px — أي أن التطبيق كان يشغل
+   * ٥٨٪ من نافذته، والباقي فراغٌ تحته.
+   *
+   * ولم يظهر ذلك قبل شريط الحالة: لا شيء كان مثبَّتاً في القاع ليُري أين
+   * ينتهي القاع. وهو عطلٌ سابق للإطار الجديد، كشفَه ولم يُحدثه.
+   */
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  /*
+   * حلقة التركيز — **إلزامية**: تنقّل لوحة المفاتيح كامل في واجهة المعلّم.
+   * وتُكتب هنا مرة واحدة لا على كل مكوّن: مكوّنٌ يُنسى يصير غير قابل للتنقّل.
+   */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/**
+ * جزيرة القيم التقنية — لاتينية، مونو، واتجاه معكوس داخل نصّ عربي.
+ *
+ * `@utility` لا `.class`: فتصير `ltr-island` أداةً من أدوات Tailwind، تُدمج
+ * وتُرجَّح مثل غيرها، ويحسم `cn()` تعارضها.
+ */
+@utility ltr-island {
+  direction: ltr;
+  text-align: left;
+  font-family: var(--font-mono);
+  unicode-bidi: isolate;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+ * الوضع الداكن — نقضٌ صريح للقرار A3
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * **A3 في `docs/design/06-decisions.md` يضع الوضع الداكن خارج MVP**، ويسجّل
+ * كلفة عكسه أعلى كلفة في الجدول: «طبقة توكنز ثانية ومراجعة ٦٧ لوحاً». وقد
+ * طُلب نقضُه صراحةً، فالنقض مسجَّل هناك لا مخفيّ هنا — وهذه هي الطبقة الثانية
+ * التي حذّر منها القرار.
+ *
+ * **والقيم مقيسة لا مقدَّرة**، كما في الطبقة الفاتحة: كل نسبة مكتوبة بجانب
+ * لونها محسوبة بمعادلة WCAG 2.1 على الطرف الذي تُعرض عليه فعلاً. فلوحةٌ
+ * داكنة «تبدو مريحة» ونصُّها عند ٣:١ تكسر ما بُني عليه المنتج كلّه.
+ *
+ * **ولماذا تُعاد التوكنز ولا تُكتب أصناف `dark:`:** أدوات Tailwind كلّها
+ * تقرأ `var(--color-*)`. فإعادةُ تعريف المتغيّر تحت محدِّد واحد تنقل الواجهة
+ * كلّها — مكوّنات shadcn وشيفرة الشاشات وما لم يُكتب بعد. أما `dark:` فتُكتب
+ * مرّة عند كل استعمال، وتُنسى مرّة عند كل استعمال جديد.
+ *
+ * و`hairline` وحده يبقى دون ٣:١ عمداً: هو فاصلٌ زخرفيّ لا حدُّ عنصر تفاعل
+ * (`border-input` هو ذاك، وهو ٤٫٩٧:١ هنا) — وهو التمييز نفسه المشروح أعلاه.
+ */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+[data-theme='dark'] {
+  /*
+   * يُخبر المتصفّح أن السطح داكن، فتتبعه عناصرُ لا نملك أنماطها: أشرطة
+   * التمرير، ومربّعات الاختيار الأصلية، وحقول التاريخ. وبلاه تبقى بيضاء
+   * فوق سطحٍ داكن.
+   */
+  color-scheme: dark;
+
+  /* ══ المحايدة ══ */
+  --color-canvas: #0b1220;
+  --color-surface: #111c2e;
+  --color-surface-2: #1b2942;
+  --color-hairline: #26344b; /* زخرفيّ — كما في الطبقة الفاتحة */
+  --color-border-input: #7c8ca0; /* 4.97:1 على surface — فوق ٣:١ المطلوبة */
+  --color-text: #e8eef7; /* 14.64:1 على surface · 16.05:1 على canvas */
+  --color-text-2: #b6c4d9; /* 9.67:1 */
+  --color-text-muted: #8b9bb4; /* 6.06:1 على surface · 6.64:1 على canvas */
+
+  /* ══ الدور الأساسي ══
+   * `#0f766e` الفاتح لا يصلح فوق سطحٍ داكن (٢٫٢:١)، فيُرفع إلى درجة أفتح.
+   */
+  --color-primary: #2dd4bf; /* 9.18:1 على surface */
+  --color-primary-hover: #5eead4;
+  --color-primary-soft: #0c2f2c;
+  --color-primary-on-soft: #5eead4; /* 9.73:1 على primary-soft */
+
+  /* ══ أسطح الحالة ══ سطحٌ وحدّ ونصّ، والنصّ وحده يُقاس. */
+  --color-ok-bg: #082b1d;
+  --color-ok-border: #14532d;
+  --color-ok-text: #6ee7a8; /* 9.94:1 */
+  --color-pending-bg: #2b1f06;
+  --color-pending-border: #5c4310;
+  --color-pending-text: #fcd34d; /* 11.19:1 */
+  --color-error-bg: #2d1010;
+  --color-error-border: #6b2020;
+  --color-error-text: #fca5a5; /* 9.27:1 */
+  --color-draft-bg: #1b2942;
+  --color-draft-border: #33425c;
+  --color-draft-text: #b6c4d9; /* 8.24:1 */
+  --color-ai-bg: #1d1638;
+  --color-ai-border: #3b2f6b;
+  --color-ai-text: #c4b5fd; /* 9.29:1 */
+
+  /* ══ الحالة الصلبة ══ مقيسة على canvas. */
+  --color-success: #4ade80; /* 10.74:1 */
+  --color-warning: #fbbf24; /* 11.22:1 */
+  --color-danger: #f87171; /* 6.77:1 */
+  --color-ai: #a78bfa; /* 6.88:1 */
+
+  /*
+   * الأبيض كان **الطرف المقيس** في ٥٫٤٧:١ الفاتحة. وهنا صار `primary` فاتحاً،
+   * فالطرف المقابل يجب أن يكون داكناً وإلّا اختفى النصّ فوق الزرّ.
+   */
+  --color-primary-foreground: #04211f; /* 9.08:1 فوق primary */
+  --color-destructive-foreground: #2d1010;
+
+  /*
+   * الظلال على سطحٍ داكن لا تُرى — الارتفاع يُقرأ من الحدّ لا من الظلّ.
+   * فتُعمَّق لتبقى ذات أثر تحت البطاقات والقوائم بدل أن تختفي بلا بديل.
+   */
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-2: 0 4px 12px rgb(0 0 0 / 50%);
+  --shadow-3: 0 12px 32px rgb(0 0 0 / 60%);
+}

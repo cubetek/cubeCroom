@@ -1,0 +1,13 @@
+{
+  "title": "الفصول",
+  "description": "إنشاء فصلك وفتحه.",
+  "pages": [
+    "classes-empty",
+    "class-dialog",
+    "classes-list",
+    "class-view",
+    "teacher-classes",
+    "class-overview",
+    "class-students"
+  ]
+}

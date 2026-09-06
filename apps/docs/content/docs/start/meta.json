@@ -1,0 +1,13 @@
+{
+  "title": "البداية",
+  "description": "أول مرة تفتح فيها البرنامج.",
+  "pages": [
+    "getting-started",
+    "welcome",
+    "profile",
+    "profile-filled",
+    "data-location",
+    "home",
+    "workspace"
+  ]
+}

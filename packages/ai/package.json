@@ -1,0 +1,35 @@
+{
+  "name": "@cubecroom/ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "سجلّ مزوّدي الذكاء الاصطناعي — واجهة واحدة للميزات مهما تبدّل المزوّد.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.49",
+    "@ai-sdk/google": "^4.0.63",
+    "@ai-sdk/openai": "^4.0.57",
+    "@cubecroom/contracts": "workspace:*",
+    "ai": "^7.0.91"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  },
+  "license": "AGPL-3.0-only"
+}

@@ -1,0 +1,80 @@
+# نشر دليل CubeCroom على DigitalOcean
+
+ينشر `app.yaml` موقعاً ثابتاً واحداً باسم `cubecroom-docs` من فرع `main` في
+`cubetek/cubeCroom`. يُبنى Next.js وFumadocs مرة واحدة ثم تُقدّم محتويات
+`apps/docs/out` عبر CDN. لا توجد خدمة Node أو قاعدة بيانات أو أمر تشغيل للموقع.
+
+## البناء والتحقق
+
+```sh
+docker build --file .do/docs.Dockerfile --tag cubecroom-docs .
+```
+
+يقرأ Docker رقم pnpm من `packageManager` في ملف الجذر، ويتحقق أن إصدار Node
+الرئيسي يطابق `.nvmrc`. تثبّت مرحلة البناء الدليل و`ui` و`contracts` فقط، مع
+`--frozen-lockfile`. لا تنسخ manifest الجذر إلى مساحة العمل إلا بعد التثبيت؛
+pnpm يثبت تبعيات الجذر حتى مع `--filter`، والجذر يحتوي أدوات تغليف Electron.
+يُستخدم linker معزول داخل صورة البناء لأن hoisted يثبت حزم lockfile غير المرتبطة
+بالدليل أيضاً. تُرفع حزم `@types` فقط ليجد `contracts` أنواع المنصة المستخدمة
+في بنائه، وتبقى إعدادات التطوير المحلية كما هي.
+تعطّل أوامر البناء إعادة التثبيت التلقائية في pnpm بعد استعادة manifest الجذر؛
+التبعيات المطلوبة ثُبّتت مسبقاً من lockfile في المرحلة السابقة.
+
+بعد التثبيت يُشغّل مولّد Fumadocs صراحةً، ثم تبنى تبعيات الدليل بالترتيب.
+أمر البناء المعتاد للدليل يتحقق من أصول الهوية ويولّد الصفحات من مصادرها المشتركة.
+تحتفظ `.dockerignore` بأيقونات سطح المكتب وأصول جميع التطبيقات التي يحتاجها هذا الفحص.
+تحتوي الصورة النهائية على الملفات الثابتة فقط، في `/apps/docs/out`.
+
+في مساحة تطوير مثبّتة التبعيات، يمكن أيضاً التحقق من المخرجات محلياً:
+
+```sh
+pnpm --filter @cubecroom/docs... --recursive run build
+node scripts/deploy-docs-check.mjs
+```
+
+`trailingSlash: true` يصدر كل صفحة كـ `path/index.html` حتى تعمل الروابط المباشرة.
+`/api/search` ملف JSON ثابت من Fumadocs، وليس endpoint يحتاج خادماً.
+إعداد `error_document: 404.html` يحافظ على استجابة 404 للمسارات غير الموجودة؛
+لا تضف `catchall_document: index.html`. الصور تُصدّر مباشرة، والخط الأساسي خط
+النظام؛ لا يحتاج عرض الموقع إلى خدمة تحسين صور أو خدمة خطوط خارجية.
+
+## النشر
+
+يجب أن تكون الملفات موجودة على فرع `main` قبل إنشاء التطبيق. يلزم ربط حساب
+GitHub في App Platform ومنح تطبيق DigitalOcean صلاحية الوصول إلى
+`cubetek/cubeCroom`؛ مصادقة `doctl` وحدها لا تمنح الوصول إلى مستودعات GitHub.
+تتطلب DigitalOcean صلاحية Owner أو Maintainer على المستودع.
+
+```sh
+doctl apps spec validate .do/app.yaml
+doctl apps create --spec .do/app.yaml
+```
+
+للتحديث، استخدم معرّف تطبيق **cubecroom-docs** الذي أعاده الإنشاء:
+
+```sh
+doctl apps update YOUR_CUBECROOM_DOCS_APP_ID --spec .do/app.yaml
+node scripts/deploy-docs-check.mjs --url https://YOUR-APP.ondigitalocean.app
+```
+
+يضبط الملف النشر التلقائي عند push إلى `main`. لا يحتوي على أسرار أو معرّفات
+حساب أو نطاق مخصص. الموقع الثابت يُقدّم عبر CDN عالمي، لذلك لا يحدد منطقة.
+يمكن متابعة البناء وحالة النشر من لوحة App Platform أو أوامر `doctl apps logs`
+و`doctl apps list-deployments`.
+
+## التكلفة والمراجع
+
+حسب التسعير الرسمي المتحقق منه في 2026-09-06: حتى **3 تطبيقات تتكون حصراً من
+مواقع ثابتة مجاناً**؛ يمكن لكل تطبيق أن يضم أكثر من موقع ثابت. كل تطبيق إضافي
+من هذا النوع **3 دولارات شهرياً**. لكل تطبيق **1 GiB** نقل خارجي شهرياً،
+والزيادة **0.02 دولار لكل GiB**. تُجمع حصص النقل واستخدامها على مستوى الفريق؛
+التكلفة الفعلية تعتمد على تطبيقات الفريق واستخدامه.
+
+- [App Spec الرسمي](https://docs.digitalocean.com/products/app-platform/reference/app-spec/)
+- [البناء باستخدام Dockerfile](https://docs.digitalocean.com/products/app-platform/reference/dockerfile/)
+- [نشر monorepo والوصول إلى GitHub وCDN](https://docs.digitalocean.com/products/app-platform/how-to/deploy-from-monorepo/)
+- [إدارة مصدر المستودع](https://docs.digitalocean.com/products/app-platform/how-to/manage-source-repo/)
+- [المواقع الثابتة وصفحة الخطأ](https://docs.digitalocean.com/products/app-platform/how-to/manage-static-sites/)
+- [التسعير الرسمي](https://docs.digitalocean.com/products/app-platform/details/pricing/)
+- [تصدير Next.js بمجلدات index.html](https://nextjs.org/docs/app/api-reference/config/next-config-js/trailingSlash)
+- [تفسير pnpm لتثبيت تبعيات الجذر](https://github.com/pnpm/pnpm/issues/7208)

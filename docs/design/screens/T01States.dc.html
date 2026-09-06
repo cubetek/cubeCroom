@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #0F766E; } a:hover { color: #115E59; }
+  </style>
+</helmet>
+<div dir="rtl" style="box-sizing: border-box; width: 1280px; height: 800px; overflow: hidden; padding: 32px; background: #F1F5F9; color: #0F172A; font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 1.7; display: flex; flex-direction: column; gap: 22px;">
+
+  <div style="display: flex; align-items: baseline; gap: 10px;">
+    <div style="font-size: 18px; font-weight: 700;">T01 · حالات التشغيل</div>
+    <div style="font-size: 13px; color: #64748B;">شاشة واحدة بثلاث حالات. المصدر: «لا تعرض logs. إذا طال التشغيل: نجهّز بياناتك…».</div>
+  </div>
+
+  <div style="flex-grow: 1; display: flex; gap: 22px; align-items: stretch; min-height: 0;">
+
+    <div style="flex-grow: 1; flex-basis: 0; display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 6px; background: #FFFFFF; border: 1px solid #CBD5E1; color: #475569; font-size: 12px; font-weight: 600;">١ · التشغيل العادي — أقل من ثانيتين</div>
+      <div style="flex-grow: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;">
+        <div style="width: 56px; height: 56px; border-radius: 17px; background: #0F766E;"></div>
+        <div style="font-size: 23px; font-weight: 700;">CubeCroom</div>
+        <div style="width: 130px; height: 4px; border-radius: 999px; background: #E2E8F0; overflow: hidden;">
+          <div style="width: 46%; height: 4px; border-radius: 999px; background: #0F766E;"></div>
+        </div>
+      </div>
+      <div style="font-size: 12px; color: #475569; line-height: 1.6;">بلا نص إطلاقاً. الشعار وشريط تقدّم غير محدَّد — لا نسبة ولا خطوات.</div>
+    </div>
+
+    <div style="flex-grow: 1; flex-basis: 0; display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 6px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 12px; font-weight: 600;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+        <span>٢ · تشغيل طويل — بعد ٥ ثوانٍ</span>
+      </div>
+      <div style="flex-grow: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center;">
+        <div style="width: 56px; height: 56px; border-radius: 17px; background: #0F766E;"></div>
+        <div style="font-size: 23px; font-weight: 700;">CubeCroom</div>
+        <div style="width: 130px; height: 4px; border-radius: 999px; background: #E2E8F0; overflow: hidden;">
+          <div style="width: 70%; height: 4px; border-radius: 999px; background: #0F766E;"></div>
+        </div>
+        <div style="font-size: 15px; color: #334155; margin-top: 4px;">نجهّز بياناتك…</div>
+      </div>
+      <div style="font-size: 12px; color: #475569; line-height: 1.6;">سطر واحد يظهر متأخّراً فلا يُقلق في التشغيل السريع. النص من المصدر حرفياً.</div>
+    </div>
+
+    <div style="flex-grow: 1; flex-basis: 0; display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 6px; background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; font-size: 12px; font-weight: 600;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="7.5" x2="12" y2="12.5"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>
+        <span>٣ · الاسترجاع — عند الحاجة فقط</span>
+      </div>
+      <div style="flex-grow: 1; background: #F8FAFC; border: 1px solid #FECACA; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 26px; text-align: center;">
+        <div style="width: 46px; height: 46px; border-radius: 14px; background: #0F766E;"></div>
+        <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="7.5" x2="12" y2="12.5"></line><line x1="12" y1="16" x2="12" y2="16"></line></svg>
+        </div>
+        <div style="font-size: 17px; font-weight: 700; line-height: 1.45;">تعذّر فتح بياناتك</div>
+        <div style="font-size: 13px; color: #334155; line-height: 1.6;">لم نجد مجلد بياناتك في مكانه. ربما نُقل أو أن قرصاً خارجياً غير موصول.</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px;">
+          <div style="height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #0F766E; color: #FFFFFF; font-size: 14px; font-weight: 600;">إعادة المحاولة</div>
+          <div style="height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #FFFFFF; border: 1px solid #7C8CA0; color: #0F172A; font-size: 13px; font-weight: 600;">تحديد مكان البيانات</div>
+          <div style="height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #FFFFFF; border: 1px solid #7C8CA0; color: #0F172A; font-size: 13px; font-weight: 600;">استعادة نسخة احتياطية</div>
+        </div>
+      </div>
+      <div style="font-size: 12px; color: #475569; line-height: 1.6;">المخارج الثلاثة نفسها في <span style="font-weight: 600;">T06 خطأ مانع</span> — نمط واحد لا نمطان.</div>
+    </div>
+
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 22px; padding: 12px 16px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 12px; color: #334155;">
+    <div><span style="font-weight: 600;">لا logs ولا أسماء ملفات ولا رموز أخطاء</span> في أيٍّ من الحالات الثلاث.</div>
+    <div style="width: 1px; height: 18px; background: #E2E8F0;"></div>
+    <div>شريط التقدّم <span style="font-weight: 600;">غير محدَّد</span> عمداً: عرض نسبة كاذبة أسوأ من عدم عرضها.</div>
+    <div style="width: 1px; height: 18px; background: #E2E8F0;"></div>
+    <div>الحالة ٣ هي المدخل الوحيد لمسار الاسترجاع — ولا تظهر في التشغيل السليم أبداً.</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

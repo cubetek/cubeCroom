@@ -1,0 +1,12 @@
+{
+  "title": "الذكاء الاصطناعي",
+  "description": "المزوّدون والنماذج، ومساعدة الطلاب، والخصوصية.",
+  "pages": [
+    "cloud-providers",
+    "local-providers",
+    "models-and-connections",
+    "student-ai",
+    "ai-privacy",
+    "ai-troubleshooting"
+  ]
+}
