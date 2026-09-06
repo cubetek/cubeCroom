@@ -1,0 +1,167 @@
+name: Deploy docs
+
+on:
+  workflow_run:
+    workflows: [CI]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+# Finish or explicitly cancel the remote deployment before starting another one.
+concurrency:
+  group: docs-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.repository == 'cubetek/cubeCroom' &&
+      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: docs-production
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      sha: ${{ steps.select.outputs.sha }}
+      url: ${{ steps.deploy.outputs.url }}
+      deployed: ${{ steps.deploy.outputs.deployed }}
+    steps:
+      # This job never checks out or executes repository files or installs dependencies.
+      - name: Select the current main commit with successful CI
+        id: select
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const { data: ref } = await github.rest.git.getRef({ ...context.repo, ref: 'heads/main' });
+            const sha = context.eventName === 'workflow_run' ? context.payload.workflow_run.head_sha : context.sha;
+            if (sha !== ref.object.sha) {
+              core.notice('Skipping an older commit: main has advanced.');
+              return;
+            }
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              ...context.repo, workflow_id: 'ci.yml', branch: 'main', head_sha: sha,
+              status: 'success', per_page: 100,
+            });
+            const verified = data.workflow_runs.find(run =>
+              run.head_sha === sha && run.head_branch === 'main' && run.conclusion === 'success' &&
+              run.head_repository?.full_name === `${context.repo.owner}/${context.repo.repo}` &&
+              ['push', 'workflow_dispatch'].includes(run.event));
+            if (!verified) throw new Error('The current main commit needs successful CI before deployment.');
+            core.setOutput('sha', sha);
+            core.setOutput('eligible', 'true');
+            core.info(`Verified CI run ${verified.id} for ${sha}.`);
+
+      - name: Deploy through DigitalOcean and wait for the verified source
+        id: deploy
+        if: steps.select.outputs.eligible == 'true'
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          DIGITALOCEAN_APP_ID: ${{ vars.DIGITALOCEAN_APP_ID }}
+          EXPECTED_SHA: ${{ steps.select.outputs.sha }}
+        with:
+          script: |
+            const appId = process.env.DIGITALOCEAN_APP_ID;
+            const token = process.env.DIGITALOCEAN_ACCESS_TOKEN;
+            const sha = process.env.EXPECTED_SHA;
+            if (!/^[0-9a-f-]{36}$/.test(appId ?? '') || !token || !/^[0-9a-f]{40}$/.test(sha ?? '')) {
+              throw new Error('Configure the docs-production app ID and access token.');
+            }
+            const request = async (path, method = 'GET', body) => {
+              const response = await fetch(`https://api.digitalocean.com/v2/apps/${appId}${path}`, {
+                method,
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: body === undefined ? undefined : JSON.stringify(body),
+                signal: AbortSignal.timeout(30_000),
+              });
+              if (!response.ok) throw new Error(`DigitalOcean ${method} ${path || '/'}: HTTP ${response.status}`);
+              return response.json();
+            };
+            const mainSha = async () => (await github.rest.git.getRef({ ...context.repo, ref: 'heads/main' })).data.object.sha;
+            const { app } = await request('');
+            const site = app.spec.static_sites?.[0];
+            if (app.spec.name !== 'cubecroom-docs' || app.spec.static_sites?.length !== 1 ||
+                site.name !== 'cubecroom-docs' || site.git?.repo_clone_url !== 'https://github.com/cubetek/cubeCroom.git' ||
+                site.git?.branch !== 'main' || ['services', 'workers', 'jobs', 'databases', 'functions'].some(key => app.spec[key]?.length)) {
+              throw new Error('The configured app must be the static cubecroom-docs site from this repository/main.');
+            }
+            if (await mainSha() !== sha) {
+              core.notice('Skipping deployment: main advanced after CI selection.');
+              return;
+            }
+            // This API pulls the latest branch; it does not accept a commit SHA.
+            // Check the actual source hash and cancel a changed/stale build while pending.
+            let { deployment } = await request('/deployments', 'POST', { force_build: false });
+            const deploymentId = deployment.id;
+            if (!/^[0-9a-f-]{36}$/.test(deploymentId ?? '')) throw new Error('Missing deployment ID.');
+            core.info(`DigitalOcean deployment ${deploymentId}`);
+            const terminal = new Set(['ERROR', 'CANCELED', 'SUPERSEDED', 'INACTIVE']);
+            let previousPhase;
+            try {
+              const deadline = Date.now() + 25 * 60_000;
+              while (Date.now() < deadline) {
+                const source = deployment.static_sites?.find(component => component.name === 'cubecroom-docs')?.source_commit_hash;
+                if (source && source !== sha) throw new Error(`Deployment source ${source} differs from verified CI ${sha}.`);
+                if (await mainSha() !== sha) throw new Error('Main advanced while the deployment was running.');
+                if (deployment.phase !== previousPhase) {
+                  core.info(`Deployment phase: ${deployment.phase}`);
+                  previousPhase = deployment.phase;
+                }
+                if (deployment.phase === 'ACTIVE') {
+                  if (source !== sha) throw new Error('The active deployment has no matching source commit.');
+                  const { app: active } = await request('');
+                  if (active.active_deployment?.id !== deploymentId) throw new Error('Another deployment became active.');
+                  const url = new URL(active.live_url || active.default_ingress);
+                  if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Expected an HTTPS public site URL.');
+                  core.setOutput('url', url.origin);
+                  core.setOutput('deployed', 'true');
+                  await core.summary.addHeading('CubeCroom docs deployed').addLink(url.origin, url.origin)
+                    .addRaw(`\n\nCommit: ${sha}\n\nDeployment: ${deploymentId}\n`).write();
+                  return;
+                }
+                if (terminal.has(deployment.phase)) throw new Error(`Deployment ended in ${deployment.phase}.`);
+                await new Promise(resolve => setTimeout(resolve, 10_000));
+                ({ deployment } = await request(`/deployments/${deploymentId}`));
+              }
+              throw new Error('Deployment did not become active within 25 minutes.');
+            } catch (error) {
+              if (deployment.phase !== 'ACTIVE' && !terminal.has(deployment.phase)) {
+                try {
+                  await request(`/deployments/${deploymentId}/cancel`, 'POST');
+                  core.info('Canceled the pending DigitalOcean deployment.');
+                } catch {
+                  core.warning(`Could not cancel deployment ${deploymentId}; inspect it in App Platform.`);
+                }
+              }
+              throw error;
+            }
+
+  smoke:
+    name: Verify the public docs without deployment credentials
+    needs: deploy
+    if: needs.deploy.outputs.deployed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ needs.deploy.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: .nvmrc
+      - name: Check pages, static search, brand assets, and HTTP 404
+        env:
+          DOCS_URL: ${{ needs.deploy.outputs.url }}
+        run: node scripts/deploy-docs-check.mjs --url "$DOCS_URL"

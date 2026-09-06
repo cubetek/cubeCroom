@@ -4,7 +4,7 @@ import { chmod, lstat, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from '
 import { dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import test from 'node:test';
-import { createValidationArchive } from '../archive-validation.mjs';
+import { archiveTarCommand, createValidationArchive } from '../archive-validation.mjs';
 import { currentReleaseTarget } from '../config.mjs';
 import { sha512 } from '../common.mjs';
 
@@ -32,7 +32,7 @@ test('validation archives preserve packaged bytes, Unix modes and symlinks witho
   assert.equal(await readFile(join(outputDirectory, 'SHA512SUMS'), 'utf8'), `${Buffer.from(manifest.sha512, 'base64').toString('hex')}  ${manifest.archive}\n`);
   const extracted = join(directory, 'extracted');
   await mkdir(extracted);
-  execFileSync('tar', ['-xzf', archive, '-C', extracted], { stdio: 'inherit', timeout: 30_000 });
+  execFileSync(archiveTarCommand, ['-xzf', archive, '-C', extracted], { stdio: 'inherit', timeout: 30_000 });
   const copied = join(extracted, 'CubeCroom fixture.app');
   assert.deepEqual(await readFile(join(copied, 'CubeCroom')), await readFile(executable));
   if (process.platform !== 'win32') {

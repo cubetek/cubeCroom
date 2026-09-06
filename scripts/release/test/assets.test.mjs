@@ -131,8 +131,13 @@ test('workflow files pin Actions and keep signing isolated from pull requests', 
   assert.equal(ciPackage.env.ELECTRON_SKIP_BINARY_DOWNLOAD, '');
   assert.equal(ciPackage.env.CUBECROOM_REQUIRE_SIGNING, '0');
   assert.ok(ci.jobs.verify.steps.some((step) => step.run?.includes('xvfb-run -a node scripts/test-packaged.mjs')));
+  const linuxSmoke = ci.jobs.verify.steps.find((step) => step.run?.includes('xvfb-run -a node scripts/test-packaged.mjs'));
+  assert.ok(linuxSmoke.run.includes('node scripts/release/prepare-linux-sandbox.mjs'));
+  assert.ok(linuxSmoke.run.indexOf('node scripts/release/prepare-linux-sandbox.mjs') < linuxSmoke.run.indexOf('xvfb-run'));
   const releasePackage = release.jobs.build.steps.find((step) => step.run?.includes('node scripts/package-app.mjs make'));
   assert.equal(releasePackage.env.CUBECROOM_REQUIRE_SIGNING, '1');
+  assert.ok(releasePackage.run.includes('node scripts/release/prepare-linux-sandbox.mjs'));
+  assert.ok(releasePackage.run.indexOf('node scripts/release/prepare-linux-sandbox.mjs') < releasePackage.run.indexOf('xvfb-run'));
   assert.ok(releasePackage.run.indexOf('node scripts/test-packaged.mjs') < releasePackage.run.indexOf('node scripts/release/verify-target.mjs'));
   assert.equal(JSON.stringify(ci).includes('secrets.'), false);
   assert.ok(ci.jobs.verify.steps.some((step) => step.run === 'node scripts/release/archive-validation.mjs'));

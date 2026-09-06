@@ -109,6 +109,7 @@ jobs:
           CUBECROOM_OUT_DIR: out-ci
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
+            node scripts/release/prepare-linux-sandbox.mjs
             xvfb-run -a node scripts/test-packaged.mjs
           else
             node scripts/test-packaged.mjs

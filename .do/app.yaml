@@ -1,10 +1,9 @@
 name: cubecroom-docs
 static_sites:
   - name: cubecroom-docs
-    github:
-      repo: cubetek/cubeCroom
+    git:
+      repo_clone_url: https://github.com/cubetek/cubeCroom.git
       branch: main
-      deploy_on_push: true
     source_dir: /
     dockerfile_path: .do/docs.Dockerfile
     output_dir: /apps/docs/out

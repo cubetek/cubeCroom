@@ -3,7 +3,12 @@ import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { currentReleaseTarget, packagedApplicationPaths, RELEASE_CONFIG, releasePaths } from './config.mjs';
-import { readJson, releaseIdentity, root, sha512 } from './common.mjs';
+import { readJson, releaseIdentity, requireValue, root, sha512 } from './common.mjs';
+
+// Git Bash's GNU tar interprets a Windows drive-letter archive as a remote host.
+// Use the OS-provided bsdtar on Windows, regardless of the caller's PATH order.
+export const archiveTarCommand = process.platform === 'win32'
+  ? join(requireValue(process.env.SystemRoot, 'SystemRoot'), 'System32', 'tar.exe') : 'tar';
 
 /** Archive the complete unpacked app; tar preserves macOS symlinks and Unix executable bits. */
 export async function createValidationArchive({ applicationDirectory, outputDirectory, target, version, commit }) {
@@ -17,7 +22,7 @@ export async function createValidationArchive({ applicationDirectory, outputDire
   if ((await readdir(output)).length) throw new Error('Validation archive output must be empty.');
   const name = `${RELEASE_CONFIG.productName}-${version}-${target.id}-validation.tar.gz`;
   const archive = join(output, name);
-  execFileSync('tar', ['-czf', archive, '-C', dirname(input), basename(input)], { stdio: 'inherit', timeout: 300_000 });
+  execFileSync(archiveTarCommand, ['-czf', archive, '-C', dirname(input), basename(input)], { stdio: 'inherit', timeout: 300_000 });
   const checksum = await sha512(archive);
   const manifest = {
     schemaVersion: 1, purpose: 'validation-only', productionSigningVerified: false,
