@@ -126,6 +126,10 @@ jobs:
       - name: البناء
         run: pnpm build
 
+      - name: Verify the isolated documentation deployment build
+        if: matrix.platform == 'linux'
+        run: docker build --file .do/docs.Dockerfile --tag cubecroom-docs:ci .
+
       - name: الاختبارات
         run: pnpm test
 

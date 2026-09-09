@@ -1,13 +1,15 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { createRequire } from 'node:module';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { COPY, SECTIONS, GETTING_STARTED, GUIDE_INDEX, ARTICLES } from './guide-copy.mjs';
 import { renderGuide } from './guide/render.mjs';
-import sharp from 'sharp';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const site = join(root, 'apps/docs');
+// The deployment installs only the docs workspace graph, without root tooling.
+const sharp = createRequire(join(site, 'package.json'))('sharp');
 const content = join(site, 'content/docs');
 const catalogFile = join(root, 'scripts/guide/screens.json');
 const catalog = JSON.parse(readFileSync(catalogFile, 'utf8'));
