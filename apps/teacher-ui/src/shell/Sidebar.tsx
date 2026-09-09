@@ -35,6 +35,8 @@ export const AUTO_COLLAPSE_BELOW = 1180;
 const ORDER: readonly NavKey[] = [
   'home',
   'classes',
+  'learning',
+  'agents',
   'files',
   'ai',
   'settings',

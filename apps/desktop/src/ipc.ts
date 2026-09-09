@@ -291,6 +291,21 @@ async function computeBootState(): Promise<BootState> {
 }
 
 export function registerIpc(): void {
+  handle<undefined, unknown>(AGENT_IPC.profiles, null, () => repositories().agents.profiles());
+  handle(AGENT_IPC.profileSave, agentProfileSchema, input => repositories().agents.saveProfile(input));
+  handle(AGENT_IPC.memories, agentScopeSchema, input => repositories().agents.memories(input.classId));
+  handle(AGENT_IPC.memorySave, agentMemorySchema, input => repositories().agents.saveMemory(input));
+  handle(AGENT_IPC.memoryDelete, learningIdSchema, input => repositories().agents.deleteMemory(input.id));
+  handle(AGENT_IPC.runs, agentScopeSchema, input => repositories().agents.runs(input.classId));
+  handle(AGENT_IPC.start, agentRunSchema, input => queueAgent(input));
+  handle(AGENT_IPC.control, agentControlSchema, input => controlAgent(input.id, input.action));
+  handle(LEARNING_IPC.list, learningListSchema, input => repositories().learning.list(input.classId));
+  handle(LEARNING_IPC.get, learningIdSchema, input => repositories().learning.get(input.id));
+  handle(LEARNING_IPC.save, learningSaveSchema, input => repositories().learning.save(input));
+  handle(LEARNING_IPC.publish, learningPublishSchema, input => repositories().learning.publish(input.id, input.published, input.expectedVersion));
+  handle(LEARNING_IPC.progress, learningIdSchema, input => repositories().learning.progress(input.id));
+  handle(LEARNING_IPC.review, learningIdSchema, input => repositories().learning.review(input.id));
+  handle(LEARNING_IPC.grade, learningGradeSchema, input => repositories().learning.grade(input.attemptId, input.score, input.comment));
   handle(UPDATE_IPC.state, null, () => updateState());
   handle(UPDATE_IPC.check, null, () => checkForUpdates());
   handle(UPDATE_IPC.download, null, () => downloadUpdate());
@@ -2308,3 +2323,6 @@ function settingsState(): SettingsState {
     appVersion: app.getVersion(),
   };
 }
+import { LEARNING_IPC, learningListSchema, learningIdSchema, learningSaveSchema, learningPublishSchema, learningGradeSchema } from '@cubecroom/contracts';
+import { AGENT_IPC, agentProfileSchema, agentScopeSchema, agentMemorySchema, agentRunSchema, agentControlSchema } from '@cubecroom/contracts';
+import { queueAgent, controlAgent } from './specialist-agents.js';

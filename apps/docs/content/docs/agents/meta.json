@@ -1,0 +1,18 @@
+{
+  "title": "فريق المساعدين",
+  "description": "طلب واحد لتجهيز العمل، وتخصيصات إضافية عند الحاجة.",
+  "pages": [
+    "learning-agent-guide",
+    "learning-agent-simple",
+    "learning-agents",
+    "learning-agent-profile",
+    "learning-agent-memory",
+    "learning-agent-result",
+    "learning-agent-schedule",
+    "learning-agent-cancel",
+    "learning-agent-publish",
+    "learning-agent-published",
+    "learning-agent-resume",
+    "learning-agent-repair"
+  ]
+}

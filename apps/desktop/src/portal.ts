@@ -2,6 +2,7 @@ import { spawn, type ChildProcess } from 'node:child_process';
 import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
+import { createRequire } from 'node:module';
 import { app } from 'electron';
 import { readConfig } from './config.js';
 import {
@@ -65,6 +66,7 @@ let responder: MdnsResponder | null = null;
  * لا بمساره في المستودع — وشجرته الداخلية تبقى كما بناها Next.
  */
 function serverEntry(): string {
+  if (!app.isPackaged && process.env['CUBECROOM_DEV_HOT_RELOAD'] === '1') return createRequire(import.meta.url).resolve('next/dist/bin/next', { paths: [join(app.getAppPath(), '..', 'student-web')] });
   const inside = join('apps', 'student-web', 'server.js');
   return app.isPackaged
     ? join(process.resourcesPath, 'standalone', inside)
@@ -178,7 +180,9 @@ async function launch(classId: string): Promise<PortalStatus> {
   const internal = await startInternalChannel();
 
   const began = Date.now();
-  const child = spawn(process.execPath, [entry], {
+  const hotReload = !app.isPackaged && process.env['CUBECROOM_DEV_HOT_RELOAD'] === '1';
+  const child = spawn(process.execPath, hotReload ? [entry, 'dev', '--hostname', '0.0.0.0', '--port', String(port)] : [entry], {
+    ...(hotReload ? { cwd: join(app.getAppPath(), '..', 'student-web') } : {}),
     env: {
       ...process.env,
       /*
@@ -194,7 +198,7 @@ async function launch(classId: string): Promise<PortalStatus> {
       ELECTRON_RUN_AS_NODE: '1',
       PORT: String(port),
       HOSTNAME: '0.0.0.0',
-      NODE_ENV: 'production',
+      NODE_ENV: hotReload ? 'development' : 'production',
       // خادم الطلاب يقرأ القاعدة نفسها بوضع WAL — لا نسخة ولا جسر بين عمليتين.
       CUBECROOM_DATA_DIR: store.dataDirectory,
       ...(internal === null
@@ -226,6 +230,7 @@ async function launch(classId: string): Promise<PortalStatus> {
    */
   const readyMs = await awaitHttpReady(`http://127.0.0.1:${port}/`, {
     hasExited: () => exited,
+    ...(hotReload ? { timeoutMs: 60000, intervalMs: 300 } : {}),
   });
 
   /*

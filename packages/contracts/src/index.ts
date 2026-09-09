@@ -27,3 +27,5 @@ export * from './diagnostics.js';
 export * from './ipc.js';
 export * from './updates.js';
 export * from './legal.js';
+export * from './learning.js';
+export * from './agents.js';

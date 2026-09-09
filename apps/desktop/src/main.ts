@@ -7,10 +7,14 @@ import { registerIpc, setAllowedOrigin } from './ipc.js';
 import { installCrashHandlers } from './crash.js';
 import { killPortal } from './portal.js';
 import { closeStore } from './store.js';
+import { startAgentScheduler, stopAgentScheduler } from './specialist-agents.js';
 import { initializeUpdates, updateState } from './updates/service.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const isDev = !app.isPackaged;
+if (isDev && process.env['CUBECROOM_DEV_HOT_RELOAD'] === '1') {
+  process.on('message', message => { if (message === 'cubecroom:dev-restart') app.quit(); });
+}
 // Windows uses the multi-resolution ICO; Linux and the macOS dock use the PNG.
 const appIcon = path.join(
   isDev ? path.join(app.getAppPath(), 'build') : process.resourcesPath,
@@ -186,6 +190,7 @@ void app.whenReady().then(() => {
   registerAppProtocol();
   setAllowedOrigin(ALLOWED_ORIGIN);
   registerIpc();
+  startAgentScheduler();
   initializeUpdates();
 
   // في التطوير تأتي الصفحات من خادم Next، فتُحقن السياسة على استجاباته.
@@ -215,6 +220,7 @@ app.on('before-quit', (event) => {
   }
   // العملية اليتيمة تُبقي المنفذ محجوزاً بعد إغلاق التطبيق.
   killPortal();
+  stopAgentScheduler();
   closeStore();
 });
 

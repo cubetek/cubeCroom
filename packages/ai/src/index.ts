@@ -25,6 +25,8 @@ export { createAdapter, createAllAdapters } from './adapters.js';
 export type { AdapterOptions } from './adapters.js';
 export { AiFailure, reasonForStatus, reasonForThrown } from './errors.js';
 export type { AiFailureReason } from './errors.js';
+export { tool } from 'ai';
+export type { ToolSet } from 'ai';
 
 export { buildMessages } from './prompts.js';
 export type { PromptInput } from './prompts.js';

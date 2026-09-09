@@ -1,0 +1,25 @@
+{
+  "title": "تجارب التعلّم",
+  "description": "عشر طرق للتذكر والفهم، من إعداد المعلم إلى مراجعة الطالب.",
+  "pages": [
+    "learning-methods",
+    "learning-editor",
+    "learning-preview",
+    "learning-library",
+    "learning-teacher-review",
+    "learning-student-library",
+    "learning-student-retrieval",
+    "learning-student-spaced",
+    "learning-student-feedback",
+    "learning-student-explain",
+    "learning-student-errors",
+    "learning-student-concepts",
+    "learning-student-diagram",
+    "learning-student-peer",
+    "learning-student-quest",
+    "learning-student-exit",
+    "learning-student-history",
+    "learning-student-steps",
+    "learning-methods-guide"
+  ]
+}

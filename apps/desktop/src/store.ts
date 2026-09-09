@@ -33,6 +33,8 @@ export type StoreState =
 
 let handle: OpenResult | null = null;
 let state: StoreState = { status: 'closed' };
+const closing = new Set<() => void>();
+export function onStoreClosing(callback: () => void): void { closing.add(callback); }
 
 export function storeState(): StoreState {
   return state;
@@ -117,6 +119,7 @@ export async function prepareFileStore(): Promise<void> {
 }
 
 export function closeStore(): void {
+  for (const callback of closing) callback();
   handle?.close();
   handle = null;
   state = { status: 'closed' };

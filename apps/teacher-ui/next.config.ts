@@ -41,5 +41,8 @@ const config: NextConfig = {
 // A production export must not overwrite the running Electron development server.
 export default async (phase: string): Promise<NextConfig> => {
   await writeLegalAssets(resolve(process.cwd(), 'public/legal'));
-  return { ...config, distDir: phase === PHASE_DEVELOPMENT_SERVER ? '.next-dev' : 'out-next' };
+  return { ...config, distDir: phase === PHASE_DEVELOPMENT_SERVER ? '.next-dev' : 'out-next', ...(phase === PHASE_DEVELOPMENT_SERVER ? {
+    transpilePackages: ['@cubecroom/ui', '@cubecroom/contracts'],
+    webpack: (cfg) => { cfg.resolve.extensionAlias = { ...cfg.resolve.extensionAlias, '.js': ['.ts', '.tsx', '.js'] }; cfg.resolve.alias['@cubecroom/contracts'] = resolve(process.cwd(), '../../packages/contracts/src/index.ts'); return cfg; },
+  } : {}) };
 };

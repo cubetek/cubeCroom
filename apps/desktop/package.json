@@ -7,7 +7,7 @@
   "main": "dist-app/main.cjs",
   "scripts": {
     "dev": "concurrently -k -n next,electron -c cyan,green \"pnpm --filter @cubecroom/teacher-ui dev\" \"pnpm dev:electron\"",
-    "dev:electron": "node ../../scripts/bundle-desktop.mjs && wait-on tcp:3000 && electron .",
+    "dev:electron": "node ../../scripts/bundle-desktop.mjs && wait-on tcp:3000 && node ../../scripts/dev-desktop.mjs",
     "rebuild:electron": "node ../../scripts/rebuild-native.mjs electron",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",

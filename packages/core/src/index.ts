@@ -86,3 +86,4 @@ export {
   UnsafeStorageNameError,
   ResultsRowError,
 } from './errors.js';
+export * from './learning.js';

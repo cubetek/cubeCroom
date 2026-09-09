@@ -21,6 +21,7 @@ const TABS = [
   { href: '/', label: 'الرئيسية' },
   { href: '/lessons', label: 'الدروس' },
   { href: '/activities', label: 'الأنشطة' },
+  { href: '/learning', label: 'تجاربي' },
 ] as const;
 
 /**

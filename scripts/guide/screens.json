@@ -1004,6 +1004,383 @@
       },
       "marks": [],
       "sha256": "98d317787a6ecbb25542ca00a64b3289f51265f7aae5dc5b42761c53aabd3d89"
+    },
+    {
+      "slug": "learning-methods",
+      "title": "اختيار طريقة التعلّم",
+      "device": "المعلم",
+      "src": "/screens/learning-methods.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "c5c36bfe918a1d14639e51028b7e26a0c935e53f3b176dfdd378fce20118e0cd"
+    },
+    {
+      "slug": "learning-editor",
+      "title": "إعداد السؤال ومفتاح الإجابة",
+      "device": "المعلم",
+      "src": "/screens/learning-editor.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "85e72d1fa54c14e71132e75203f3eb3f3be778faa6d69c5c6ce3625113458a29"
+    },
+    {
+      "slug": "learning-preview",
+      "title": "معاينة السؤال قبل النشر",
+      "device": "المعلم",
+      "src": "/screens/learning-preview.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "b561ca5a93a9e64accb27811e703b34db21b4a2e89d20d6132986e9b450069f8"
+    },
+    {
+      "slug": "learning-library",
+      "title": "تجارب الدرس المتاحة للطلاب",
+      "device": "المعلم",
+      "src": "/screens/learning-library.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "ee65d45bca2ff19d7d66e0bd78ad42d4f3daf8c5fad002f07297d190148be3f1"
+    },
+    {
+      "slug": "learning-agents",
+      "title": "اختيار المساعد المختص",
+      "device": "المعلم",
+      "src": "/screens/learning-agents.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "13cf467283d3d182657a8db40467ed06e7864697c18cd7059c9f5b70a0e06881"
+    },
+    {
+      "slug": "learning-agent-profile",
+      "title": "شخصية المساعد ومهمته",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-profile.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "a80f640012af4840e7568b11e15ca6ea8cb081a1c74fa037062cfbf4392eb120"
+    },
+    {
+      "slug": "learning-agent-memory",
+      "title": "ذاكرة المساعد وسجل الإنجاز",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-memory.png",
+      "view": {
+        "width": 1280,
+        "height": 1314,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "c22a675038739833eff625a824021080c4e80fe2c5b5148916dcbdc596f070c2"
+    },
+    {
+      "slug": "learning-agent-result",
+      "title": "تجربة أعدها ونشرها الفريق من طلب قصير",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-result.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "319f978263ea01f343b76fee9f4aaca482559dde58a05691bec1bd5dc16581b0"
+    },
+    {
+      "slug": "learning-agent-schedule",
+      "title": "مهمة مراجعة مؤجلة",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-schedule.png",
+      "view": {
+        "width": 1280,
+        "height": 1314,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "b497fbc4b830073a0f636836c78fc45a21764ec36ca5c06553cae48d8405c9aa"
+    },
+    {
+      "slug": "learning-agent-cancel",
+      "title": "إلغاء المهمة المؤجلة",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-cancel.png",
+      "view": {
+        "width": 1280,
+        "height": 1314,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "dc6dc71e47e36b103314b1fcbcaebf5e4444683e32dd831ba8e2de74f5b31aa4"
+    },
+    {
+      "slug": "learning-agent-publish",
+      "title": "تفويض المساعد بنشر تجربة",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-publish.png",
+      "view": {
+        "width": 1278,
+        "height": 1391,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "a235de57de2a265137e916f281180cb35a9e271d25c440e88c8e9451201f330b"
+    },
+    {
+      "slug": "learning-teacher-review",
+      "title": "مراجعة تفسير الطالب وفق المعايير",
+      "device": "المعلم",
+      "src": "/screens/learning-teacher-review.png",
+      "view": {
+        "width": 1278,
+        "height": 1391,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "71162b2f197726efb4e18482faaeec905ef794cd70314f0e767ca81d70d80d64"
+    },
+    {
+      "slug": "learning-agent-published",
+      "title": "إتمام النشر بعد فحص الجودة",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-published.png",
+      "view": {
+        "width": 1278,
+        "height": 1391,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "f17c11a0541e29e569fadc480de28576f8ef3a52dce419b71073d2778de3e1dd"
+    },
+    {
+      "slug": "learning-student-library",
+      "title": "اختيار التجربة من جهاز الطالب",
+      "device": "الطالب",
+      "src": "/screens/learning-student-library.png",
+      "view": {
+        "width": 836,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "d90384bda8cf65b1240ce84d41c5962a51ff1f5b97afd72130c6b960cfff5ace"
+    },
+    {
+      "slug": "learning-student-retrieval",
+      "title": "تحدي الاسترجاع وثقة الطالب",
+      "device": "الطالب",
+      "src": "/screens/learning-student-retrieval.png",
+      "view": {
+        "width": 1185,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "ed77606d94f00ca87fd6ff73387c337399967edc3a8af3be37f558de077bdee0"
+    },
+    {
+      "slug": "learning-student-spaced",
+      "title": "بطاقة مراجعة مع تلميح",
+      "device": "الطالب",
+      "src": "/screens/learning-student-spaced.png",
+      "view": {
+        "width": 1185,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "7bd14344828e63534aec8c458c48ad7803410ea759b90b99396089fd2a4e8228"
+    },
+    {
+      "slug": "learning-student-feedback",
+      "title": "التغذية الراجعة وموعد المراجعة",
+      "device": "الطالب",
+      "src": "/screens/learning-student-feedback.png",
+      "view": {
+        "width": 1185,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "4348971acdd2cae873aff27fdc214c20553d4afb9922c4129f1e34a929f83606"
+    },
+    {
+      "slug": "learning-student-explain",
+      "title": "التفسير ومعايير التقييم",
+      "device": "الطالب",
+      "src": "/screens/learning-student-explain.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "56189984f052926987f3e747a05762bf1426dd2899a1226944b7569a1f936aec"
+    },
+    {
+      "slug": "learning-student-errors",
+      "title": "اكتشاف الخطأ وتصحيحه",
+      "device": "الطالب",
+      "src": "/screens/learning-student-errors.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "a43bff402d2ecc99d050c3ba002d2cd356da21dbee6052e162052bb8e159a800"
+    },
+    {
+      "slug": "learning-student-concepts",
+      "title": "ربط المفاهيم والعلاقات",
+      "device": "الطالب",
+      "src": "/screens/learning-student-concepts.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "3ed33a5f8f3993fb9a458c3bfd7d8fd592a51bb2d3658beb3c995c0b0f6bf9d0"
+    },
+    {
+      "slug": "learning-student-diagram",
+      "title": "إكمال المخطط المتسلسل",
+      "device": "الطالب",
+      "src": "/screens/learning-student-diagram.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "a7591ac54c3a453cc9a57ae9665194866337df918de62e63c61e64f87938b5a6"
+    },
+    {
+      "slug": "learning-student-peer",
+      "title": "فكّر وحدك ثم ناقش وأجب مجدداً",
+      "device": "الطالب",
+      "src": "/screens/learning-student-peer.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "163e229085de51c474aed4b5007697a23ae9e67828f7fb83dd97db37f6143795"
+    },
+    {
+      "slug": "learning-student-quest",
+      "title": "المهمة التطبيقية ومسار الدعم",
+      "device": "الطالب",
+      "src": "/screens/learning-student-quest.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "be961dbb1a2af895e1d5efb9109f44d4a691912b8bc48b31551dce2bd33f8303"
+    },
+    {
+      "slug": "learning-student-exit",
+      "title": "التحقق من الفهم قبل نهاية الحصة",
+      "device": "الطالب",
+      "src": "/screens/learning-student-exit.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "b8511a83d6409ff0bcaa4afeac9c878f9b1640c4bdf58383c9401c2dbf42b785"
+    },
+    {
+      "slug": "learning-student-history",
+      "title": "قراءة الدرجة وملاحظات المعلم",
+      "device": "الطالب",
+      "src": "/screens/learning-student-history.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "bdd1d386319b2b41f00526988855b3ca58da999d3a2ff319eeab116a3994e182"
+    },
+    {
+      "slug": "learning-student-steps",
+      "title": "ترتيب الخطوات بمساعدة مثال",
+      "device": "الطالب",
+      "src": "/screens/learning-student-steps.png",
+      "view": {
+        "width": 1185,
+        "height": 1000,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "2aa80f36ed6ae205e6f7ed072b68cd40fd80821b59cc542fbb8387215919102f"
+    },
+    {
+      "slug": "learning-agent-resume",
+      "title": "استئناف مهمة بعد إعادة فتح التطبيق",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-resume.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "756e13bc5b1b493259967794f16f1a6841f466183e17460b571d447deb6c2de9"
+    },
+    {
+      "slug": "learning-agent-simple",
+      "title": "طلب واحد والفريق ينجز التفاصيل",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-simple.png",
+      "view": {
+        "width": 1278,
+        "height": 1391,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "ab75f2d233986524214bd2b5a87fd79b162fd4653585ce053809ac28b890d3e7"
+    },
+    {
+      "slug": "learning-agent-repair",
+      "title": "إصلاح المسودة ونشرها دون عمل يدوي",
+      "device": "المعلم",
+      "src": "/screens/learning-agent-repair.png",
+      "view": {
+        "width": 1280,
+        "height": 900,
+        "dpr": 1
+      },
+      "marks": [],
+      "sha256": "c0e8d0cb422c3d8ee632ec51d342de81c42ccfd1f832d9ba68b1817e12d68751"
     }
   ]
 }

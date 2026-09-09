@@ -19,6 +19,8 @@ import type { OpenTarget } from '../screens/Classes';
 export type NavKey =
   | 'home'
   | 'classes'
+  | 'learning'
+  | 'agents'
   | 'files'
   | 'ai'
   | 'settings'
@@ -41,6 +43,8 @@ export type Tab = {
 export const NAV_TITLES: Record<NavKey, string> = {
   home: 'الرئيسية',
   classes: 'الفصول',
+  learning: 'تجارب التعلّم',
+  agents: 'فريق المساعدين',
   files: 'الملفات',
   ai: 'الذكاء الاصطناعي',
   settings: 'الإعدادات',
@@ -51,6 +55,8 @@ export const NAV_TITLES: Record<NavKey, string> = {
 export const NAV_ICONS: Record<NavKey, IconName> = {
   home: 'home',
   classes: 'book',
+  learning: 'check-circle',
+  agents: 'sparkles',
   files: 'folder',
   ai: 'sparkles',
   settings: 'sliders',

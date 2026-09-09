@@ -37,10 +37,12 @@ export function renderGuide({ screens, copy, articles, sections, introductions }
   const used = Object.keys(sections).filter(section => pages.some(page => page.section === section));
   files.set('meta.json', JSON.stringify({ title: 'دليل الاستخدام', pages: ['index', ...used] }, null, 2) + '\n');
   for (const section of used) {
+    const sectionPages = pages.filter(page => page.section === section).map(page => page.slug);
+    const first = (sections[section].first ?? []).filter(slug => sectionPages.includes(slug));
     files.set(`${section}/meta.json`, JSON.stringify({
       title: sections[section].title,
       description: sections[section].description,
-      pages: pages.filter(page => page.section === section).map(page => page.slug),
+      pages: [...first, ...sectionPages.filter(slug => !first.includes(slug))],
     }, null, 2) + '\n');
   }
   return files;

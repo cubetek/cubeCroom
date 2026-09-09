@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import { writeLegalAssets } from '../../scripts/release/legal-assets.mjs';
 import { resolve } from 'node:path';
+import { PHASE_DEVELOPMENT_SERVER } from 'next/constants';
 
 const config: NextConfig = {
   /**
@@ -63,7 +64,10 @@ const config: NextConfig = {
   },
 };
 
-export default async (): Promise<NextConfig> => {
+export default async (phase: string): Promise<NextConfig> => {
   await writeLegalAssets(resolve(process.cwd(), 'public/legal'));
-  return config;
+  return { ...config, ...(phase === PHASE_DEVELOPMENT_SERVER ? {
+    distDir: '.next-dev', transpilePackages: ['@cubecroom/ui', '@cubecroom/contracts', '@cubecroom/core', '@cubecroom/db'],
+    webpack: (cfg) => { cfg.resolve.extensionAlias = { ...cfg.resolve.extensionAlias, '.js': ['.ts', '.tsx', '.js'] }; for (const name of ['contracts', 'core', 'db']) cfg.resolve.alias[`@cubecroom/${name}`] = resolve(process.cwd(), `../../packages/${name}/src/index.ts`); return cfg; },
+  } : {}) };
 };
