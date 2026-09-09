@@ -1,4 +1,5 @@
 import type { ProviderId } from '@cubecroom/contracts';
+import type { ToolSet } from 'ai';
 import { parseModelId, type ModelId } from './model-id.js';
 
 /**
@@ -19,6 +20,7 @@ export type AiMessage = {
 };
 
 export type CompleteRequest = {
+  readonly tools?: ToolSet;
   readonly modelId: ModelId | string;
   readonly messages: readonly AiMessage[];
   readonly signal?: AbortSignal | undefined;
@@ -41,6 +43,7 @@ export type ProviderAdapter = {
   /** يتحقق أن المفتاح صالح ويعيد نماذج الحساب — خطوة «اختبار» في T04. */
   readonly listModels: (key: string, signal?: AbortSignal, baseURL?: string) => Promise<string[]>;
   readonly complete: (input: {
+    tools?: ToolSet;
     key: string;
     baseURL?: string | undefined;
     model: string;
@@ -104,6 +107,7 @@ export function createRegistry({ adapters, resolveKey, resolveBaseURL }: Registr
       if (key === null) throw new ProviderNotConfiguredError(provider);
 
       return adapter.complete({
+        ...(request.tools ? { tools: request.tools } : {}),
         key,
         baseURL: await resolveBaseURL?.(provider),
         model,

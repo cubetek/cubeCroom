@@ -129,6 +129,9 @@ jobs:
       - name: الاختبارات
         run: pnpm test
 
+      - name: Verify learning assessments and specialist agent permissions
+        run: pnpm test:learning
+
       - name: فحص قواعد الإصدار وبيانات التحديث
         run: node --test scripts/release/test/*.test.mjs
 

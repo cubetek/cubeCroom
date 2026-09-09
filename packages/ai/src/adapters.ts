@@ -1,4 +1,4 @@
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -178,10 +178,11 @@ export function createAdapter(provider: ProviderId, options: AdapterOptions = {}
       }
     },
 
-    async complete({ key, model, messages, signal, baseURL, maxOutputTokens }): Promise<CompleteResult> {
+    async complete({ key, model, messages, signal, baseURL, maxOutputTokens, tools }): Promise<CompleteResult> {
       try {
         const system = systemOf(messages);
         const result = await generate({
+          ...(tools ? { tools, stopWhen: stepCountIs(12) } : {}),
           model: FACTORIES[provider](key, call, endpoint(baseURL))(model),
           prompt: promptOf(messages),
           ...(system === undefined ? {} : { system }),
@@ -191,8 +192,8 @@ export function createAdapter(provider: ProviderId, options: AdapterOptions = {}
 
         return {
           text: result.text,
-          ...(typeof result.usage?.totalTokens === 'number'
-            ? { tokens: result.usage.totalTokens }
+          ...(typeof (result.totalUsage?.totalTokens ?? result.usage?.totalTokens) === 'number'
+            ? { tokens: result.totalUsage?.totalTokens ?? result.usage.totalTokens }
             : {}),
         };
       } catch (error) {

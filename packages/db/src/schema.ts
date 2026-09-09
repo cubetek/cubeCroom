@@ -1,4 +1,5 @@
 import { sql } from 'drizzle-orm';
+import type { LearningMaterial, LearningResponse, LearningFeedback, AgentProfile, AgentRunInput, AgentRun } from '@cubecroom/contracts';
 import { index, integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 
 /**
@@ -22,6 +23,44 @@ const updatedAt = () =>
   integer('updated_at', { mode: 'timestamp_ms' })
     .notNull()
     .default(sql`(unixepoch() * 1000)`);
+
+export const learningExperiences = sqliteTable('learning_experiences', {
+  id: id(), classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  lessonId: text('lesson_id').references(() => lessons.id, { onDelete: 'set null' }),
+  version: integer('version').notNull(), published: integer('published', { mode: 'boolean' }).notNull().default(false),
+  material: text('material', { mode: 'json' }).$type<LearningMaterial>().notNull(), updatedAt: updatedAt(),
+}, t => [index('learning_class_idx').on(t.classId)]);
+export const learningVersions = sqliteTable('learning_versions', {
+  id: id(), experienceId: text('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }),
+  version: integer('version').notNull(), material: text('material', { mode: 'json' }).$type<LearningMaterial>().notNull(),
+}, t => [unique('learning_version_unique').on(t.experienceId, t.version)]);
+export const practiceSessions = sqliteTable('practice_sessions', {
+  id: id(), experienceId: text('experience_id').notNull().references(() => learningExperiences.id, { onDelete: 'cascade' }),
+  studentId: text('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+  version: integer('version').notNull(), completed: integer('completed', { mode: 'boolean' }).notNull().default(false), createdAt: createdAt(),
+}, t => [index('practice_student_experience').on(t.studentId, t.experienceId)]);
+export const practiceAttempts = sqliteTable('practice_attempts', {
+  id: id(), sessionId: text('session_id').notNull().references(() => practiceSessions.id, { onDelete: 'cascade' }),
+  itemId: text('item_id').notNull(), response: text('response', { mode: 'json' }).$type<LearningResponse>().notNull(),
+  feedback: text('feedback', { mode: 'json' }).$type<LearningFeedback>().notNull(), createdAt: createdAt(),
+}, t => [unique('practice_session_item').on(t.sessionId, t.itemId)]);
+export const agentProfiles = sqliteTable('agent_profiles', {
+  id: id(), profile: text('profile', { mode: 'json' }).$type<AgentProfile>().notNull(),
+});
+export const agentMemories = sqliteTable('agent_memories', {
+  id: id(), agentId: text('agent_id').notNull(), classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(), source: text('source').notNull(), updatedAt: updatedAt(),
+}, t => [index('agent_memory_scope').on(t.classId, t.agentId)]);
+export const agentRuns = sqliteTable('agent_runs', {
+  id: id(), classId: text('class_id').notNull().references(() => classes.id, { onDelete: 'cascade' }),
+  input: text('input', { mode: 'json' }).$type<AgentRunInput>().notNull(),
+  status: text('status').$type<AgentRun['status']>().notNull(), result: text('result').notNull().default(''),
+  events: text('events', { mode: 'json' }).$type<AgentRun['events']>().notNull(), updatedAt: updatedAt(),
+}, t => [index('agent_run_scope').on(t.classId, t.status)]);
+export const agentEffects = sqliteTable('agent_effects', {
+  id: id(), runId: text('run_id').notNull().references(() => agentRuns.id, { onDelete: 'cascade' }),
+  result: text('result', { mode: 'json' }).$type<unknown>().notNull(),
+});
 
 /* ── المعلم والإعدادات ───────────────────────────────── */
 

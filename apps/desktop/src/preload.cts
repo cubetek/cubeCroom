@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import { LEARNING_IPC, AGENT_IPC, type LearningBridge, type AgentBridge } from '@cubecroom/contracts';
 import { UPDATE_IPC, type UpdateBridge, type UpdateState } from '@cubecroom/contracts';
 import type {
   WindowAppearance,
@@ -105,6 +106,25 @@ const updateApi: UpdateBridge = {
   },
 };
 const api = {
+  ...({
+    learningList: input => ipcRenderer.invoke(LEARNING_IPC.list, input),
+    learningGet: input => ipcRenderer.invoke(LEARNING_IPC.get, input),
+    learningSave: input => ipcRenderer.invoke(LEARNING_IPC.save, input),
+    learningPublish: input => ipcRenderer.invoke(LEARNING_IPC.publish, input),
+    learningProgress: input => ipcRenderer.invoke(LEARNING_IPC.progress, input),
+    learningReview: input => ipcRenderer.invoke(LEARNING_IPC.review, input),
+    learningGrade: input => ipcRenderer.invoke(LEARNING_IPC.grade, input),
+  } satisfies LearningBridge),
+  ...({
+    agentProfiles: () => ipcRenderer.invoke(AGENT_IPC.profiles),
+    agentProfileSave: input => ipcRenderer.invoke(AGENT_IPC.profileSave, input),
+    agentMemories: input => ipcRenderer.invoke(AGENT_IPC.memories, input),
+    agentMemorySave: input => ipcRenderer.invoke(AGENT_IPC.memorySave, input),
+    agentMemoryDelete: input => ipcRenderer.invoke(AGENT_IPC.memoryDelete, input),
+    agentRuns: input => ipcRenderer.invoke(AGENT_IPC.runs, input),
+    agentStart: input => ipcRenderer.invoke(AGENT_IPC.start, input),
+    agentControl: input => ipcRenderer.invoke(AGENT_IPC.control, input),
+  } satisfies AgentBridge),
   ...updateApi,
   lessonAgentRun: (input: LessonAgentRunInput): Promise<LessonAgentResult> =>
     ipcRenderer.invoke('lessons:agent-run', input),

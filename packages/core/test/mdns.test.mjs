@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
 import makeMdns from 'multicast-dns';
-import { LOCAL_HOSTNAME, startHostnameResponder } from '../dist/index.js';
+import { startHostnameResponder } from '../dist/index.js';
 
 /*
  * إعلان الاسم — §22.
@@ -12,6 +13,9 @@ import { LOCAL_HOSTNAME, startHostnameResponder } from '../dist/index.js';
  */
 
 const WAIT_MS = 2000;
+// A running teacher preview (or another teacher on the LAN) must not answer this test.
+const hostname = `cubecroom-test-${randomUUID()}.local`;
+const otherHostname = `cubecroom-other-${randomUUID()}.local`;
 
 /** يسأل عن اسم ويعيد عنوانه، أو `null` إن لم يُجَب خلال المهلة. */
 async function resolve(name) {
@@ -35,8 +39,8 @@ async function resolve(name) {
   }
 }
 
-test('جهازٌ يسأل عن cubecroom.local فيجد عنوان المعلم', async (t) => {
-  const responder = startHostnameResponder('192.168.4.20');
+test('جهازٌ يسأل عن اسم المعلم فيجد عنوانه', async (t) => {
+  const responder = startHostnameResponder('192.168.4.20', hostname);
   if (responder === null) {
     // لا يُدّعى نجاحٌ لم يحدث: بيئة تمنع المقبس تُعلن تخطّياً لا مروراً.
     t.skip('تعذّر فتح مقبس mDNS في هذه البيئة');
@@ -44,8 +48,8 @@ test('جهازٌ يسأل عن cubecroom.local فيجد عنوان المعلم'
   }
 
   try {
-    assert.equal(responder.hostname, LOCAL_HOSTNAME);
-    const found = await resolve(LOCAL_HOSTNAME);
+    assert.equal(responder.hostname, hostname);
+    const found = await resolve(hostname);
     if (found === null) {
       t.skip('الشبكة هنا لا تمرّر البثّ المتعدد — والعنوان الرقمي يبقى الطريق');
       return;
@@ -57,14 +61,14 @@ test('جهازٌ يسأل عن cubecroom.local فيجد عنوان المعلم'
 });
 
 test('ولا يجيب عن اسم غيره — إعلانٌ لا خادم أسماء', async (t) => {
-  const responder = startHostnameResponder('192.168.4.20');
+  const responder = startHostnameResponder('192.168.4.20', hostname);
   if (responder === null) {
     t.skip('تعذّر فتح مقبس mDNS في هذه البيئة');
     return;
   }
 
   try {
-    const found = await resolve('printer.local');
+    const found = await resolve(otherHostname);
     assert.equal(found, null, `أجاب عن اسم ليس اسمه: ${found}`);
   } finally {
     await responder.stop();
@@ -72,7 +76,7 @@ test('ولا يجيب عن اسم غيره — إعلانٌ لا خادم أسم
 });
 
 test('والإيقاف يصمت الاسم — لا يبقى يقود إلى خادم أُغلق', async (t) => {
-  const responder = startHostnameResponder('192.168.4.20');
+  const responder = startHostnameResponder('192.168.4.20', hostname);
   if (responder === null) {
     t.skip('تعذّر فتح مقبس mDNS في هذه البيئة');
     return;
@@ -81,5 +85,5 @@ test('والإيقاف يصمت الاسم — لا يبقى يقود إلى خ�
   // وإيقافٌ ثانٍ لا يرمي: `killPortal` قد يليه `stopPortal` عند الإغلاق.
   await responder.stop();
 
-  assert.equal(await resolve(LOCAL_HOSTNAME), null);
+  assert.equal(await resolve(hostname), null);
 });

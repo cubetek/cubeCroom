@@ -2,6 +2,7 @@ import { LEARNING_COPY, LEARNING_PAGES } from './guide/learning.mjs';
 import { PROVIDER_COPY, PROVIDER_PAGES } from './guide/providers.mjs';
 import { RELEASE_COPY, RELEASE_PAGES } from './guide/releases.mjs';
 import { WORKSPACE_PAGES } from './guide/workspace.mjs';
+import { PRACTICE_COPY, PRACTICE_PAGES } from './guide/practice.mjs';
 
 /**
  * فهرس مصادر الدليل وشروح الشاشات الأساسية. المقالات المتخصصة في guide/*.mjs.
@@ -22,6 +23,8 @@ export const SECTIONS = {
   classes: { title: 'الفصول', description: 'إنشاء فصلك وفتحه.' },
   lessons: { title: 'الدروس', description: 'كتابة الدرس ونشره للطلاب.' },
   activities: { title: 'الأنشطة', description: 'أسئلة يجيب عنها الطلاب.' },
+  practice: { title: 'تجارب التعلّم', description: 'عشر طرق للتذكر والفهم، من إعداد المعلم إلى مراجعة الطالب.' },
+  agents: { title: 'فريق المساعدين', description: 'طلب واحد لتجهيز العمل، وتخصيصات إضافية عند الحاجة.', first: ['learning-agent-guide', 'learning-agent-simple'] },
   session: { title: 'الحصة', description: 'فتح الدخول، وقبول الطلاب، وإنهاء الحصة.' },
   student: { title: 'ما يراه الطالب', description: 'الرحلة كاملة من جهاز الطالب.' },
   results: { title: 'النتائج', description: 'قراءة الإجابات وتصحيحها وتصديرها.' },
@@ -312,5 +315,5 @@ description: "اختر رحلتك: تجهيز أول فصل للمعلم، أو 
 يمكنك أيضاً اختيار موضوع من القائمة الجانبية أو البحث عن اسم الشاشة. الصور في الدليل مأخوذة من البرنامج لتساعدك على معرفة موضع كل خطوة.
 `;
 
-export const COPY = { ...SCREEN_COPY, ...LEARNING_COPY, ...PROVIDER_COPY, ...RELEASE_COPY };
-export const ARTICLES = [...WORKSPACE_PAGES, ...LEARNING_PAGES, ...PROVIDER_PAGES, ...RELEASE_PAGES];
+export const COPY = { ...SCREEN_COPY, ...LEARNING_COPY, ...PROVIDER_COPY, ...RELEASE_COPY, ...PRACTICE_COPY };
+export const ARTICLES = [...WORKSPACE_PAGES, ...LEARNING_PAGES, ...PROVIDER_PAGES, ...RELEASE_PAGES, ...PRACTICE_PAGES];

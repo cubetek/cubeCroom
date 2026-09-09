@@ -8,6 +8,8 @@ import { useTabs } from '../shell/tabs';
 import { Dashboard } from './Dashboard';
 import { Classes, type OpenTarget } from './Classes';
 import { AiSettings } from './AiSettings';
+import { LearningStudio } from './LearningStudio';
+import { AgentTeam } from './AgentTeam';
 import { Files } from './Files';
 import { Settings } from './Settings';
 import { Backup } from './Backup';
@@ -144,6 +146,10 @@ export function Home({ teacherName }: { teacherName: string }) {
         />
       ) : active === 'files' ? (
         <Files />
+      ) : active === 'learning' ? (
+        <LearningStudio onOpenAgents={() => tabs.openNav('agents')} />
+      ) : active === 'agents' ? (
+        <AgentTeam onOpenLearning={() => tabs.openNav('learning')} />
       ) : active === 'ai' ? (
         <AiSettings onConnectionChange={setAiConnected} />
       ) : active === 'settings' ? (

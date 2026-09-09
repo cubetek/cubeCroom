@@ -1,4 +1,6 @@
 import type { OpenResult } from '../open.js';
+import { learningRepository } from './learning.js';
+import { agentsRepository } from './agents.js';
 import { teacherRepository } from './teacher.js';
 import { settingsRepository } from './settings.js';
 import { classesRepository } from './classes.js';
@@ -23,6 +25,8 @@ export function createRepositories(handle: OpenResult) {
   const lessons = lessonsRepository(db, transaction);
   const activities = activitiesRepository(db, transaction);
   return {
+    learning: learningRepository(db, transaction),
+    agents: agentsRepository(db, transaction),
     teacher: teacherRepository(db),
     settings: settingsRepository(db),
     classes: classesRepository(db),

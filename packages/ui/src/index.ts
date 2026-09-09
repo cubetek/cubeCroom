@@ -175,3 +175,4 @@ export type { CommandDialogProps } from '#components/command';
 /* ————— الدمج ————— */
 export { cn } from '#lib/utils';
 export { LegalNotice } from '#components/legal-notice';
+export { LearningInteraction } from './LearningInteraction';

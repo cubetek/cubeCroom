@@ -2,7 +2,7 @@
  * إصدار المخطط الذي يفهمه هذا البناء من التطبيق.
  * يُرفع مع كل ترحيل جديد يُضاف إلى packages/db/migrations.
  */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 /**
  * القاعدة أحدث من التطبيق.
