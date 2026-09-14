@@ -46,7 +46,7 @@ export async function collectPreviewTarget(input, destination, target, identity)
   }, null, 2)}\n`);
 }
 
-/** Revalidate all four builds, then expose only six binaries, metadata and checksums. */
+/** Revalidate every configured build, then expose only its binaries, metadata and checksums. */
 export async function assemblePreview(input, destination, identity, createdAt) {
   const { inspectTarget } = await import('./assets.mjs');
   if (typeof createdAt !== 'string' || !Number.isFinite(Date.parse(createdAt))) throw new Error('Expected an ISO preview creation time.');

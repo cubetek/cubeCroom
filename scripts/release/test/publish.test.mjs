@@ -55,8 +55,10 @@ async function previewFixture(t) {
 test('preview publication validates all binaries, exact identity, checksums and attestation subjects', async (t) => {
   const { directory } = await previewFixture(t);
   const result = await validatePreviewPublication(directory, identity, { runId });
-  assert.equal(result.expected.length, 9);
-  assert.equal(result.metadata.artifacts.length, 6);
+  const binaries = RELEASE_CONFIG.targets.reduce((count, target) => count + target.extensions.length, 0);
+  // Every binary plus release-metadata.json, SHA512SUMS and attestation.json.
+  assert.equal(result.expected.length, binaries + 3);
+  assert.equal(result.metadata.artifacts.length, binaries);
   assert.equal(result.metadata.ota, false);
   await assert.rejects(validatePreviewPublication(directory, { ...identity, commit: 'b'.repeat(40) }), /exact release identity/);
   await assert.rejects(validatePreviewPublication(directory, identity, { runId: '999' }), /another workflow run/);
@@ -68,7 +70,7 @@ test('preview rejects changed policy, wrong platform identity, external URLs and
     { ota: true }, { osSigning: 'verified' }, { productionSigningVerified: true }, { channel: 'stable' },
     { artifacts: metadata.artifacts.slice(1) }, { artifacts: [...metadata.artifacts, metadata.artifacts[0]] },
     { artifacts: metadata.artifacts.map((file, index) => index === 0 ? { ...file, url: 'https://example.invalid/download' } : file) },
-    { artifacts: metadata.artifacts.map((file, index) => index === 0 ? { ...file, arch: 'arm64' } : file) },
+    { artifacts: metadata.artifacts.map((file, index) => index === 0 ? { ...file, arch: file.arch === 'arm64' ? 'x64' : 'arm64' } : file) },
   ]) {
     await writeFile(join(directory, 'release-metadata.json'), JSON.stringify({ ...metadata, ...change }));
     await assert.rejects(validatePreviewPublication(directory, identity));

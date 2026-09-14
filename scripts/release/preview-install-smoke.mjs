@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
-import { currentReleaseTarget, packagedRuntimePaths, RELEASE_CONFIG, releaseArtifactNames, releasePaths } from './config.mjs';
+import { currentReleaseTarget, packagedApplicationPaths, packagedRuntimePaths, RELEASE_CONFIG, releaseArtifactNames, releasePaths } from './config.mjs';
 import { isInside, safeSmokePath } from './smoke-paths.mjs';
 
 const execute = promisify(execFile);
@@ -175,7 +175,8 @@ foreach ($folder in @([Environment]::GetFolderPath('Desktop'), [Environment]::Ge
       report.limitations.push('No Developer ID or Apple notarization. This does not validate Gatekeeper acceptance after browser download.');
     } else {
       await run(asset('.AppImage'), ['--appimage-extract'], { cwd: qa });
-      const appRoot = join(qa, 'linux-unpacked');
+      // prepare-linux-sandbox finds this folder through config, and ARM64 uses linux-arm64-unpacked.
+      const appRoot = packagedApplicationPaths(qa, target).appOutDirectory;
       await rename(join(qa, 'squashfs-root'), appRoot);
       const launcher = join(appRoot, 'AppRun');
       assert.equal(await realpath(launcher), launcher, 'AppRun must remain inside the extracted image');

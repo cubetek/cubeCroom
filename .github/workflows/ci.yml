@@ -118,16 +118,16 @@ jobs:
       - name: Verify one product version across the release PR
         run: pnpm version:check
 
-      # Lint once; runtime and native package checks run on every configured target.
+      # Lint once, on one Linux target; runtime and native package checks run on every configured target.
       - name: التدقيق
-        if: matrix.platform == 'linux'
+        if: matrix.id == 'linux-x64'
         run: pnpm lint
 
       - name: البناء
         run: pnpm build
 
       - name: Verify the isolated documentation deployment build
-        if: matrix.platform == 'linux'
+        if: matrix.id == 'linux-x64'
         run: docker build --file .do/docs.Dockerfile --tag cubecroom-docs:ci .
 
       - name: الاختبارات
@@ -159,6 +159,10 @@ jobs:
           else
             node scripts/package-app.mjs package
           fi
+
+      - name: Install the virtual display where the Linux runner lacks it
+        if: runner.os == 'Linux'
+        run: node scripts/release/prepare-linux-runtime.mjs
 
       - name: Run the packaged application with isolated test data
         env:
