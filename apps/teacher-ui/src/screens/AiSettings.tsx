@@ -31,6 +31,7 @@ import {
 import { when, isLocalProvider, LOCAL_PROVIDER_URLS, saveKeySchema } from '@cubecroom/contracts';
 import type { AiSettings as Settings, ProviderState } from '@cubecroom/contracts';
 import { bridge } from '../lib/bridge';
+import { McpSettings } from './McpSettings';
 
 /**
  * T19 — الذكاء الاصطناعي (ربط المفاتيح).
@@ -265,6 +266,8 @@ export function AiSettings({
           </p>
         </CardContent>
       </Card>
+
+      <McpSettings />
 
       <p className="text-t-caption text-text-muted">
         تظهر أرقام الاستهلاك فقط إذا كان مزوّدك يوفّرها، والفوترة تجري عنده لا عبر هذه المنصة.

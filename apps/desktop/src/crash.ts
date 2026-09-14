@@ -1,6 +1,7 @@
 import { app } from 'electron';
 import { appendCrashEntry, type CrashEntry } from '@cubecroom/core';
 import { killPortal } from './portal.js';
+import { stopMcpChannelNow } from './mcp/channel.js';
 import { closeStore, storeState } from './store.js';
 
 /**
@@ -62,6 +63,7 @@ async function bail(source: string, error: Error): Promise<void> {
 
   try {
     killPortal();
+    stopMcpChannelNow();
     closeStore();
   } catch {
     // لا شيء يُفعل: نحن في مسار الخروج أصلاً.

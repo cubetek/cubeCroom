@@ -65,6 +65,8 @@ await build({
   banner: { js: "const __cubecroomMetaUrl = require('node:url').pathToFileURL(__filename).href;" },
 });
 await build({ ...common, entryPoints: [join(app, 'src', 'preload.cts')], outfile: join(dist, 'preload.cjs') });
+// AI apps start this relay with CubeCroom's own executable in Node mode (D36).
+await build({ ...common, entryPoints: [join(app, 'src', 'mcp', 'relay.ts')], outfile: join(dist, 'mcp-relay.cjs') });
 await cp(join(root, 'packages', 'db', 'migrations'), join(dist, 'migrations'), { recursive: true });
 if (!stage) await copyNative(join(app, 'node_modules', 'better-sqlite3'));
 const electron = verifyNative({ runtime: 'electron', modulePath: join(root, 'node_modules', 'better-sqlite3') });

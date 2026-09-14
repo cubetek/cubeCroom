@@ -26,6 +26,14 @@ export type AppConfig = {
    * يستطيع إعدادٌ خاطئ أن يمنع الحصة.
    */
   readonly studentPort?: number;
+  /**
+   * قراءة تطبيقات الذكاء الاصطناعي على هذا الجهاز عبر MCP (D36).
+   *
+   * إعداد جهاز لا إعداد معلم للسبب نفسه: التطبيقات التي تقرأ مثبّتةٌ على هذا
+   * الحاسوب وحده، ونسخةٌ احتياطية تُستعاد على جهازٍ آخر لا تفتح فيه باباً.
+   * وغيابه يعني الإطفاء، ولا يُكتب إلا حين يُفتح.
+   */
+  readonly mcpEnabled?: boolean;
 };
 
 /**
@@ -75,6 +83,8 @@ export async function readConfig(): Promise<AppConfig | null> {
         ...(endpoints.success ? { aiEndpoints: endpoints.data } : {}),
         // منفذٌ تالفٌ في الملفّ يُهمَل ويعود الافتراضي — لا يمنع الإقلاع.
         ...(isUsablePort(port) ? { studentPort: port } : {}),
+        // لا يُفتح إلا بقيمة `true` صريحة: قيمةٌ تالفة تعني الإطفاء لا الفتح.
+        ...((parsed as AppConfig).mcpEnabled === true ? { mcpEnabled: true } : {}),
       };
     }
     return null;
@@ -108,6 +118,7 @@ export async function updateConfig(patch: {
   readonly dataDirectory?: string;
   readonly aiEndpoints?: LocalProviderEndpoints;
   readonly studentPort?: number | null;
+  readonly mcpEnabled?: boolean;
 }): Promise<AppConfig> {
   const existing = await readConfig();
 
@@ -117,6 +128,7 @@ export async function updateConfig(patch: {
 
   const studentPort =
     patch.studentPort === undefined ? existing?.studentPort : (patch.studentPort ?? undefined);
+  const mcpEnabled = patch.mcpEnabled ?? existing?.mcpEnabled;
 
   const next: AppConfig = {
     dataDirectory,
@@ -124,6 +136,7 @@ export async function updateConfig(patch: {
       ? { aiEndpoints: { ...existing?.aiEndpoints, ...patch.aiEndpoints } } : {}),
     // منفذٌ خارج المدى يُهمَل هنا كما يُهمَل عند القراءة — الحارس واحد للطريقين.
     ...(isUsablePort(studentPort) ? { studentPort } : {}),
+    ...(mcpEnabled === true ? { mcpEnabled: true } : {}),
   };
 
   await writeConfig(next);

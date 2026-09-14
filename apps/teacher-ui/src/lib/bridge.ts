@@ -1,6 +1,7 @@
 import type {
   LearningBridge,
   AgentBridge,
+  McpBridge,
   UpdateBridge,
   WindowAppearance,
   ApproveAllInput,
@@ -85,7 +86,7 @@ import type {
  * لكن `next dev` قد يُفتح في متصفح أثناء التطوير. عندها لا يوجد جسر — فنقول
  * ذلك صراحةً بدل أن تتعطّل الشاشة بلا سبب مفهوم.
  */
-export type Bridge = UpdateBridge & LearningBridge & AgentBridge & {
+export type Bridge = UpdateBridge & LearningBridge & AgentBridge & McpBridge & {
   readonly platform: string;
   readonly windowAppearance: (input: WindowAppearance) => Promise<{ updated: true }>;
   readonly bootState: () => Promise<BootState>;

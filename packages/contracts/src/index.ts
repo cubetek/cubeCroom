@@ -29,3 +29,4 @@ export * from './updates.js';
 export * from './legal.js';
 export * from './learning.js';
 export * from './agents.js';
+export * from './mcp.js';
