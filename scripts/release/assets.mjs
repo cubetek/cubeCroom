@@ -5,9 +5,17 @@ import { parse, stringify } from 'yaml';
 import { RELEASE_CONFIG, releaseArtifactNames } from './config.mjs';
 import { readJson, repository, sha512 } from './common.mjs';
 
-export function metadataName(platform, channel) {
+/**
+ * The feed a target's build writes and its installed app requests. electron-builder
+ * (getUpdateInfoFileName) and electron-updater (getChannelFilePrefix) agree: Windows never adds an
+ * architecture, macOS always uses `-mac`, and only Linux appends a non-x64 architecture. Windows and
+ * macOS builds therefore share one feed each, while Linux ARM64 keeps `latest-linux-arm64.yml`.
+ */
+export function metadataName(target, channel) {
   const prefix = channel === 'stable' ? 'latest' : 'beta';
-  return `${prefix}${platform === 'darwin' ? '-mac' : platform === 'linux' ? '-linux' : ''}.yml`;
+  const os = target.platform === 'darwin' ? '-mac' : target.platform === 'linux' ? '-linux' : '';
+  const arch = target.platform === 'linux' && target.arch !== 'x64' ? `-${target.arch}` : '';
+  return `${prefix}${os}${arch}.yml`;
 }
 const safeName = (value) => typeof value === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value) && basename(value) === value;
 export function validateMetadata(metadata, identity, files) {
@@ -28,7 +36,7 @@ export function validateMetadata(metadata, identity, files) {
 
 export async function inspectTarget(directory, target, identity, { requireReport = true } = {}) {
   const expectedNames = releaseArtifactNames(target, identity.version);
-  const metadataFile = metadataName(target.platform, identity.channel);
+  const metadataFile = metadataName(target, identity.channel);
   const files = [];
   for (const name of await readdir(directory)) {
     // Builder's debug/config/unpacked output is not a distributable asset.
@@ -75,7 +83,8 @@ export async function assembleAssets(input, output, identity) {
     metadataGroups.set(checked.metadataFile, group);
   }
   for (const [name, group] of metadataGroups) {
-    // Keep x64 legacy fields stable; modern updater selects the matching architecture from files.
+    // Keep x64 legacy fields stable. electron-updater picks the file whose name carries the running
+    // process.arch (findFile, MacUpdater), so a shared Windows or macOS feed serves each architecture.
     group.sort((a, b) => a.target.arch === 'x64' ? -1 : b.target.arch === 'x64' ? 1 : 0);
     const metadata = { ...group[0].metadata, files: group.flatMap((entry) => entry.metadata.files) };
     validateMetadata(metadata, identity, files);

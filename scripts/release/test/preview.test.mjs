@@ -31,7 +31,7 @@ async function fixture(t) {
       files.push({ url: name, size: bytes.length, sha512: createHash('sha512').update(bytes).digest('base64') });
       await writeFile(join(output, `${name}.blockmap`), 'private builder metadata');
     }
-    await writeFile(join(output, metadataName(target.platform, identity.channel)), stringify({ version: identity.version, files, path: files[0].url, sha512: files[0].sha512 }));
+    await writeFile(join(output, metadataName(target, identity.channel)), stringify({ version: identity.version, files, path: files[0].url, sha512: files[0].sha512 }));
     await writeFile(join(output, `packaging-checks-${target.platform}-${target.arch}.json`), JSON.stringify({
       schemaVersion: 1, version: identity.version, platform: target.platform, arch: target.arch,
       resourcesValidated: true, nativeSqliteVerified: true,
@@ -52,11 +52,11 @@ test('preview keeps the package version and exact source identity without enabli
   assert.throws(() => previewIdentity('v0.1.0', identity.commit, '0.1.0', '0.2.0'));
 });
 
-test('preview publishes only six verified binaries, explicit signing state and SHA512', async (t) => {
+test('preview publishes only the configured binaries, explicit signing state and SHA512', async (t) => {
   const directory = await fixture(t);
   const destination = join(directory, 'public');
   const metadata = await assemblePreview(join(directory, 'input'), destination, identity, createdAt);
-  assert.equal(metadata.artifacts.length, 6);
+  assert.equal(metadata.artifacts.length, RELEASE_CONFIG.targets.reduce((count, target) => count + target.extensions.length, 0));
   assert.equal(metadata.channel, 'preview');
   assert.equal(metadata.prerelease, true);
   assert.equal(metadata.productionSigningVerified, false);

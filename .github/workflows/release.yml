@@ -135,6 +135,9 @@ jobs:
       - name: Select isolated output directory
         id: paths
         run: node -e "require('node:fs').appendFileSync(process.env.GITHUB_OUTPUT, 'out=' + require('node:path').resolve('dist/release-target') + '\n')"
+      - name: Install the virtual display where the Linux runner lacks it
+        if: runner.os == 'Linux'
+        run: node scripts/release/prepare-linux-runtime.mjs
       - name: Build, sign, and notarize without publishing
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: ''
