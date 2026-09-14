@@ -11,6 +11,8 @@ import {
 } from 'electron';
 import {
   IPC,
+  MCP_IPC,
+  mcpSetEnabledSchema,
   SETTING_KEYS,
   PROVIDER_LABELS,
   PROVIDERS,
@@ -172,6 +174,7 @@ import {
   changeUpdateChannel, acknowledgeUpdatePreparation,
 } from './updates/service.js';
 import { portalStatus, startPortal, stopPortal } from './portal.js';
+import { mcpStatus, setMcpEnabled } from './mcp/channel.js';
 import {
   deleteKey,
   encryptionAvailable,
@@ -291,6 +294,9 @@ async function computeBootState(): Promise<BootState> {
 }
 
 export function registerIpc(): void {
+  // D36: reading by AI apps on this device. The channel owns its device setting and lifecycle.
+  handle<undefined, unknown>(MCP_IPC.status, null, () => mcpStatus());
+  handle(MCP_IPC.setEnabled, mcpSetEnabledSchema, ({ enabled }) => setMcpEnabled(enabled));
   handle<undefined, unknown>(AGENT_IPC.profiles, null, () => repositories().agents.profiles());
   handle(AGENT_IPC.profileSave, agentProfileSchema, input => repositories().agents.saveProfile(input));
   handle(AGENT_IPC.memories, agentScopeSchema, input => repositories().agents.memories(input.classId));

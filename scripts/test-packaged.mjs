@@ -1,8 +1,10 @@
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { packagedApplicationPaths, releasePaths } from './release/config.mjs';
 import { safeSmokePath } from './release/smoke-paths.mjs';
 
@@ -40,6 +42,7 @@ child.once('close', () => { childClosed = true; });
 child.stdout.on('data', b => { runtimeLog += b; });
 child.stderr.on('data', b => { runtimeLog += b; });
 let socket;
+let mcpClient = null;
 let nextId = 0;
 const pending = new Map();
 const exceptions = [];
@@ -170,6 +173,25 @@ try {
   await evaluate('document.querySelector("[role=dialog] button[aria-label=إغلاق]").click()');
   results.checks.push('packaged AGPL text, source link and third-party notices');
   const cls = await evaluate('window.cubecroom.classesCreate({name:"فصل اختبار الحزمة",subject:"علوم"})');
+  // D36: an AI app starts the relay exactly as the settings show, with the packaged executable.
+  const mcp = await evaluate('window.cubecroom.mcpSetEnabled({enabled:true})');
+  assert.equal(mcp.state, 'running', JSON.stringify(mcp));
+  assert.deepEqual(mcp.launch.env, { ELECTRON_RUN_AS_NODE: '1' });
+  if (!process.env.APPIMAGE) assert.equal(await realpath(mcp.launch.command), await realpath(executable));
+  mcpClient = new Client({ name: 'cubecroom-packaged-smoke', version });
+  const mcpTransport = new StdioClientTransport({ command: mcp.launch.command, args: [...mcp.launch.args], env: { ...mcp.launch.env }, stderr: 'pipe' });
+  mcpTransport.stderr?.on('data', b => { runtimeLog += `[mcp relay] ${b}`; });
+  await mcpClient.connect(mcpTransport);
+  const { tools } = await mcpClient.listTools();
+  assert.equal(tools.length, 9, JSON.stringify(tools.map(tool => tool.name)));
+  assert.ok(tools.every(tool => tool.annotations?.readOnlyHint === true), 'Every MCP tool is read-only');
+  const listed = await mcpClient.callTool({ name: 'list_classes', arguments: {} });
+  assert.ok(listed.structuredContent.classes.some(item => item.id === cls.id), JSON.stringify(listed));
+  const mcpEnded = new Promise(resolveEnded => { mcpClient.onclose = resolveEnded; });
+  assert.equal(await evaluate('window.cubecroom.mcpSetEnabled({enabled:false}).then(s => s.state)'), 'off');
+  await Promise.race([mcpEnded, new Promise((_, reject) => setTimeout(() => reject(new Error('The MCP relay stayed connected after reading was turned off')), 15000))]);
+  mcpClient = null;
+  results.checks.push('MCP relay through the packaged executable in Node mode; turning reading off closes it');
   await evaluate(`window.cubecroom.portalStart({classId:${JSON.stringify(cls.id)}})`);
   const portal = await until(async () => { const value = await evaluate('window.cubecroom.portalStatus()'); return value.state === 'starting' ? null : value; });
   assert.ok(['running', 'unreachable'].includes(portal.state), JSON.stringify(portal));
@@ -202,7 +224,9 @@ try {
   }
   process.exitCode = 1;
 } finally {
+  await mcpClient?.close().catch(() => {});
   if (socket?.readyState === WebSocket.OPEN) {
+    await evaluate('window.cubecroom.mcpSetEnabled({enabled:false})').catch(() => {});
     await evaluate('window.cubecroom.portalStop()').catch(() => {});
     await send('Page.close').catch(() => {});
   }

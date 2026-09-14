@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { LEARNING_IPC, AGENT_IPC, type LearningBridge, type AgentBridge } from '@cubecroom/contracts';
+import { LEARNING_IPC, AGENT_IPC, MCP_IPC, type LearningBridge, type AgentBridge, type McpBridge } from '@cubecroom/contracts';
 import { UPDATE_IPC, type UpdateBridge, type UpdateState } from '@cubecroom/contracts';
 import type {
   WindowAppearance,
@@ -125,6 +125,10 @@ const api = {
     agentStart: input => ipcRenderer.invoke(AGENT_IPC.start, input),
     agentControl: input => ipcRenderer.invoke(AGENT_IPC.control, input),
   } satisfies AgentBridge),
+  ...({
+    mcpStatus: () => ipcRenderer.invoke(MCP_IPC.status),
+    mcpSetEnabled: input => ipcRenderer.invoke(MCP_IPC.setEnabled, input),
+  } satisfies McpBridge),
   ...updateApi,
   lessonAgentRun: (input: LessonAgentRunInput): Promise<LessonAgentResult> =>
     ipcRenderer.invoke('lessons:agent-run', input),

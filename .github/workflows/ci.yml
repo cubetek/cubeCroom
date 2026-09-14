@@ -136,6 +136,9 @@ jobs:
       - name: Verify learning assessments and specialist agent permissions
         run: pnpm test:learning
 
+      - name: Verify the read-only MCP server for local AI apps
+        run: pnpm test:mcp
+
       - name: فحص قواعد الإصدار وبيانات التحديث
         run: node --test scripts/release/test/*.test.mjs
 

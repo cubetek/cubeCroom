@@ -9,6 +9,7 @@ import { killPortal } from './portal.js';
 import { closeStore } from './store.js';
 import { startAgentScheduler, stopAgentScheduler } from './specialist-agents.js';
 import { initializeUpdates, updateState } from './updates/service.js';
+import { resumeMcpChannel, stopMcpChannelNow } from './mcp/channel.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const isDev = !app.isPackaged;
@@ -192,6 +193,8 @@ void app.whenReady().then(() => {
   registerIpc();
   startAgentScheduler();
   initializeUpdates();
+  // D36: resumes only when the teacher turned reading by AI apps on for this device.
+  void resumeMcpChannel();
 
   // في التطوير تأتي الصفحات من خادم Next، فتُحقن السياسة على استجاباته.
   if (isDev) {
@@ -220,6 +223,7 @@ app.on('before-quit', (event) => {
   }
   // العملية اليتيمة تُبقي المنفذ محجوزاً بعد إغلاق التطبيق.
   killPortal();
+  stopMcpChannelNow();
   stopAgentScheduler();
   closeStore();
 });
