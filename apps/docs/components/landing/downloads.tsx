@@ -39,7 +39,7 @@ export function Downloads({ source }: { source: ReleaseSource }) {
             </Card>)}
           </div>
           {release.missingTargets.length > 0 && <p className="mt-5 text-sm leading-8 text-slate-600">لم تُنشر ملفات هذه الأنظمة ضمن هذا الإصدار: {release.missingTargets.map(target => target.label + ' (' + target.architecture + ')').join('، ')}. راجع صفحة الإصدار لمعرفة الملفات المتاحة.</p>}
-          <p className="mt-5 text-sm leading-7 text-slate-500">على Mac، اختر Apple Silicon لأجهزة شرائح M، أو Intel للأجهزة الأقدم. تجد نوع الشريحة في «حول هذا الـ Mac».</p>
+          <p className="mt-5 text-sm leading-7 text-slate-500">على Mac، اختر Apple Silicon لأجهزة شرائح M، أو Intel للأجهزة الأقدم. تجد نوع الشريحة في «حول هذا الـ Mac». وعلى Windows وLinux، اختر ARM64 لأجهزة معالجات ARM مثل Snapdragon، أو x64 لأجهزة Intel وAMD؛ تجد نوع المعالج في Windows ضمن «الإعدادات ← النظام ← حول».</p>
           <ReleaseVerification release={release} />
           <section id="installation-notes" className="mt-8 scroll-mt-8 rounded-2xl border border-stone-200 bg-white p-6 sm:p-8" aria-labelledby="installation-notes-title">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 id="installation-notes-title" className="text-xl font-semibold">ملاحظات الإصدار والتثبيت</h2><a href={release.releaseUrl} className={linkClass}>اقرأها على GitHub <ArrowLeft className="size-4" aria-hidden="true" /></a></div>

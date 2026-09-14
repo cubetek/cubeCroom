@@ -1,15 +1,11 @@
-import { RELEASE_CONFIG } from '../release/config.mjs';
+import { RELEASE_CONFIG, releaseTargetArchitecture } from '../release/config.mjs';
 
 const repositoryUrl = `https://github.com/${RELEASE_CONFIG.repository.owner}/${RELEASE_CONFIG.repository.repo}`;
 const sourceDocument = (path) => `${repositoryUrl}/blob/main/${path}`;
 const platformNames = { win32: 'Windows', darwin: 'macOS', linux: 'Linux' };
 const installerNames = { win32: 'EXE', darwin: 'DMG', linux: 'AppImage' };
-const installationRows = RELEASE_CONFIG.targets.map((target) => {
-  const architecture = target.platform === 'darwin'
-    ? target.arch === 'arm64' ? 'Apple Silicon — شرائح M' : 'Intel — x64'
-    : target.arch;
-  return `| ${platformNames[target.platform]} | ${architecture} | ${installerNames[target.platform]} |`;
-}).join('\n');
+const installationRows = RELEASE_CONFIG.targets.map((target) =>
+  `| ${platformNames[target.platform]} | ${releaseTargetArchitecture(target)} | ${installerNames[target.platform]} |`).join('\n');
 
 /** Reader-facing corrections for screenshot pages; labels match the current UI. */
 export const RELEASE_COPY = {
@@ -63,7 +59,7 @@ export const RELEASE_PAGES = [
 | --- | --- | --- |
 ${installationRows}
 
-في macOS اختر Apple Silicon إذا كان جهازك يستخدم إحدى شرائح M، أو Intel إذا كان معالجه من Intel. راجع معلومات جهازك ومتطلبات الإصدار قبل التنزيل؛ اختيار اسم النظام وحده لا يكفي.
+في macOS اختر Apple Silicon إذا كان جهازك يستخدم إحدى شرائح M، أو Intel إذا كان معالجه من Intel. وفي Windows وLinux اختر ARM64 إذا كان معالج جهازك من نوع ARM، مثل أجهزة Snapdragon، أو x64 لمعالجات Intel وAMD؛ تجد نوع المعالج في Windows ضمن «الإعدادات ← النظام ← حول». راجع معلومات جهازك ومتطلبات الإصدار قبل التنزيل؛ اختيار اسم النظام وحده لا يكفي.
 
 ## افتح النسخة بعد التنزيل
 
@@ -257,14 +253,14 @@ ${installationRows}
     title: 'إصدار نسخة جديدة عبر طلب دمج',
     description: 'تجهيز رقم النسخة وسجل التغييرات، ثم بناء الحزم ونشرها بعد الدمج.',
     body: `
-يجمع Release Please التغييرات المدمجة في الفرع الرئيسي ويُحدّث طلب دمج واحداً للإصدار القادم. يحتوي الطلب على رقم النسخة في التطبيق وسجل التغييرات، وتعمل عليه فحوص Windows وLinux وmacOS بمعماريتي Intel وApple Silicon.
+يجمع Release Please التغييرات المدمجة في الفرع الرئيسي ويُحدّث طلب دمج واحداً للإصدار القادم. يحتوي الطلب على رقم النسخة في التطبيق وسجل التغييرات، وتعمل عليه فحوص Windows وLinux بمعماريتي x64 وARM64، وmacOS بمعماريتي Intel وApple Silicon.
 
 ## من التغيير إلى الإصدار
 
 1. ادمج التحسينات بعناوين Conventional Commits، مثل fix: لإصلاح عيب وfeat: لميزة جديدة.
 2. راجع [طلب الإصدار على GitHub](${repositoryUrl}/pulls)، ورقم النسخة وسجل التغييرات ونتائج الفحوصات.
 3. عند دمج طلب الإصدار، تبدأ عملية البناء تلقائياً من نسخة الشيفرة المحددة في ذلك الدمج.
-4. تُختبر الحزم وتُجمع نتائج الأنظمة الأربعة قبل نشر الملفات في [GitHub Releases](${repositoryUrl}/releases).
+4. تُختبر الحزم وتُجمع نتائج كل الأنظمة والمعماريات المدعومة قبل نشر الملفات في [GitHub Releases](${repositoryUrl}/releases).
 5. تقرأ [صفحة التنزيل](/download) و[سجل التغييرات](/changelog) النسخة المنشورة وتاريخها وروابطها تلقائياً.
 
 ## وضع النشر الحالي

@@ -30,7 +30,7 @@ async function fixture(t) {
       await writeFile(join(path, name), bytes);
       files.push({ url: name, sha512: createHash('sha512').update(bytes).digest('base64'), size: bytes.length });
     }
-    await writeFile(join(path, metadataName(target.platform, identity.channel)), stringify({ version: identity.version, files, path: files[0].url, sha512: files[0].sha512 }));
+    await writeFile(join(path, metadataName(target, identity.channel)), stringify({ version: identity.version, files, path: files[0].url, sha512: files[0].sha512 }));
     await writeFile(join(path, `packaging-checks-${target.platform}-${target.arch}.json`), JSON.stringify({ schemaVersion: 1, version: identity.version, platform: target.platform, arch: target.arch, resourcesValidated: true, nativeSqliteVerified: true }));
   }
   return directory;
@@ -55,6 +55,23 @@ test('assembly requires every platform and merges mac architectures without coll
   assert.ok(metadata.path.includes('-x64.'));
 });
 
+test('feeds use the names electron-builder writes and electron-updater requests on every architecture', async (t) => {
+  const byId = Object.fromEntries(RELEASE_CONFIG.targets.map((target) => [target.id, target]));
+  assert.equal(metadataName(byId['win-x64'], 'stable'), 'latest.yml');
+  assert.equal(metadataName(byId['win-arm64'], 'stable'), 'latest.yml');
+  assert.equal(metadataName(byId['mac-arm64'], 'beta'), 'beta-mac.yml');
+  assert.equal(metadataName(byId['linux-x64'], 'stable'), 'latest-linux.yml');
+  assert.equal(metadataName(byId['linux-arm64'], 'stable'), 'latest-linux-arm64.yml');
+  const directory = await fixture(t);
+  const files = await assembleAssets(join(directory, 'input'), join(directory, 'output'), identity);
+  const windows = files.find((file) => file.name === 'latest.yml');
+  assert.equal(windows.arch, 'universal');
+  const feed = parse(await readFile(join(directory, 'output', windows.name), 'utf8'));
+  assert.deepEqual(feed.files.map((file) => file.url).sort(), [`CubeCroom-${identity.version}-win-arm64.exe`, `CubeCroom-${identity.version}-win-x64.exe`]);
+  assert.equal(files.find((file) => file.name === 'latest-linux.yml').arch, 'x64');
+  assert.equal(files.find((file) => file.name === 'latest-linux-arm64.yml').arch, 'arm64');
+});
+
 test('assembly refuses a missing updater ZIP despite the DMG being present', async (t) => {
   const directory = await fixture(t);
   await rm(join(directory, 'input', 'mac-arm64', `CubeCroom-${identity.version}-mac-arm64.zip`));
@@ -73,7 +90,7 @@ test('assembled multi-platform release signs and verifies using the actual runti
   assert.deepEqual(decoded, payload);
   for (const file of decoded.files) await verifyReleaseFile(join(directory, 'output', file.name), file);
   const documents = distributionDocuments(decoded);
-  assert.equal(JSON.parse(documents['downloads.json']).downloads.length, 4);
+  assert.equal(JSON.parse(documents['downloads.json']).downloads.length, RELEASE_CONFIG.targets.length);
   assert.equal(documents.SHA512SUMS.trim().split('\n').length, files.length);
   assert.throws(() => signReleaseManifest(payload, 'test-only', privatePem, { schemaVersion: 1, keys: [] }), /Unknown release signing key/);
   assert.throws(() => verifyReleaseManifest({ ...envelope, payload: Buffer.from(JSON.stringify({ ...payload, commit: 'b'.repeat(40) })).toString('base64') }, trust, { repository: RELEASE_CONFIG.repository }), /Invalid release signature/);
@@ -139,6 +156,15 @@ test('workflow files pin Actions and keep signing isolated from pull requests', 
   assert.ok(releasePackage.run.includes('node scripts/release/prepare-linux-sandbox.mjs'));
   assert.ok(releasePackage.run.indexOf('node scripts/release/prepare-linux-sandbox.mjs') < releasePackage.run.indexOf('xvfb-run'));
   assert.ok(releasePackage.run.indexOf('node scripts/test-packaged.mjs') < releasePackage.run.indexOf('node scripts/release/verify-target.mjs'));
+  // Linux ARM64 images omit xvfb: the runtime step must precede every virtual-display smoke.
+  const runtimeStep = (steps) => steps.findIndex((step) => step.run === 'node scripts/release/prepare-linux-runtime.mjs');
+  const ciRuntime = runtimeStep(ci.jobs.verify.steps);
+  assert.ok(ciRuntime >= 0 && ci.jobs.verify.steps[ciRuntime].if === "runner.os == 'Linux'");
+  assert.ok(ciRuntime < ci.jobs.verify.steps.indexOf(linuxSmoke));
+  const releaseRuntime = runtimeStep(release.jobs.build.steps);
+  assert.ok(releaseRuntime >= 0 && releaseRuntime < release.jobs.build.steps.indexOf(releasePackage));
+  // Lint and the docs image are target-independent: build them once, not once per Linux architecture.
+  assert.equal(ci.jobs.verify.steps.find((step) => step.run === 'pnpm lint').if, "matrix.id == 'linux-x64'");
   assert.equal(JSON.stringify(ci).includes('secrets.'), false);
   assert.ok(ci.jobs.verify.steps.some((step) => step.run === 'node scripts/release/archive-validation.mjs'));
   const validationUpload = ci.jobs.verify.steps.find((step) => step.with?.name?.startsWith('validation-'));

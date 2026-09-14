@@ -9,9 +9,11 @@ export const RELEASE_CONFIG = Object.freeze({
   artifactName: 'CubeCroom-${version}-${os}-${arch}.${ext}',
   targets: Object.freeze([
     { id: 'win-x64', platform: 'win32', arch: 'x64', runner: 'windows-2022', targets: ['nsis'], extensions: ['.exe'] },
+    { id: 'win-arm64', platform: 'win32', arch: 'arm64', runner: 'windows-11-arm', targets: ['nsis'], extensions: ['.exe'] },
     { id: 'mac-x64', platform: 'darwin', arch: 'x64', runner: 'macos-15-intel', targets: ['dmg', 'zip'], extensions: ['.dmg', '.zip'] },
     { id: 'mac-arm64', platform: 'darwin', arch: 'arm64', runner: 'macos-15', targets: ['dmg', 'zip'], extensions: ['.dmg', '.zip'] },
     { id: 'linux-x64', platform: 'linux', arch: 'x64', runner: 'ubuntu-24.04', targets: ['AppImage'], extensions: ['.AppImage'] },
+    { id: 'linux-arm64', platform: 'linux', arch: 'arm64', runner: 'ubuntu-24.04-arm', targets: ['AppImage'], extensions: ['.AppImage'] },
   ]),
 });
 
@@ -21,6 +23,14 @@ export function releaseArtifactNames(target, version) {
   if (!os) throw new Error(`Unsupported release artifact platform: ${target.platform}`);
   return target.extensions.map((extension) => RELEASE_CONFIG.artifactName
     .replace('${version}', version).replace('${os}', os).replace('${arch}', target.arch).replace('${ext}', extension.slice(1)));
+}
+
+/** Reader-facing architecture label, shared by the download page and the installation guide. */
+export function releaseTargetArchitecture(target) {
+  if (target.platform === 'darwin') return target.arch === 'arm64' ? 'Apple Silicon — شرائح M' : 'Intel — معمارية x64';
+  if (target.arch === 'x64') return 'x64 — معالجات Intel وAMD';
+  if (target.arch === 'arm64') return target.platform === 'win32' ? 'ARM64 — مثل أجهزة Snapdragon' : 'ARM64 — معالجات ARM';
+  throw new Error(`No architecture label is configured for ${target.id}`);
 }
 
 /** A public verification key alone never activates updates in an unsigned build. */
@@ -64,9 +74,15 @@ export function packagedRuntimePaths(appOutDirectory, platform = process.platfor
   };
 }
 
+/**
+ * electron-builder's own unpacked folder. Its computeAppOutDir appends `-<arch>` only for a
+ * non-default architecture (x64), and `-unpacked` everywhere except macOS: ARM64 builds land in
+ * `win-arm64-unpacked` and `linux-arm64-unpacked`, never in the x64 folder names.
+ */
 export function packagedApplicationPaths(outDirectory, target = currentReleaseTarget()) {
-  const folder = target.platform === 'darwin' ? (target.arch === 'arm64' ? 'mac-arm64' : 'mac')
-    : target.platform === 'win32' ? 'win-unpacked' : 'linux-unpacked';
+  const key = { win32: 'win', darwin: 'mac', linux: 'linux' }[target.platform];
+  if (!key) throw new Error(`Unsupported packaged platform: ${target.platform}`);
+  const folder = `${key}${target.arch === 'x64' ? '' : `-${target.arch}`}${target.platform === 'darwin' ? '' : '-unpacked'}`;
   const appOutDirectory = join(outDirectory, folder);
   return { appOutDirectory, ...packagedRuntimePaths(appOutDirectory, target.platform) };
 }
