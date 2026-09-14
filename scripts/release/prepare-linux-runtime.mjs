@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 
-// Packaged smoke runs Electron under a virtual display. The Ubuntu x64 runner image ships xvfb;
-// GitHub's Ubuntu 24.04 ARM64 partner image does not list it. Install only what is missing, so an
+// Packaged smoke runs Electron under a virtual display. GitHub's Ubuntu 24.04 ARM64 partner image does not
+// list xvfb, although the first ARM64 run found it installed, as on x64. Install only what is missing, so an
 // image that already provides the packages is left untouched and no other host setting changes.
 if (process.platform !== 'linux' || process.env.GITHUB_ACTIONS !== 'true') {
   throw new Error('Linux runtime preparation is restricted to the GitHub Actions Linux runner.');
