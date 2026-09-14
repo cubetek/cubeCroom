@@ -22,6 +22,7 @@
     "test:lesson-editor": "node scripts/test-lesson-editor.mjs",
     "test:ai-education": "node scripts/test-ai-education.mjs",
     "test:learning": "node --test scripts/test-learning.mjs",
+    "test:mcp": "node --test scripts/test-mcp.mjs",
     "test:learning-ui": "node scripts/test-learning-ui.mjs",
     "load": "node scripts/load.mjs",
     "package": "pnpm build && node scripts/bundle-desktop.mjs --stage && node scripts/package-app.mjs package",
